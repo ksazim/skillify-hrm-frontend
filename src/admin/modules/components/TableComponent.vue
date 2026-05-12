@@ -384,9 +384,9 @@ thead tr {
 }
 
 th {
-  padding: 14px 18px;
+  padding: 8px 14px;
+  font-size: 10px;
   text-align: left;
-  font-size: 9.5px;
   font-weight: 500;
   letter-spacing: .18em;
   text-transform: uppercase;
@@ -440,8 +440,8 @@ tbody tr.tr--selected::before { transform: scaleY(1); }
 
 /* ── Cells ── */
 td {
-  padding: 14px 18px;
-  font-size: 13px;
+  padding: 8px 14px;
+  font-size: 12px;
   color: var(--text-secondary);
   border-right: 1px solid var(--border);
   vertical-align: middle;
@@ -526,10 +526,9 @@ td.td--right  { text-align: right; }
 
 /* ── Action buttons ── */
 .cell-actions {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
 }
 
 .action-btn {
@@ -602,7 +601,7 @@ td.td--right  { text-align: right; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 72px 32px;
+  padding: 40px 24px;
   text-align: center;
 }
 .empty-icon {

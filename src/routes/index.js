@@ -7,6 +7,7 @@ import companyRoutes from './company'
 import employeeRoutes from './employee'
 import attendanceRoutes from './attendance'
 import leaveRoutes from './leave'
+import payrollRoutes from './payroll'
 
 const routes = [
     ...adminRoutes,
@@ -15,6 +16,7 @@ const routes = [
     ...employeeRoutes,
     ...attendanceRoutes,
     ...leaveRoutes,
+    ...payrollRoutes,
 ]
 
 var router = createRouter({

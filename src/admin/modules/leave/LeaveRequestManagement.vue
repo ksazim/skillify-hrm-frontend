@@ -813,8 +813,11 @@ const isAdminUser = computed(() => userApproverStage.value >= 0)
 const canActOnRequest = (item) => {
   if (!item) return false
   if (userApproverStage.value < 0) return false
-  const overallOk = !['approved', 'rejected'].includes(item.overall_status)
-  return overallOk && item.current_stage === userApproverStage.value
+  const overallOk = !['approved', 'rejected', 'cancelled'].includes(item.overall_status ?? item.status)
+  if (!overallOk) return false
+
+  // approval_hierchy tells us if it's this user's turn in the pipeline
+  return !!item.approval_hierchy
 }
 
 // ── Notification ──────────────────────────────────────────────────────────────
@@ -990,13 +993,16 @@ const timelinePillClass = (item, idx) => {
 
 // ── Open action modal ─────────────────────────────────────────────────────────
 const openActionModal = (item, mode) => {
-  if (!canActOnRequest(item)) {
-    const os = item?.overall_status ?? item?.status ?? 'pending'
-    if (os === 'approved') { notify('warning', 'This request has already been fully approved.', { autoClose: 3000 }); return }
-    if (os === 'rejected') { notify('warning', 'This request has already been rejected.', { autoClose: 3000 }); return }
-    notify('warning', 'This request is not at your approval stage yet.', { autoClose: 3000 })
+  const os = item?.overall_status ?? item?.status ?? 'pending'
+  if (os === 'approved')  { notify('warning', 'This request has already been approved.', { autoClose: 3000 }); return }
+  if (os === 'rejected')  { notify('warning', 'This request has already been rejected.', { autoClose: 3000 }); return }
+  if (os === 'cancelled') { notify('warning', 'This request has been cancelled.', { autoClose: 3000 }); return }
+
+  if (!item.approval_hierchy) {
+    notify('warning', 'This request has not reached your approval stage yet.', { autoClose: 3000 })
     return
   }
+
   actionItem.value            = { ...item }
   actionModalMode.value       = mode
   actionNotes.value           = ''
@@ -1017,23 +1023,29 @@ const submitAction = async () => {
   }
   actionSaving.value = true
   try {
+    const hasHierarchy = !!actionItem.value.approval_hierchy
     const payload = {
       status: actionModalMode.value === 'approve' ? 'approved' : 'rejected',
-      stage:  actionItem.value.current_stage ?? 0,
+      ...(hasHierarchy && { stage: actionItem.value.current_stage ?? 0 }),
       ...(actionNotes.value.trim() && { notes: actionNotes.value.trim() }),
     }
-    // PUT /leave/approvals/{id}/status — backend advances current_stage on approval
-    await apiFetch(`/leave/approvals/${actionItem.value.id}/status`, {
+
+    // Use different endpoints depending on hierarchy
+    const endpoint = hasHierarchy
+      ? `/leave/approvals/${actionItem.value.id}/status`
+      : `/leave/requests/${actionItem.value.id}/status`
+
+    await apiFetch(endpoint, {
       method:  'PUT',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify(payload),
     })
+
     showActionModal.value = false
-    const nextName = nextStageName(actionItem.value)
     const msg = payload.status === 'approved'
-      ? (nextName
-          ? `Approved at Stage ${(actionItem.value.current_stage ?? 0) + 1}. Forwarded to ${nextName}.`
-          : 'Leave request fully approved.')
+      ? (hasHierarchy && nextStageName(actionItem.value)
+          ? `Approved at Stage ${(actionItem.value.current_stage ?? 0) + 1}. Forwarded to ${nextStageName(actionItem.value)}.`
+          : 'Leave request approved.')
       : 'Leave request rejected and employee notified.'
     notify('success', msg, { autoClose: 4000 })
     await loadData()
@@ -1443,18 +1455,29 @@ onBeforeUnmount(() => {
 .lr-dot-future   { background: rgba(240,234,224,0.06); border-color: rgba(240,234,224,0.18); }
 
 /* ── Table layout ── */
-:deep(table) { table-layout: auto; width: 100%; }
-:deep(td .cell-text)    { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
-:deep(td .cell-actions) { white-space: nowrap; overflow: visible; }
+:deep(.action-btn.btn-approve),
+:deep(.action-btn.action-btn--btn-approve) {
+  background: rgba(110,207,169,0.15) !important;
+  border-color: rgba(110,207,169,0.55) !important;
+  color: #6ECFA9 !important;
+}
+:deep(.action-btn.btn-approve:hover:not(:disabled)),
+:deep(.action-btn.action-btn--btn-approve:hover:not(:disabled)) {
+  background: rgba(110,207,169,0.28) !important;
+  border-color: #6ECFA9 !important;
+}
 
-:deep(.btn-approve) {
-  background: rgba(110,207,169,0.10) !important; border-color: rgba(110,207,169,0.40) !important; color: #6ECFA9 !important;
+:deep(.action-btn.btn-reject),
+:deep(.action-btn.action-btn--btn-reject) {
+  background: rgba(239,107,107,0.15) !important;
+  border-color: rgba(239,107,107,0.55) !important;
+  color: #EF6B6B !important;
 }
-:deep(.btn-approve:hover) { background: rgba(110,207,169,0.20) !important; }
-:deep(.btn-reject) {
-  background: rgba(239,107,107,0.10) !important; border-color: rgba(239,107,107,0.40) !important; color: #EF6B6B !important;
+:deep(.action-btn.btn-reject:hover:not(:disabled)),
+:deep(.action-btn.action-btn--btn-reject:hover:not(:disabled)) {
+  background: rgba(239,107,107,0.28) !important;
+  border-color: #EF6B6B !important;
 }
-:deep(.btn-reject:hover) { background: rgba(239,107,107,0.20) !important; }
 
 /* ── Download button ── */
 .lr-dl-btn {
