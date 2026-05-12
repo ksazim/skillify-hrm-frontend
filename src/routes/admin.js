@@ -75,6 +75,48 @@ export default [
         meta: { layout: adminLayout, requiresAuth:true }
     },
     {
+        path: '/admin/dashboard/projects',
+        name: 'ProjectsModule',
+        component: () => import('@/admin/modules/projects/ProjecTs'),
+        meta: { layout: adminLayout, requiresAuth:true }
+    },
+    {
+        path: '/admin/dashboard/tasks',
+        name: 'TasksModule',
+        component: () => import('@/admin/modules/projects/TaskModuLe'),
+        meta: { layout: adminLayout, requiresAuth:true }
+    },
+    {
+        path: '/admin/dashboard/team-assignments',
+        name: 'TeamAssignmentModule',
+        component: () => import('@/admin/modules/projects/TeamAssignment'),
+        meta: { layout: adminLayout, requiresAuth:true }
+    },
+    {
+        path: '/admin/dashboard/milestones',
+        name: 'MilestonesModule',
+        component: () => import('@/admin/modules/projects/MilestoneManagement'),
+        meta: { layout: adminLayout, requiresAuth:true }
+    },
+    {
+        path: '/admin/announcements/all',
+        name: 'NoticeManagement',
+        component: () => import('@/admin/modules/announcements/NoticeManagement'),
+        meta: { layout: adminLayout, requiresAuth:true }
+    },
+    {
+        path: '/admin/announcements/create',
+        name: 'CreateAnnouncement',
+        component: () => import('@/admin/modules/announcements/NoticeManagement'),
+        meta: { layout: adminLayout, requiresAuth:true }
+    },
+    {
+        path: '/admin/announcements/notice',
+        name: 'NoticeBoard',
+        component: () => import('@/admin/modules/announcements/NoticeManagement'),
+        meta: { layout: adminLayout, requiresAuth:true }
+    },
+    {
         path: '/:pathmatch(.*)*',
         name: 'notFound',
         component: () => import('../admin/NotFound'),
