@@ -21,9 +21,13 @@ export const useAuthStore = defineStore('auth', {
       axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
       
       try {
-        const response = await axios.get(process.env.VUE_APP_BASE_API_URL + 'user');
-        
-        this.user = response.data.user;
+        // MOCK: Use mock data for testing without backend
+        this.user = {
+          id: 1,
+          name: 'Admin User',
+          email: 'admin@domain.com',
+          roleId: 3
+        }
         
         if (this.user.roleId === 3) {
           this.isAgent = false;
@@ -37,8 +41,8 @@ export const useAuthStore = defineStore('auth', {
       } catch (error) {
         if (error.response && error.response.status === 401) {
           this.isAuthenticated = false;
-          this.user = {}; // Clear user data
-          localStorage.removeItem('token'); // Remove token from localStorage
+          this.user = {};
+          localStorage.removeItem('token');
         } else {
           console.error('An error occurred while fetching user data:', error);
         }

@@ -1,10 +1,16 @@
-import axios from 'axios'
 import { useAppConfigStore } from '@/store/appConfig'
 
 export const useAppConfig = async () => {
   try {
-    const response = await axios.get(process.env.VUE_APP_BASE_API + '/system')
-    const system = response.data.system
+    // MOCK: Use mock system data for testing without backend
+    const system = {
+      brand_name: 'Nexara',
+      logo: null,
+      favicon: null,
+      primary_color: '#4f46e5',
+      secondary_color: '#10b981',
+      tagline: 'Human Resources'
+    }
 
     const storageBase = process.env.VUE_APP_BASE_URL // e.g. https://yourdomain.com/storage/
 
