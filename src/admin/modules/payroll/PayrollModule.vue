@@ -1,1429 +1,1493 @@
 <template>
-  <CrudLayout
-    ref="layoutRef"
-    title="Payroll"
-    subtitle="Process payroll, manage deductions and download payslips"
-    :breadcrumbs="breadcrumbs"
-    :stats="pageStats"
-    :loading="isLoading"
-    loading-message="Loading payroll data"
-    :error="hasError ? errorMessage : ''"
-    error-title="Failed to Load Payroll"
-    :has-data="true"
-    :notification="notification"
-    @retry="loadData"
-  >
-    <template #icon>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
-      </svg>
-    </template>
+  <div class="pm-wrap">
 
-    <template #filters>
-      <FilterPanel
-        title="Search & Filter"
-        :fields="filterFields"
-        v-model="searchFilters"
-        @submit="handleSearch"
-        @reset="handleReset"
-      />
-    </template>
-
-    <!-- ── Tab bar ── -->
-    <div class="pr-tabs">
-      <button
-        v-for="tab in tabs"
-        :key="tab.key"
-        class="pr-tab"
-        :class="{ 'pr-tab--active': activeTab === tab.key }"
-        @click="activeTab = tab.key"
-      >
-        <span class="pr-tab-label">{{ tab.label }}</span>
-        <span v-if="tab.badge" class="pr-tab-badge">{{ tab.badge }}</span>
-      </button>
-
-      <!-- Run Payroll button (admin only) -->
-      <div class="pr-tab-spacer"></div>
-      <button v-if="isAdminUser" class="pr-run-btn" @click="openRunPayrollModal">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M8 5v14l11-7z"/>
-        </svg>
+    <!-- ── Page Header ── -->
+    <div class="pm-header">
+      <div class="pm-header-left">
+        <div class="pm-header-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="pm-title">Payroll</h1>
+          <p class="pm-subtitle">Process payroll, manage deductions and download payslips</p>
+        </div>
+      </div>
+      <button v-if="isAdmin" class="pm-run-btn" @click="openRunModal">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
         Run Payroll
       </button>
     </div>
 
-    <!-- ════════════════════════════════
-         TAB: EMPLOYEE SALARY LIST
-    ════════════════════════════════ -->
-    <div v-if="activeTab === 'employees'">
-      <DataTable
-        :data="paginatedEmployees"
-        :columns="employeeColumns"
-        :actions="employeeActions"
-        result-label="employees"
-        @action="handleEmployeeAction"
-        @sort="handleSort"
-      >
-        <template #cell-name="{ row }">
-          <div class="pr-name-cell">
-            <div class="pr-avatar">{{ initials(row.name) }}</div>
-            <div>
-              <span class="pr-emp-name">{{ row.name }}</span>
-              <span class="pr-emp-dept">{{ row.department ?? '—' }}</span>
-            </div>
-          </div>
-        </template>
-
-        <template #cell-basic_salary="{ row }">
-          <span class="pr-amount">{{ formatCurrency(row.basic_salary) }}</span>
-        </template>
-
-        <template #cell-deductions="{ row }">
-          <span class="pr-amount pr-amount--deduct">−{{ formatCurrency(totalDeductions(row)) }}</span>
-        </template>
-
-        <template #cell-bonuses="{ row }">
-          <span class="pr-amount pr-amount--bonus">+{{ formatCurrency(totalBonuses(row)) }}</span>
-        </template>
-
-        <template #cell-net_salary="{ row }">
-          <span class="pr-amount pr-amount--net">{{ formatCurrency(netSalary(row)) }}</span>
-        </template>
-
-        <template #cell-status="{ row }">
-          <span class="pr-status-badge" :class="payStatusClass(row.pay_status)">
-            {{ row.pay_status ?? 'Unpaid' }}
-          </span>
-        </template>
-      </DataTable>
-    </div>
-
-    <!-- ════════════════════════════════
-         TAB: DEDUCTIONS & BONUSES
-    ════════════════════════════════ -->
-    <div v-if="activeTab === 'adjustments'">
-      <div class="pr-adj-toolbar">
-        <button v-if="isAdminUser" class="pr-adj-add-btn" @click="openAdjModal('deduction')">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-          Add Deduction
-        </button>
-        <button v-if="isAdminUser" class="pr-adj-add-btn pr-adj-add-btn--bonus" @click="openAdjModal('bonus')">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-          Add Bonus
-        </button>
+    <!-- ── Stats ── -->
+    <div class="pm-stats">
+      <div class="pm-stat">
+        <span class="pm-stat-label">Employees</span>
+        <span class="pm-stat-value">{{ payrolls.length }}</span>
       </div>
-
-      <DataTable
-        :data="paginatedAdjustments"
-        :columns="adjustmentColumns"
-        :actions="isAdminUser ? adjActions : []"
-        result-label="adjustments"
-        @action="handleAdjAction"
-      >
-        <template #cell-type="{ row }">
-          <span class="pr-adj-type" :class="row.type === 'bonus' ? 'pr-adj-bonus' : 'pr-adj-deduct'">
-            {{ row.type === 'bonus' ? '+ Bonus' : '− Deduction' }}
-          </span>
-        </template>
-        <template #cell-amount="{ row }">
-          <span class="pr-amount" :class="row.type === 'bonus' ? 'pr-amount--bonus' : 'pr-amount--deduct'">
-            {{ row.type === 'bonus' ? '+' : '−' }}{{ formatCurrency(row.amount) }}
-          </span>
-        </template>
-      </DataTable>
+      <div class="pm-stat">
+        <span class="pm-stat-label">Total Gross</span>
+        <span class="pm-stat-value">{{ formatCurrency(totalGross) }}</span>
+      </div>
+      <div class="pm-stat pm-stat--gold">
+        <span class="pm-stat-label">Total Net</span>
+        <span class="pm-stat-value">{{ formatCurrency(totalNet) }}</span>
+      </div>
+      <div class="pm-stat">
+        <span class="pm-stat-label">Pending</span>
+        <span class="pm-stat-value">{{ draftCount }}</span>
+      </div>
     </div>
 
-    <!-- ════════════════════════════════
-         TAB: PAYROLL HISTORY
-    ════════════════════════════════ -->
+    <!-- ── Tab bar ── -->
+    <div class="pm-tabs">
+      <button
+        v-for="tab in tabs"
+        :key="tab.key"
+        class="pm-tab"
+        :class="{ 'pm-tab--active': activeTab === tab.key }"
+        @click="switchTab(tab.key)"
+      >
+        {{ tab.label }}
+        <span v-if="tab.badge" class="pm-tab-badge">{{ tab.badge }}</span>
+      </button>
+      <div class="pm-tab-spacer"></div>
+      <div class="pm-search">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input v-model="searchQuery" type="text" placeholder="Search…" />
+      </div>
+    </div>
+
+    <!-- ════ TAB: PAYROLL LIST ════ -->
+    <div v-if="activeTab === 'payrolls'">
+      <div v-if="isLoading" class="pm-state">
+        <span class="pm-spinner"></span> Loading payroll data…
+      </div>
+      <div v-else-if="hasError" class="pm-state pm-state--error">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+        {{ errorMessage }}
+        <button @click="loadPayrolls">Retry</button>
+      </div>
+      <template v-else>
+        <div class="pm-filter-row">
+          <div class="pm-filter-tabs">
+            <button
+              v-for="s in statusFilters"
+              :key="s.value"
+              class="pm-filter-tab"
+              :class="{ 'pm-filter-tab--active': statusFilter === s.value }"
+              @click="statusFilter = s.value; currentPage = 1"
+            >
+              {{ s.label }}
+              <span class="pm-filter-count">{{ s.count }}</span>
+            </button>
+          </div>
+          <div class="pm-period-filters">
+            <select v-model="selectedMonth" class="pm-select" @change="currentPage = 1">
+              <option value="">All Months</option>
+              <option v-for="m in months" :key="m.value" :value="m.value">{{ m.label }}</option>
+            </select>
+            <select v-model="selectedYear" class="pm-select" @change="currentPage = 1">
+              <option value="">All Years</option>
+              <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pm-table-wrap">
+          <table class="pm-table">
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Period</th>
+                <th class="ta-r">Gross</th>
+                <th class="ta-r">Deductions</th>
+                <th class="ta-r">Overtime / Bonus</th>
+                <th class="ta-r">Net Pay</th>
+                <th class="ta-c">Status</th>
+                <th class="ta-c">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-if="paginatedPayrolls.length === 0">
+                <td colspan="8">
+                  <div class="pm-empty">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity=".2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                    <span>No payroll records found</span>
+                  </div>
+                </td>
+              </tr>
+              <tr
+                v-for="row in paginatedPayrolls"
+                :key="row.id"
+                class="pm-tr"
+                @click="openDetail(row)"
+              >
+                <td>
+                  <div class="pm-name-cell">
+                    <div class="pm-avatar" :style="{ background: avatarBg(row.employee?.user?.name) }">
+                      {{ initials(row.employee?.user?.name) }}
+                    </div>
+                    <div>
+                      <span class="pm-emp-name">{{ row.employee?.user?.name ?? '—' }}</span>
+                      <span class="pm-emp-id">#{{ String(row.employee_id).padStart(4, '0') }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="pm-period">{{ monthName(row.month) }} {{ row.year }}</span></td>
+                <td class="ta-r pm-mono">{{ formatCurrency(row.gross_salary) }}</td>
+                <td class="ta-r pm-mono pm-deduct">−{{ formatCurrency((row.late_deduction || 0) + (row.leave_deduction || 0)) }}</td>
+                <td class="ta-r pm-mono pm-bonus">+{{ formatCurrency((row.overtime_amount || 0) + (row.bonus_amount || 0)) }}</td>
+                <td class="ta-r pm-mono pm-net">{{ formatCurrency(row.net_salary) }}</td>
+                <td class="ta-c">
+                  <span class="pm-badge" :class="`pm-badge--${row.status}`">{{ row.status }}</span>
+                </td>
+                <td class="ta-c" @click.stop>
+                  <div class="pm-actions">
+                    <button class="pm-act pm-act--view" title="View" @click="openDetail(row)">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                    <button
+                      class="pm-act pm-act--slip"
+                      title="Download Payslip"
+                      @click="sharePayslip(row)"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    </button>
+                    <button
+                      v-if="row.status === 'draft' && isAdmin"
+                      class="pm-act pm-act--pay"
+                      title="Mark as Paid"
+                      @click="confirmMarkPaid(row)"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                    <button
+                      v-if="row.status !== 'paid' && isAdmin"
+                      class="pm-act pm-act--del"
+                      title="Delete"
+                      @click="confirmDelete(row)"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div v-if="totalPages > 1" class="pm-pagination">
+          <button class="pm-page-btn" :disabled="currentPage === 1" @click="currentPage--">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <span class="pm-page-info">{{ currentPage }} / {{ totalPages }}</span>
+          <button class="pm-page-btn" :disabled="currentPage === totalPages" @click="currentPage++">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </template>
+    </div>
+
+    <!-- ════ TAB: HISTORY ════ -->
     <div v-if="activeTab === 'history'">
-      <DataTable
-        :data="paginatedHistory"
-        :columns="historyColumns"
-        :actions="historyActions"
-        result-label="payroll runs"
-        @action="handleHistoryAction"
-      >
-        <template #cell-period="{ row }">
-          <div class="pr-period-cell">
-            <span class="pr-period-label">{{ row.period_label }}</span>
-            <span class="pr-period-sub">{{ row.processed_at ? formatDate(row.processed_at) : '—' }}</span>
-          </div>
-        </template>
-        <template #cell-total_gross="{ row }">
-          <span class="pr-amount">{{ formatCurrency(row.total_gross) }}</span>
-        </template>
-        <template #cell-total_net="{ row }">
-          <span class="pr-amount pr-amount--net">{{ formatCurrency(row.total_net) }}</span>
-        </template>
-        <template #cell-run_status="{ row }">
-          <span class="pr-status-badge" :class="runStatusClass(row.run_status)">
-            {{ row.run_status }}
-          </span>
-        </template>
-      </DataTable>
-    </div>
-
-    <template #pagination>
-      <Pagination
-        v-model="currentPage"
-        :total-items="activePaginationTotal"
-        :page-size="itemsPerPage"
-        :page-size-options="[10, 25, 50]"
-        item-label="records"
-        :show-first-last="true"
-        :show-labels="false"
-        :show-jump-to="false"
-        @update:page-size="handlePageSizeChange"
-        @page-change="handlePageChange"
-      />
-    </template>
-  </CrudLayout>
-
-  <!-- ══════════════════════════════════════════════════
-       RUN PAYROLL MODAL
-  ══════════════════════════════════════════════════ -->
-  <Teleport to="body">
-    <div v-if="showRunModal" class="pr-modal-backdrop" @click.self="showRunModal = false">
-      <div class="pr-modal-shell">
-        <div class="pr-modal-head">
-          <div class="pr-modal-head-left">
-            <div class="pr-modal-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            </div>
-            <div>
-              <h2 class="pr-modal-title">Run Payroll</h2>
-              <p class="pr-modal-subtitle">Process salary disbursements for the selected period</p>
-            </div>
-          </div>
-          <button class="pr-modal-close" @click="showRunModal = false">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-          </button>
-        </div>
-
-        <div v-if="runNotif.show" class="pr-modal-notif" :class="'pr-notif-' + runNotif.type">{{ runNotif.message }}</div>
-
-        <div class="pr-modal-body">
-          <div class="pr-form-section-title">Payroll Period</div>
-          <div class="pr-form-grid">
-            <div class="pr-form-field">
-              <label class="pr-form-label">Month <span class="pr-req">*</span></label>
-              <select v-model="runForm.month" class="pr-form-select">
-                <option v-for="m in months" :key="m.value" :value="m.value">{{ m.label }}</option>
-              </select>
-            </div>
-            <div class="pr-form-field">
-              <label class="pr-form-label">Year <span class="pr-req">*</span></label>
-              <select v-model="runForm.year" class="pr-form-select">
-                <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
-              </select>
-            </div>
-            <div class="pr-form-field pr-field-full">
-              <label class="pr-form-label">Payment Date <span class="pr-req">*</span></label>
-              <input v-model="runForm.payment_date" type="date" class="pr-form-input" />
-            </div>
-            <div class="pr-form-field pr-field-full">
-              <label class="pr-form-label">Notes</label>
-              <textarea v-model="runForm.notes" class="pr-form-textarea" rows="2" placeholder="Optional notes about this payroll run…"></textarea>
-            </div>
-          </div>
-
-          <!-- Summary strip -->
-          <div class="pr-run-summary">
-            <div class="pr-run-sum-item">
-              <span class="pr-run-sum-label">Employees</span>
-              <span class="pr-run-sum-val">{{ employees.length }}</span>
-            </div>
-            <div class="pr-run-sum-divider"></div>
-            <div class="pr-run-sum-item">
-              <span class="pr-run-sum-label">Total Gross</span>
-              <span class="pr-run-sum-val">{{ formatCurrency(totalGross) }}</span>
-            </div>
-            <div class="pr-run-sum-divider"></div>
-            <div class="pr-run-sum-item">
-              <span class="pr-run-sum-label">Total Deductions</span>
-              <span class="pr-run-sum-val pr-run-sum-deduct">{{ formatCurrency(totalDeductionsAll) }}</span>
-            </div>
-            <div class="pr-run-sum-divider"></div>
-            <div class="pr-run-sum-item">
-              <span class="pr-run-sum-label">Total Net</span>
-              <span class="pr-run-sum-val pr-run-sum-net">{{ formatCurrency(totalNetAll) }}</span>
-            </div>
-          </div>
-
-          <div class="pr-run-warning">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-            This action will mark all employee salaries as <strong>Paid</strong> for the selected period and generate payslips. This cannot be undone.
-          </div>
-        </div>
-
-        <div class="pr-modal-foot">
-          <button class="pr-btn-cancel" @click="showRunModal = false">Cancel</button>
-          <button class="pr-btn-submit pr-btn-run" :disabled="runSaving" @click="submitRunPayroll">
-            <span v-if="runSaving" class="pr-spinner-sm"></span>
-            <svg v-else width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            {{ runSaving ? 'Processing…' : 'Confirm & Run' }}
-          </button>
-        </div>
+      <div class="pm-table-wrap">
+        <table class="pm-table">
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th class="ta-r">Employees</th>
+              <th class="ta-r">Total Gross</th>
+              <th class="ta-r">Total Net</th>
+              <th class="ta-c">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="historyRows.length === 0">
+              <td colspan="5">
+                <div class="pm-empty">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity=".2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  <span>No payroll history</span>
+                </div>
+              </td>
+            </tr>
+            <tr v-for="row in historyRows" :key="row.period" class="pm-tr">
+              <td><span class="pm-period">{{ row.period }}</span></td>
+              <td class="ta-r pm-mono">{{ row.count }}</td>
+              <td class="ta-r pm-mono">{{ formatCurrency(row.gross) }}</td>
+              <td class="ta-r pm-mono pm-net">{{ formatCurrency(row.net) }}</td>
+              <td class="ta-c">
+                <span class="pm-badge" :class="row.count > 0 ? 'pm-badge--paid' : 'pm-badge--draft'">
+                  {{ row.count > 0 ? 'Complete' : 'Empty' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-  </Teleport>
 
-  <!-- ══════════════════════════════════════════════════
-       DEDUCTION / BONUS MODAL
-  ══════════════════════════════════════════════════ -->
-  <Teleport to="body">
-    <div v-if="showAdjModal" class="pr-modal-backdrop" @click.self="showAdjModal = false">
-      <div class="pr-modal-shell">
-        <div class="pr-modal-head">
-          <div class="pr-modal-head-left">
-            <div class="pr-modal-icon" :class="adjForm.type === 'bonus' ? 'pr-icon-bonus' : 'pr-icon-deduct'">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+    <!-- ══ GENERATE / RUN PAYROLL MODAL ══ -->
+    <Teleport to="body">
+      <Transition name="pm-modal">
+        <div v-if="showRunModal" class="pm-backdrop" @click.self="showRunModal = false">
+          <div class="pm-modal">
+            <div class="pm-modal-head">
+              <div class="pm-modal-head-left">
+                <div class="pm-modal-icon">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+                <div>
+                  <h2 class="pm-modal-title">Generate Payroll</h2>
+                  <p class="pm-modal-sub">Process salary disbursements for the selected period</p>
+                </div>
+              </div>
+              <button class="pm-modal-close" @click="showRunModal = false">
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              </button>
             </div>
-            <div>
-              <h2 class="pr-modal-title">{{ adjEditId ? 'Edit' : 'Add' }} {{ adjForm.type === 'bonus' ? 'Bonus' : 'Deduction' }}</h2>
-              <p class="pr-modal-subtitle">{{ adjForm.type === 'bonus' ? 'Add a one-time or recurring bonus' : 'Add a deduction to employee pay' }}</p>
+            <div v-if="runNotif.show" class="pm-modal-notif" :class="`pm-notif--${runNotif.type}`">
+              {{ runNotif.message }}
             </div>
-          </div>
-          <button class="pr-modal-close" @click="showAdjModal = false">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-          </button>
-        </div>
+            <div class="pm-modal-body">
+              <!-- Company selector — shown only when no company is pre-selected in store -->
+              <template v-if="companyStore.company_id === 0">
+                <div class="pm-section-title">Select Company</div>
+                <div class="pm-field pm-field--full">
+                  <label class="pm-label">Company <span class="pm-req">*</span></label>
+                  <select v-model="runForm.company_id" class="pm-control">
+                    <option :value="0" disabled>— Choose a company —</option>
+                    <option v-for="c in companies" :key="c.value" :value="c.value">{{ c.label }}</option>
+                  </select>
+                  <span v-if="companiesLoading" class="pm-field-hint">
+                    <span class="pm-spinner-sm"></span> Loading companies…
+                  </span>
+                  <span v-else-if="!companies.length" class="pm-field-hint pm-field-hint--warn">
+                    No companies found. Make sure companies are configured.
+                  </span>
+                </div>
+                <div class="pm-section-title" style="margin-top:20px">Payroll Period</div>
+              </template>
+              <template v-else>
+                <div class="pm-section-title">Payroll Period</div>
+              </template>
 
-        <div v-if="adjNotif.show" class="pr-modal-notif" :class="'pr-notif-' + adjNotif.type">{{ adjNotif.message }}</div>
-
-        <div class="pr-modal-body">
-          <div class="pr-form-grid">
-            <div class="pr-form-field pr-field-full">
-              <label class="pr-form-label">Employee <span class="pr-req">*</span></label>
-              <select v-model="adjForm.employee_id" class="pr-form-select">
-                <option value="">Select employee…</option>
-                <option v-for="e in employees" :key="e.id" :value="e.id">{{ e.name }}</option>
-              </select>
-            </div>
-            <div class="pr-form-field pr-field-full">
-              <label class="pr-form-label">Type <span class="pr-req">*</span></label>
-              <div class="pr-type-toggle">
-                <button class="pr-type-btn" :class="adjForm.type === 'deduction' ? 'pr-type-btn--active-deduct' : ''" @click="adjForm.type = 'deduction'">Deduction</button>
-                <button class="pr-type-btn" :class="adjForm.type === 'bonus' ? 'pr-type-btn--active-bonus' : ''" @click="adjForm.type = 'bonus'">Bonus</button>
+              <div class="pm-form-grid">
+                <div class="pm-field">
+                  <label class="pm-label">Month <span class="pm-req">*</span></label>
+                  <select v-model="runForm.month" class="pm-control">
+                    <option v-for="m in months" :key="m.value" :value="m.value">{{ m.label }}</option>
+                  </select>
+                </div>
+                <div class="pm-field">
+                  <label class="pm-label">Year <span class="pm-req">*</span></label>
+                  <select v-model="runForm.year" class="pm-control">
+                    <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="pm-run-preview">
+                <div class="pm-run-prev-item">
+                  <span class="pm-run-prev-label">Company</span>
+                  <span class="pm-run-prev-val">{{ selectedCompanyName }}</span>
+                </div>
+                <div class="pm-run-prev-sep"></div>
+                <div class="pm-run-prev-item">
+                  <span class="pm-run-prev-label">Period</span>
+                  <span class="pm-run-prev-val">{{ monthName(runForm.month) }} {{ runForm.year }}</span>
+                </div>
+                <div class="pm-run-prev-sep"></div>
+                <div class="pm-run-prev-item">
+                  <span class="pm-run-prev-label">Net Est.</span>
+                  <span class="pm-run-prev-val pm-run-prev-val--gold">{{ formatCurrency(totalNet) }}</span>
+                </div>
+              </div>
+              <div class="pm-run-warning">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                Existing payroll records for the selected period will be skipped automatically.
               </div>
             </div>
-            <div class="pr-form-field">
-              <label class="pr-form-label">Label <span class="pr-req">*</span></label>
-              <input v-model="adjForm.label" class="pr-form-input" type="text" :placeholder="adjForm.type === 'bonus' ? 'e.g. Performance Bonus' : 'e.g. Tax, Loan'" />
-            </div>
-            <div class="pr-form-field">
-              <label class="pr-form-label">Amount <span class="pr-req">*</span></label>
-              <input v-model="adjForm.amount" class="pr-form-input" type="number" min="0" step="0.01" placeholder="0.00" />
-            </div>
-            <div class="pr-form-field">
-              <label class="pr-form-label">Effective Month</label>
-              <select v-model="adjForm.month" class="pr-form-select">
-                <option value="">All months (recurring)</option>
-                <option v-for="m in months" :key="m.value" :value="m.value">{{ m.label }}</option>
-              </select>
-            </div>
-            <div class="pr-form-field">
-              <label class="pr-form-label">Year</label>
-              <select v-model="adjForm.year" class="pr-form-select">
-                <option value="">—</option>
-                <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
-              </select>
-            </div>
-            <div class="pr-form-field pr-field-full">
-              <label class="pr-form-label">Note</label>
-              <textarea v-model="adjForm.note" class="pr-form-textarea" rows="2" placeholder="Optional description…"></textarea>
+            <div class="pm-modal-foot">
+              <button class="pm-btn-cancel" @click="showRunModal = false">Cancel</button>
+              <button class="pm-btn-primary pm-btn-run" :disabled="runSaving || runForm.company_id === 0" @click="submitGenerate">
+                <span v-if="runSaving" class="pm-spinner-sm"></span>
+                <svg v-else width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                {{ runSaving ? 'Generating…' : 'Confirm & Generate' }}
+              </button>
             </div>
           </div>
         </div>
+      </Transition>
+    </Teleport>
 
-        <div class="pr-modal-foot">
-          <button class="pr-btn-cancel" @click="showAdjModal = false">Cancel</button>
-          <button class="pr-btn-submit" :class="adjForm.type === 'bonus' ? 'pr-btn-bonus' : 'pr-btn-deduct'" :disabled="adjSaving" @click="submitAdj">
-            <span v-if="adjSaving" class="pr-spinner-sm"></span>
-            {{ adjSaving ? 'Saving…' : adjEditId ? 'Update' : 'Save' }}
-          </button>
+    <!-- ══ PAYROLL DETAIL MODAL ══ -->
+    <Teleport to="body">
+      <Transition name="pm-modal">
+        <div v-if="showDetailModal && detailPayroll" class="pm-backdrop" @click.self="showDetailModal = false">
+          <div class="pm-modal pm-modal--wide">
+            <div class="pm-modal-head">
+              <div class="pm-modal-head-left">
+                <div class="pm-avatar pm-avatar--md" :style="{ background: avatarBg(detailPayroll.employee?.user?.name) }">
+                  {{ initials(detailPayroll.employee?.user?.name) }}
+                </div>
+                <div>
+                  <h2 class="pm-modal-title">{{ detailPayroll.employee?.user?.name ?? 'Employee' }}</h2>
+                  <p class="pm-modal-sub">
+                    Payslip · {{ monthName(detailPayroll.month) }} {{ detailPayroll.year }}
+                    <span class="pm-badge pm-badge-inline" :class="`pm-badge--${detailPayroll.status}`">{{ detailPayroll.status }}</span>
+                  </p>
+                </div>
+              </div>
+              <button class="pm-modal-close" @click="showDetailModal = false">
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              </button>
+            </div>
+            <div class="pm-modal-body">
+              <div class="pm-detail-summary">
+                <div class="pm-ds-item">
+                  <span class="pm-ds-label">Gross Salary</span>
+                  <span class="pm-ds-val">{{ formatCurrency(detailPayroll.gross_salary) }}</span>
+                </div>
+                <div class="pm-ds-sep"></div>
+                <div class="pm-ds-item">
+                  <span class="pm-ds-label">Deductions</span>
+                  <span class="pm-ds-val pm-ds-val--red">−{{ formatCurrency((detailPayroll.late_deduction || 0) + (detailPayroll.leave_deduction || 0)) }}</span>
+                </div>
+                <div class="pm-ds-sep"></div>
+                <div class="pm-ds-item">
+                  <span class="pm-ds-label">Overtime + Bonus</span>
+                  <span class="pm-ds-val pm-ds-val--green">+{{ formatCurrency((detailPayroll.overtime_amount || 0) + (detailPayroll.bonus_amount || 0)) }}</span>
+                </div>
+                <div class="pm-ds-sep"></div>
+                <div class="pm-ds-item pm-ds-item--net">
+                  <span class="pm-ds-label">Net Salary</span>
+                  <span class="pm-ds-val pm-ds-val--gold">{{ formatCurrency(detailPayroll.net_salary) }}</span>
+                </div>
+              </div>
+              <div class="pm-breakdown-grid">
+                <div class="pm-breakdown-col">
+                  <div class="pm-section-title">
+                    <span class="pm-dot pm-dot--green"></span>Earnings
+                  </div>
+                  <div class="pm-breakdown-list">
+                    <div v-for="item in detailEarnings" :key="item.title" class="pm-breakdown-row">
+                      <span class="pm-br-label">{{ item.title }}</span>
+                      <span class="pm-br-val pm-bonus">{{ formatCurrency(item.amount) }}</span>
+                    </div>
+                    <div v-if="!detailEarnings.length" class="pm-br-empty">No earnings items</div>
+                  </div>
+                </div>
+                <div class="pm-breakdown-col">
+                  <div class="pm-section-title">
+                    <span class="pm-dot pm-dot--red"></span>Deductions
+                  </div>
+                  <div class="pm-breakdown-list">
+                    <div v-for="item in detailDeductions" :key="item.title" class="pm-breakdown-row">
+                      <span class="pm-br-label">{{ item.title }}</span>
+                      <span class="pm-br-val pm-deduct">−{{ formatCurrency(item.amount) }}</span>
+                    </div>
+                    <div v-if="!detailDeductions.length" class="pm-br-empty">No deductions</div>
+                  </div>
+                </div>
+              </div>
+              <div v-if="detailPayroll.paid_at" class="pm-paid-stamp">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Paid on {{ formatDate(detailPayroll.paid_at) }}
+              </div>
+            </div>
+            <div class="pm-modal-foot">
+              <button class="pm-btn-cancel" @click="showDetailModal = false">Close</button>
+              <!-- Share Payslip button -->
+              <button class="pm-btn-slip" @click="sharePayslip(detailPayroll)">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download Payslip
+              </button>
+              <button
+                v-if="detailPayroll.status === 'draft' && isAdmin"
+                class="pm-btn-primary pm-btn-run"
+                @click="confirmMarkPaid(detailPayroll); showDetailModal = false"
+              >
+                Mark as Paid
+              </button>
+            </div>
+          </div>
         </div>
+      </Transition>
+    </Teleport>
+
+    <!-- ══ CONFIRM MODAL ══ -->
+    <Teleport to="body">
+      <Transition name="pm-modal">
+        <div v-if="showConfirmModal" class="pm-backdrop" @click.self="showConfirmModal = false">
+          <div class="pm-modal pm-modal--sm">
+            <div class="pm-modal-head">
+              <div class="pm-modal-head-left">
+                <div class="pm-modal-icon" :class="confirmData.danger ? 'pm-icon--danger' : 'pm-icon--gold'">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                </div>
+                <h2 class="pm-modal-title">{{ confirmData.title }}</h2>
+              </div>
+              <button class="pm-modal-close" @click="showConfirmModal = false">
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              </button>
+            </div>
+            <div class="pm-modal-body">
+              <p class="pm-confirm-msg">{{ confirmData.message }}</p>
+            </div>
+            <div class="pm-modal-foot">
+              <button class="pm-btn-cancel" @click="showConfirmModal = false">Cancel</button>
+              <button
+                class="pm-btn-primary"
+                :class="confirmData.danger ? 'pm-btn-danger' : 'pm-btn-run'"
+                @click="executeConfirm"
+              >
+                {{ confirmData.action }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- ── Toast ── -->
+    <Transition name="pm-toast">
+      <div v-if="toast.visible" class="pm-toast" :class="`pm-toast--${toast.type}`">
+        <svg v-if="toast.type === 'success'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <svg v-else width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+        {{ toast.message }}
       </div>
-    </div>
-  </Teleport>
+    </Transition>
 
-  <!-- ══════════════════════════════════════════════════
-       EMPLOYEE SALARY DETAIL / EDIT MODAL
-  ══════════════════════════════════════════════════ -->
-  <Teleport to="body">
-    <div v-if="showEmpModal" class="pr-modal-backdrop" @click.self="showEmpModal = false">
-      <div class="pr-modal-shell pr-emp-shell">
-        <div class="pr-modal-head">
-          <div class="pr-modal-head-left">
-            <div class="pr-avatar pr-avatar--lg">{{ initials(selectedEmployee?.name) }}</div>
-            <div>
-              <h2 class="pr-modal-title">{{ selectedEmployee?.name }}</h2>
-              <p class="pr-modal-subtitle">{{ selectedEmployee?.department }} · {{ selectedEmployee?.designation ?? 'Employee' }}</p>
-            </div>
-          </div>
-          <button class="pr-modal-close" @click="showEmpModal = false">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-          </button>
-        </div>
-
-        <div v-if="empNotif.show" class="pr-modal-notif" :class="'pr-notif-' + empNotif.type">{{ empNotif.message }}</div>
-
-        <div class="pr-modal-body">
-          <!-- Salary summary -->
-          <div class="pr-salary-summary">
-            <div class="pr-sal-item">
-              <span class="pr-sal-label">Basic Salary</span>
-              <span class="pr-sal-val">{{ formatCurrency(selectedEmployee?.basic_salary) }}</span>
-            </div>
-            <div class="pr-sal-item pr-sal-item--deduct">
-              <span class="pr-sal-label">Total Deductions</span>
-              <span class="pr-sal-val">−{{ formatCurrency(totalDeductions(selectedEmployee)) }}</span>
-            </div>
-            <div class="pr-sal-item pr-sal-item--bonus">
-              <span class="pr-sal-label">Total Bonuses</span>
-              <span class="pr-sal-val">+{{ formatCurrency(totalBonuses(selectedEmployee)) }}</span>
-            </div>
-            <div class="pr-sal-item pr-sal-item--net">
-              <span class="pr-sal-label">Net Salary</span>
-              <span class="pr-sal-val">{{ formatCurrency(netSalary(selectedEmployee)) }}</span>
-            </div>
-          </div>
-
-          <!-- Edit basic salary (admin only) -->
-          <template v-if="isAdminUser">
-            <div class="pr-form-section-title" style="margin-top:24px">Edit Basic Salary</div>
-            <div class="pr-form-grid">
-              <div class="pr-form-field pr-field-full">
-                <label class="pr-form-label">Basic Salary <span class="pr-req">*</span></label>
-                <input v-model="empForm.basic_salary" class="pr-form-input" type="number" min="0" step="0.01" />
-              </div>
-            </div>
-          </template>
-
-          <!-- Adjustments breakdown -->
-          <div class="pr-form-section-title" style="margin-top:24px">Adjustments</div>
-          <div v-if="employeeAdjustments.length" class="pr-adj-list">
-            <div v-for="adj in employeeAdjustments" :key="adj.id" class="pr-adj-row">
-              <span class="pr-adj-type" :class="adj.type === 'bonus' ? 'pr-adj-bonus' : 'pr-adj-deduct'">
-                {{ adj.type === 'bonus' ? 'Bonus' : 'Deduction' }}
-              </span>
-              <span class="pr-adj-label">{{ adj.label }}</span>
-              <span class="pr-amount" :class="adj.type === 'bonus' ? 'pr-amount--bonus' : 'pr-amount--deduct'">
-                {{ adj.type === 'bonus' ? '+' : '−' }}{{ formatCurrency(adj.amount) }}
-              </span>
-            </div>
-          </div>
-          <div v-else class="pr-no-adj">No adjustments for this employee.</div>
-        </div>
-
-        <div class="pr-modal-foot">
-          <button class="pr-btn-cancel" @click="showEmpModal = false">Close</button>
-          <button v-if="isAdminUser" class="pr-btn-submit" :disabled="empSaving" @click="submitEmpSalary">
-            <span v-if="empSaving" class="pr-spinner-sm"></span>
-            {{ empSaving ? 'Saving…' : 'Update Salary' }}
-          </button>
-        </div>
-      </div>
-    </div>
-  </Teleport>
-
-  <!-- ══════════════════════════════════════════════════
-       PAYSLIP VIEW MODAL
-  ══════════════════════════════════════════════════ -->
-  <Teleport to="body">
-    <div v-if="showPayslipModal" class="pr-modal-backdrop" @click.self="showPayslipModal = false">
-      <div class="pr-modal-shell pr-payslip-shell">
-        <div class="pr-modal-head">
-          <div class="pr-modal-head-left">
-            <div class="pr-modal-icon pr-icon-payslip">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg>
-            </div>
-            <div>
-              <h2 class="pr-modal-title">Payslip</h2>
-              <p class="pr-modal-subtitle">{{ payslipData?.employee_name }} · {{ payslipData?.period_label }}</p>
-            </div>
-          </div>
-          <button class="pr-modal-close" @click="showPayslipModal = false">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-          </button>
-        </div>
-
-        <div class="pr-modal-body">
-          <div class="pr-payslip">
-            <!-- Header -->
-            <div class="pr-payslip-header">
-              <div class="pr-payslip-company">
-                <span class="pr-payslip-company-name">{{ companyName }}</span>
-                <span class="pr-payslip-period">Payslip for {{ payslipData?.period_label }}</span>
-              </div>
-              <div class="pr-payslip-meta">
-                <div class="pr-payslip-meta-row"><span>Employee</span><strong>{{ payslipData?.employee_name }}</strong></div>
-                <div class="pr-payslip-meta-row"><span>Department</span><strong>{{ payslipData?.department }}</strong></div>
-                <div class="pr-payslip-meta-row"><span>Designation</span><strong>{{ payslipData?.designation ?? '—' }}</strong></div>
-                <div class="pr-payslip-meta-row"><span>Payment Date</span><strong>{{ payslipData?.payment_date ? formatDate(payslipData.payment_date) : '—' }}</strong></div>
-              </div>
-            </div>
-
-            <!-- Earnings -->
-            <div class="pr-payslip-section-title">Earnings</div>
-            <div class="pr-payslip-table">
-              <div class="pr-payslip-row pr-payslip-row--head">
-                <span>Description</span><span>Amount</span>
-              </div>
-              <div class="pr-payslip-row">
-                <span>Basic Salary</span>
-                <span>{{ formatCurrency(payslipData?.basic_salary) }}</span>
-              </div>
-              <div v-for="b in payslipData?.bonuses" :key="b.id" class="pr-payslip-row">
-                <span>{{ b.label }}</span>
-                <span class="pr-amount--bonus">+{{ formatCurrency(b.amount) }}</span>
-              </div>
-              <div class="pr-payslip-row pr-payslip-row--total">
-                <span>Gross Earnings</span>
-                <span>{{ formatCurrency(payslipData?.gross) }}</span>
-              </div>
-            </div>
-
-            <!-- Deductions -->
-            <div class="pr-payslip-section-title" style="margin-top:18px">Deductions</div>
-            <div class="pr-payslip-table">
-              <div class="pr-payslip-row pr-payslip-row--head">
-                <span>Description</span><span>Amount</span>
-              </div>
-              <div v-if="!payslipData?.deductions?.length" class="pr-payslip-row">
-                <span style="opacity:.4">No deductions</span><span>—</span>
-              </div>
-              <div v-for="d in payslipData?.deductions" :key="d.id" class="pr-payslip-row">
-                <span>{{ d.label }}</span>
-                <span class="pr-amount--deduct">−{{ formatCurrency(d.amount) }}</span>
-              </div>
-              <div class="pr-payslip-row pr-payslip-row--total">
-                <span>Total Deductions</span>
-                <span class="pr-amount--deduct">−{{ formatCurrency(payslipData?.total_deductions) }}</span>
-              </div>
-            </div>
-
-            <!-- Net -->
-            <div class="pr-payslip-net">
-              <span>Net Pay</span>
-              <span class="pr-payslip-net-amount">{{ formatCurrency(payslipData?.net) }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="pr-modal-foot">
-          <button class="pr-btn-cancel" @click="showPayslipModal = false">Close</button>
-          <button class="pr-btn-submit" @click="downloadPayslip">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5v-2z"/></svg>
-            Download Payslip
-          </button>
-        </div>
-      </div>
-    </div>
-  </Teleport>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-// import { useCrudStore } from '@/store/crud'
-import CrudLayout  from '../components/CrudLayout.vue'
-import FilterPanel from '../components/FilterComponent.vue'
-import DataTable   from '../components/TableComponent.vue'
-import Pagination  from '../components/PaginationComponent.vue'
+import { useCompanyStore } from '@/store/company' // adjust path to match your project
 
-// const crudStore  = useCrudStore()
-const baseApi    = process.env.VUE_APP_BASE_API ?? ''
-const layoutRef  = ref(null)
-const companyName = process.env.VUE_APP_COMPANY_NAME ?? 'Your Company'
+/* ── Store ─────────────────────────────────────────────── */
+const companyStore = useCompanyStore()
 
-// ── Auth ──────────────────────────────────────────────────────────────────────
+/* ── Props ─────────────────────────────────────────────── */
+const apiBase = process.env.VUE_APP_BASE_API
+
+/* ── Auth / fetch helper ───────────────────────────────── */
 const authHeader = () => {
   const t = localStorage.getItem('token')
   return t ? { Authorization: `Bearer ${t}` } : {}
 }
 
+/**
+ * All payroll routes share the /payroll prefix.
+ * path examples:
+ *   ''           → GET  /payroll          (index)
+ *   '/generate'  → POST /payroll/generate
+ *   '/123'       → GET  /payroll/123      (show)
+ *   '/123/mark-paid' → POST /payroll/123/mark-paid
+ *   '/123'       → DELETE /payroll/123
+ */
 const apiFetch = async (path, options = {}) => {
-  const res  = await fetch(`${baseApi}${path}`, {
+  const res  = await fetch(`${apiBase}/payroll${path}`, {
     ...options,
-    headers: { ...authHeader(), ...(options.headers ?? {}) },
+    headers: { ...authHeader(), ...(options.headers ?? {}) }
   })
-  const data = await res.json()
-  if (!res.ok) throw { status: res.status, data }
-  return data
+  const json = await res.json()
+  if (!res.ok) throw json
+  return json
 }
 
-// ── Current user ──────────────────────────────────────────────────────────────
+/* ── Current user / admin check ────────────────────────── */
 const currentUser = ref(null)
+
+const isAdmin = computed(() => {
+  const roles = currentUser.value?.roles ?? []
+  return roles
+    .map(r => (typeof r === 'object' ? r?.name ?? '' : r).toLowerCase())
+    .some(r => ['admin', 'hr', 'super administrator', 'super_admin'].includes(r))
+})
 
 const loadCurrentUser = async () => {
   try {
-    const data = await apiFetch('/user')
+    const res  = await fetch(`${apiBase}/user`, { headers: authHeader() })
+    const data = await res.json()
     currentUser.value = data.user ?? data
-  } catch (e) { console.error(e) }
+  } catch { /* ignore */ }
 }
 
-const userRoles = computed(() => {
-  const roles = currentUser.value?.roles
-  if (!Array.isArray(roles) || !roles.length) return []
-  return roles.map(r => (typeof r === 'object' ? r?.name ?? '' : r).toLowerCase())
-})
+/* ── Companies ─────────────────────────────────────────── */
+const companies        = ref([])
+const companiesLoading = ref(false)
 
-const isAdminUser = computed(() =>
-  userRoles.value.some(r => ['admin', 'hr', 'superadmin', 'super_admin'].includes(r))
-)
-
-// ── Notification ──────────────────────────────────────────────────────────────
-const notification = ref({ show: false, type: 'info', title: '', message: '', autoClose: 0 })
-const notify = (type, message, { title = '', autoClose = 3000 } = {}) => {
-  if (layoutRef.value?.showBanner) { layoutRef.value.showBanner(type, message, { title, autoClose }); return }
-  notification.value = { show: false, type, title, message, autoClose }
-  setTimeout(() => { notification.value = { show: true, type, title, message, autoClose } }, 0)
+const loadCompanies = async () => {
+  companiesLoading.value = true
+  try {
+    const res  = await fetch(`${apiBase}/system/companies`, { headers: authHeader() })
+    const data = await res.json()
+    // Response shape: { companies: [{ value, label }] }
+    companies.value = data.companies ?? []
+  } catch { /* ignore — list stays empty */ }
+  finally { companiesLoading.value = false }
 }
 
-// ── State ─────────────────────────────────────────────────────────────────────
+/* ── State ─────────────────────────────────────────────── */
+const payrolls     = ref([])
 const isLoading    = ref(false)
 const hasError     = ref(false)
 const errorMessage = ref('')
 
-const employees   = ref([])
-const adjustments = ref([])
-const history     = ref([])
+const activeTab     = ref('payrolls')
+const searchQuery   = ref('')
+const statusFilter  = ref('all')
+const selectedMonth = ref('')
+const selectedYear  = ref('')
+const currentPage   = ref(1)
+const perPage       = 15
 
-const activeTab   = ref('employees')
-const currentPage = ref(1)
-const itemsPerPage = ref(10)
-const sortConfig  = ref({ by: 'name', order: 'asc' })
-const searchFilters = ref({ search: '', department: '', status: '' })
-
-// ── Tabs ──────────────────────────────────────────────────────────────────────
-const tabs = computed(() => [
-  { key: 'employees',   label: 'Employee Salaries', badge: employees.value.length || null },
-  { key: 'adjustments', label: 'Deductions & Bonuses', badge: adjustments.value.length || null },
-  { key: 'history',     label: 'Payroll History', badge: null },
-])
-
-// ── Stats ─────────────────────────────────────────────────────────────────────
-const pageStats = computed(() => [
-  { label: 'Employees',      value: employees.value.length },
-  { label: 'Total Gross',    value: formatCurrency(totalGross.value) },
-  { label: 'Total Net',      value: formatCurrency(totalNetAll.value) },
-  { label: 'Payroll Runs',   value: history.value.length },
-])
-
-const totalGross = computed(() =>
-  employees.value.reduce((s, e) => s + (Number(e.basic_salary) || 0) + totalBonuses(e), 0)
-)
-const totalDeductionsAll = computed(() =>
-  employees.value.reduce((s, e) => s + totalDeductions(e), 0)
-)
-const totalNetAll = computed(() =>
-  employees.value.reduce((s, e) => s + netSalary(e), 0)
-)
-
-const breadcrumbs = [
-  { label: 'Dashboard', to: '/dashboard' },
-  { label: 'Payroll' },
-]
-
-// ── Pagination ────────────────────────────────────────────────────────────────
-const filteredEmployees = computed(() => {
-  let list = employees.value
-  if (searchFilters.value.search) {
-    const q = searchFilters.value.search.toLowerCase()
-    list = list.filter(e => e.name?.toLowerCase().includes(q) || e.department?.toLowerCase().includes(q))
-  }
-  if (searchFilters.value.department) list = list.filter(e => e.department === searchFilters.value.department)
-  if (searchFilters.value.status)     list = list.filter(e => e.pay_status === searchFilters.value.status)
-  return list
-})
-
-const filteredAdjustments = computed(() => {
-  let list = adjustments.value
-  if (searchFilters.value.search) {
-    const q = searchFilters.value.search.toLowerCase()
-    list = list.filter(a => a.label?.toLowerCase().includes(q) || a.employee_name?.toLowerCase().includes(q))
-  }
-  return list
-})
-
-const paginatedEmployees = computed(() => {
-  const s = (currentPage.value - 1) * itemsPerPage.value
-  return filteredEmployees.value.slice(s, s + itemsPerPage.value)
-})
-
-const paginatedAdjustments = computed(() => {
-  const s = (currentPage.value - 1) * itemsPerPage.value
-  return filteredAdjustments.value.slice(s, s + itemsPerPage.value)
-})
-
-const paginatedHistory = computed(() => {
-  const s = (currentPage.value - 1) * itemsPerPage.value
-  return history.value.slice(s, s + itemsPerPage.value)
-})
-
-const activePaginationTotal = computed(() => {
-  if (activeTab.value === 'employees')   return filteredEmployees.value.length
-  if (activeTab.value === 'adjustments') return filteredAdjustments.value.length
-  return history.value.length
-})
-
-// ── Salary helpers ────────────────────────────────────────────────────────────
-const totalDeductions = (emp) => {
-  if (!emp) return 0
-  return adjustments.value
-    .filter(a => a.employee_id === emp.id && a.type === 'deduction')
-    .reduce((s, a) => s + Number(a.amount), 0)
-}
-
-const totalBonuses = (emp) => {
-  if (!emp) return 0
-  return adjustments.value
-    .filter(a => a.employee_id === emp.id && a.type === 'bonus')
-    .reduce((s, a) => s + Number(a.amount), 0)
-}
-
-const netSalary = (emp) => {
-  if (!emp) return 0
-  return Number(emp.basic_salary || 0) + totalBonuses(emp) - totalDeductions(emp)
-}
-
-const employeeAdjustments = computed(() =>
-  adjustments.value.filter(a => a.employee_id === selectedEmployee.value?.id)
-)
-
-// ── Table columns ─────────────────────────────────────────────────────────────
-const employeeColumns = [
-  { key: 'name',         label: 'Employee',    type: 'custom', sortable: true,  minWidth: '160px' },
-  { key: 'basic_salary', label: 'Basic',       type: 'custom', sortable: true,  minWidth: '110px', align: 'right' },
-  { key: 'deductions',   label: 'Deductions',  type: 'custom', sortable: false, minWidth: '110px', align: 'right' },
-  { key: 'bonuses',      label: 'Bonuses',     type: 'custom', sortable: false, minWidth: '100px', align: 'right' },
-  { key: 'net_salary',   label: 'Net Pay',     type: 'custom', sortable: false, minWidth: '120px', align: 'right' },
-  { key: 'status',       label: 'Status',      type: 'custom', sortable: false, minWidth: '90px',  align: 'center' },
-  { key: 'actions',      label: 'Actions',     type: 'actions',sortable: false, minWidth: '160px', align: 'center' },
-]
-
-const employeeActions = computed(() => [
-  { name: 'view',     label: 'View',     class: 'btn-view' },
-  ...(isAdminUser.value ? [{ name: 'edit', label: 'Edit Salary', class: 'btn-edit' }] : []),
-  { name: 'payslip',  label: 'Payslip',  class: 'btn-payslip' },
-])
-
-const adjustmentColumns = [
-  { key: 'employee_name', label: 'Employee',  sortable: true,  minWidth: '140px' },
-  { key: 'type',          label: 'Type',      type: 'custom',  sortable: true,  minWidth: '110px' },
-  { key: 'label',         label: 'Label',     sortable: false, minWidth: '140px' },
-  { key: 'amount',        label: 'Amount',    type: 'custom',  sortable: true,  minWidth: '110px', align: 'right' },
-  { key: 'month',         label: 'Month',     sortable: false, minWidth: '80px' },
-  { key: 'note',          label: 'Note',      sortable: false, minWidth: '140px' },
-  { key: 'actions',       label: 'Actions',   type: 'actions', sortable: false, minWidth: '120px', align: 'center' },
-]
-
-const adjActions = [
-  { name: 'edit',   label: 'Edit',   class: 'btn-edit'   },
-  { name: 'delete', label: 'Delete', class: 'btn-delete' },
-]
-
-const historyColumns = [
-  { key: 'period',      label: 'Period',       type: 'custom', sortable: true,  minWidth: '140px' },
-  { key: 'employees_count', label: 'Employees',sortable: false, minWidth: '90px', align: 'center' },
-  { key: 'total_gross', label: 'Gross',        type: 'custom', sortable: false, minWidth: '120px', align: 'right' },
-  { key: 'total_net',   label: 'Net',          type: 'custom', sortable: false, minWidth: '120px', align: 'right' },
-  { key: 'run_status',  label: 'Status',       type: 'custom', sortable: false, minWidth: '100px', align: 'center' },
-  { key: 'actions',     label: 'Actions',      type: 'actions',sortable: false, minWidth: '140px', align: 'center' },
-]
-
-const historyActions = [
-  { name: 'view_run', label: 'View',     class: 'btn-view' },
-  { name: 'download', label: 'Download', class: 'btn-payslip' },
-]
-
-// ── Filter fields ─────────────────────────────────────────────────────────────
-const filterFields = computed(() => [
-  { name: 'search', label: 'Search', type: 'text', placeholder: 'Name, department…' },
-  {
-    name: 'status', label: 'Pay Status', type: 'select', placeholder: 'All',
-    options: [
-      { value: 'Paid',   label: 'Paid'   },
-      { value: 'Unpaid', label: 'Unpaid' },
-    ],
-  },
-])
-
-// ── Run Payroll modal ─────────────────────────────────────────────────────────
-const showRunModal = ref(false)
-const runSaving    = ref(false)
-const runNotif     = ref({ show: false, type: 'success', message: '' })
-const runForm      = ref({ month: new Date().getMonth() + 1, year: new Date().getFullYear(), payment_date: '', notes: '' })
-
+/* ── Constants ─────────────────────────────────────────── */
 const months = [
-  { value: 1, label: 'January' }, { value: 2, label: 'February' }, { value: 3, label: 'March' },
-  { value: 4, label: 'April' },   { value: 5, label: 'May' },       { value: 6, label: 'June' },
-  { value: 7, label: 'July' },    { value: 8, label: 'August' },    { value: 9, label: 'September' },
-  { value: 10, label: 'October' },{ value: 11, label: 'November' }, { value: 12, label: 'December' },
+  { value: 1,  label: 'January'   }, { value: 2,  label: 'February'  },
+  { value: 3,  label: 'March'     }, { value: 4,  label: 'April'     },
+  { value: 5,  label: 'May'       }, { value: 6,  label: 'June'      },
+  { value: 7,  label: 'July'      }, { value: 8,  label: 'August'    },
+  { value: 9,  label: 'September' }, { value: 10, label: 'October'   },
+  { value: 11, label: 'November'  }, { value: 12, label: 'December'  }
 ]
-const currentYear = new Date().getFullYear()
-const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i)
 
-const openRunPayrollModal = () => {
-  runForm.value = { month: new Date().getMonth() + 1, year: currentYear, payment_date: '', notes: '' }
-  runNotif.value.show = false
-  showRunModal.value  = true
+const now   = new Date()
+const years = Array.from({ length: 5 }, (_, i) => now.getFullYear() - 2 + i)
+
+const AVATAR_PALETTE = [
+  '#8B6F47', '#6B8E7F', '#7B9EA8', '#8B7BA8',
+  '#9E7B6B', '#6B7B8B', '#8B8B6B', '#7B8B6B'
+]
+
+/* ── Tabs ─────────────────────────────────────────────── */
+const tabs = computed(() => [
+  { key: 'payrolls', label: 'Payroll Records',   badge: payrolls.value.length || null },
+  { key: 'history',  label: 'History by Period', badge: null }
+])
+
+const switchTab = (key) => {
+  activeTab.value  = key
+  currentPage.value = 1
 }
 
-const submitRunPayroll = async () => {
-  if (!runForm.value.payment_date) {
-    runNotif.value = { show: true, type: 'error', message: 'Payment date is required.' }; return
+/* ── Aggregate stats ────────────────────────────────────── */
+const totalGross = computed(() =>
+  payrolls.value.reduce((s, p) => s + (Number(p.gross_salary) || 0), 0)
+)
+const totalNet = computed(() =>
+  payrolls.value.reduce((s, p) => s + (Number(p.net_salary) || 0), 0)
+)
+const draftCount = computed(() =>
+  payrolls.value.filter(p => p.status === 'draft').length
+)
+
+/* ── Status filter tabs ─────────────────────────────────── */
+const statusFilters = computed(() => [
+  { value: 'all',   label: 'All',   count: payrolls.value.length },
+  { value: 'draft', label: 'Draft', count: payrolls.value.filter(p => p.status === 'draft').length },
+  { value: 'paid',  label: 'Paid',  count: payrolls.value.filter(p => p.status === 'paid').length }
+])
+
+/* ── Filtered & paginated list ──────────────────────────── */
+const filteredPayrolls = computed(() => {
+  let list = payrolls.value
+
+  if (statusFilter.value !== 'all')
+    list = list.filter(p => p.status === statusFilter.value)
+
+  if (selectedMonth.value)
+    list = list.filter(p => p.month === Number(selectedMonth.value))
+
+  if (selectedYear.value)
+    list = list.filter(p => p.year === Number(selectedYear.value))
+
+  if (searchQuery.value.trim()) {
+    const q = searchQuery.value.toLowerCase()
+    list = list.filter(p =>
+      (p.employee?.user?.name ?? '').toLowerCase().includes(q) ||
+      String(p.employee_id).includes(q)
+    )
   }
-  runSaving.value = true
-  try {
-    await apiFetch('/payroll/run', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(runForm.value),
-    })
-    showRunModal.value = false
-    notify('success', 'Payroll processed successfully.', { autoClose: 4000 })
-    await loadData()
-  } catch (e) {
-    const msg = e?.data?.message || 'Failed to process payroll.'
-    runNotif.value = { show: true, type: 'error', message: msg }
-  } finally {
-    runSaving.value = false
-  }
-}
 
-// ── Adjustment modal ──────────────────────────────────────────────────────────
-const showAdjModal = ref(false)
-const adjSaving    = ref(false)
-const adjEditId    = ref(null)
-const adjNotif     = ref({ show: false, type: 'success', message: '' })
-const defaultAdj   = () => ({ employee_id: '', type: 'deduction', label: '', amount: '', month: '', year: currentYear, note: '' })
-const adjForm      = ref(defaultAdj())
+  return list
+})
 
-const openAdjModal = (type = 'deduction', item = null) => {
-  adjEditId.value = item?.id ?? null
-  adjForm.value   = item
-    ? { employee_id: item.employee_id, type: item.type, label: item.label, amount: item.amount, month: item.month ?? '', year: item.year ?? currentYear, note: item.note ?? '' }
-    : { ...defaultAdj(), type }
-  adjNotif.value.show = false
-  showAdjModal.value  = true
-}
+const paginatedPayrolls = computed(() => {
+  const start = (currentPage.value - 1) * perPage
+  return filteredPayrolls.value.slice(start, start + perPage)
+})
 
-const submitAdj = async () => {
-  if (!adjForm.value.employee_id || !adjForm.value.label || !adjForm.value.amount) {
-    adjNotif.value = { show: true, type: 'error', message: 'Employee, label and amount are required.' }; return
-  }
-  adjSaving.value = true
-  try {
-    const method   = adjEditId.value ? 'PUT' : 'POST'
-    const endpoint = adjEditId.value ? `/payroll/adjustments/${adjEditId.value}` : '/payroll/adjustments'
-    await apiFetch(endpoint, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(adjForm.value),
-    })
-    showAdjModal.value = false
-    notify('success', `${adjForm.value.type === 'bonus' ? 'Bonus' : 'Deduction'} saved.`, { autoClose: 3000 })
-    await loadData()
-  } catch (e) {
-    adjNotif.value = { show: true, type: 'error', message: e?.data?.message || 'Save failed.' }
-  } finally {
-    adjSaving.value = false
-  }
-}
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(filteredPayrolls.value.length / perPage))
+)
 
-const handleAdjAction = ({ action, row }) => {
-  if (action === 'edit')   openAdjModal(row.type, row)
-  if (action === 'delete') deleteAdj(row)
-}
+/* ── History grouped by period ──────────────────────────── */
+const historyRows = computed(() => {
+  const map = {}
+  payrolls.value.forEach(p => {
+    const key = `${monthName(p.month)} ${p.year}`
+    if (!map[key]) map[key] = { period: key, count: 0, gross: 0, net: 0 }
+    map[key].count++
+    map[key].gross += Number(p.gross_salary) || 0
+    map[key].net   += Number(p.net_salary)   || 0
+  })
+  return Object.values(map).reverse()
+})
 
-const deleteAdj = async (row) => {
-  if (!confirm(`Delete this ${row.type}?`)) return
-  try {
-    await apiFetch(`/payroll/adjustments/${row.id}`, { method: 'DELETE' })
-    notify('success', 'Adjustment deleted.', { autoClose: 3000 })
-    await loadData()
-  } catch {
-    notify('error', 'Delete failed.')
-  }
-}
+/* ── Selected company name for preview ─────────────────── */
+const selectedCompanyName = computed(() => {
+  const id = companyStore.company_id !== 0 ? companyStore.company_id : runForm.value.company_id
+  if (!id) return '—'
+  const found = companies.value.find(c => c.value === id)
+  return found?.label ?? `Company #${id}`
+})
 
-// ── Employee salary modal ─────────────────────────────────────────────────────
-const showEmpModal    = ref(false)
-const empSaving       = ref(false)
-const selectedEmployee = ref(null)
-const empNotif        = ref({ show: false, type: 'success', message: '' })
-const empForm         = ref({ basic_salary: '' })
-
-const openEmpModal = (emp) => {
-  selectedEmployee.value = emp
-  empForm.value = { basic_salary: emp.basic_salary }
-  empNotif.value.show = false
-  showEmpModal.value  = true
-}
-
-const submitEmpSalary = async () => {
-  empSaving.value = true
-  try {
-    await apiFetch(`/payroll/employees/${selectedEmployee.value.id}/salary`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ basic_salary: empForm.value.basic_salary }),
-    })
-    showEmpModal.value = false
-    notify('success', 'Salary updated.', { autoClose: 3000 })
-    await loadData()
-  } catch (e) {
-    empNotif.value = { show: true, type: 'error', message: e?.data?.message || 'Update failed.' }
-  } finally {
-    empSaving.value = false
-  }
-}
-
-// ── Payslip modal ─────────────────────────────────────────────────────────────
-const showPayslipModal = ref(false)
-const payslipData      = ref(null)
-
-const openPayslip = async (emp) => {
-  try {
-    const data = await apiFetch(`/payroll/employees/${emp.id}/payslip`)
-    payslipData.value = {
-      employee_name:    emp.name,
-      department:       emp.department,
-      designation:      emp.designation,
-      period_label:     `${months.find(m => m.value === (new Date().getMonth() + 1))?.label} ${currentYear}`,
-      payment_date:     data.payment_date ?? null,
-      basic_salary:     Number(emp.basic_salary || 0),
-      bonuses:          adjustments.value.filter(a => a.employee_id === emp.id && a.type === 'bonus'),
-      deductions:       adjustments.value.filter(a => a.employee_id === emp.id && a.type === 'deduction'),
-      gross:            Number(emp.basic_salary || 0) + totalBonuses(emp),
-      total_deductions: totalDeductions(emp),
-      net:              netSalary(emp),
-      ...(data.payslip ?? {}),
-    }
-    showPayslipModal.value = true
-  } catch {
-    // Fallback: build from local data
-    payslipData.value = {
-      employee_name:    emp.name,
-      department:       emp.department,
-      designation:      emp.designation,
-      period_label:     `${months.find(m => m.value === (new Date().getMonth() + 1))?.label} ${currentYear}`,
-      payment_date:     null,
-      basic_salary:     Number(emp.basic_salary || 0),
-      bonuses:          adjustments.value.filter(a => a.employee_id === emp.id && a.type === 'bonus'),
-      deductions:       adjustments.value.filter(a => a.employee_id === emp.id && a.type === 'deduction'),
-      gross:            Number(emp.basic_salary || 0) + totalBonuses(emp),
-      total_deductions: totalDeductions(emp),
-      net:              netSalary(emp),
-    }
-    showPayslipModal.value = true
-  }
-}
-
-const openHistoryPayslip = async (run) => {
-  try {
-    const data = await apiFetch(`/payroll/history/${run.id}/payslip`)
-    payslipData.value = { ...data, period_label: run.period_label }
-    showPayslipModal.value = true
-  } catch {
-    notify('error', 'Could not load payslip.')
-  }
-}
-
-const downloadPayslip = async () => {
-  const emp = selectedEmployee.value
-  if (!emp?.id) { notify('error', 'No employee selected.'); return }
-  try {
-    const token = localStorage.getItem('token')
-    const res   = await fetch(`${baseApi}/payroll/employees/${emp.id}/payslip/download`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    })
-    if (!res.ok) throw new Error()
-    const blob = await res.blob()
-    const url  = URL.createObjectURL(blob)
-    const a    = document.createElement('a')
-    a.href = url; a.download = `payslip-${emp.name}-${payslipData.value?.period_label ?? 'current'}.pdf`
-    document.body.appendChild(a); a.click()
-    document.body.removeChild(a); URL.revokeObjectURL(url)
-  } catch {
-    notify('error', 'Could not download payslip. Try again.')
-  }
-}
-
-// ── Action handlers ───────────────────────────────────────────────────────────
-const handleEmployeeAction = ({ action, row }) => {
-  if (action === 'view')    openEmpModal(row)
-  if (action === 'edit')    openEmpModal(row)
-  if (action === 'payslip') openPayslip(row)
-}
-
-const handleHistoryAction = ({ action, row }) => {
-  if (action === 'view_run') openHistoryPayslip(row)
-  if (action === 'download') openHistoryPayslip(row)
-}
-
-// ── Data loading ──────────────────────────────────────────────────────────────
-const loadData = async () => {
+/* ── Load payrolls ──────────────────────────────────────── */
+const loadPayrolls = async () => {
   isLoading.value = true
   hasError.value  = false
   try {
-    const [empRes, adjRes, histRes] = await Promise.all([
-      apiFetch('/payroll/employees'),
-      apiFetch('/payroll/adjustments'),
-      apiFetch('/payroll/history'),
-    ])
-    employees.value   = empRes.data ?? empRes ?? []
-    adjustments.value = adjRes.data ?? adjRes ?? []
-    history.value     = histRes.data ?? histRes ?? []
+    // GET /payroll
+    const data = await apiFetch('')
+    payrolls.value = data.data?.data ?? data.data ?? []
   } catch (e) {
-    hasError.value  = true
-    errorMessage.value = e?.data?.message || 'Failed to load payroll data.'
-    notify('error', errorMessage.value)
+    hasError.value     = true
+    errorMessage.value = e?.message || 'Failed to load payroll data.'
   } finally {
     isLoading.value = false
   }
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-const formatCurrency = (val) =>
-  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(val) || 0)
+/* ── Generate / Run payroll modal ───────────────────────── */
+const showRunModal = ref(false)
+const runSaving    = ref(false)
+const runNotif     = ref({ show: false, type: 'success', message: '' })
+const runForm      = ref({ company_id: 0, month: now.getMonth() + 1, year: now.getFullYear() })
 
-const formatDate = (d) => {
-  if (!d) return '—'
-  try { return new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) }
-  catch { return d }
+const openRunModal = () => {
+  runForm.value = {
+    company_id: companyStore.company_id !== 0 ? companyStore.company_id : 0,
+    month:      now.getMonth() + 1,
+    year:       now.getFullYear()
+  }
+  runNotif.value.show = false
+  showRunModal.value  = true
+  // Fetch company list when store has no pre-selected company
+  if (companyStore.company_id === 0 && companies.value.length === 0) {
+    loadCompanies()
+  }
 }
 
+const submitGenerate = async () => {
+  // Use store company_id if it was set, otherwise use what user picked in the form
+  const effectiveCompanyId = companyStore.company_id !== 0
+    ? companyStore.company_id
+    : runForm.value.company_id
+
+  if (!effectiveCompanyId) {
+    runNotif.value = { show: true, type: 'error', message: 'Please select a company before generating payroll.' }
+    return
+  }
+
+  runSaving.value = true
+  try {
+    // POST /payroll/generate
+    const payload = { ...runForm.value, company_id: effectiveCompanyId }
+    const data = await apiFetch('/generate', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    })
+    showRunModal.value = false
+    showToast(data.message ?? 'Payroll generated successfully', 'success')
+    await loadPayrolls()
+  } catch (e) {
+    runNotif.value = { show: true, type: 'error', message: e?.message || 'Generation failed.' }
+  } finally {
+    runSaving.value = false
+  }
+}
+
+/* ── Detail modal ───────────────────────────────────────── */
+const showDetailModal = ref(false)
+const detailPayroll   = ref(null)
+
+const detailEarnings   = computed(() =>
+  detailPayroll.value?.items?.filter(i => i.type === 'earning')   ?? []
+)
+const detailDeductions = computed(() =>
+  detailPayroll.value?.items?.filter(i => i.type === 'deduction') ?? []
+)
+
+const openDetail = async (row) => {
+  try {
+    // GET /payroll/{id}
+    const data = await apiFetch(`/${row.id}`)
+    detailPayroll.value = data.data
+  } catch {
+    detailPayroll.value = row
+  }
+  showDetailModal.value = true
+}
+
+/* ── Mark as paid ───────────────────────────────────────── */
+const markAsPaid = async (payroll) => {
+  try {
+    // POST /payroll/{id}/mark-paid
+    await apiFetch(`/${payroll.id}/mark-paid`, { method: 'POST' })
+    showToast('Payroll marked as paid', 'success')
+    const idx = payrolls.value.findIndex(p => p.id === payroll.id)
+    if (idx !== -1) {
+      payrolls.value[idx] = {
+        ...payrolls.value[idx],
+        status:  'paid',
+        paid_at: new Date().toISOString()
+      }
+    }
+  } catch {
+    showToast('Failed to update status', 'error')
+  }
+}
+
+/* ── Delete ─────────────────────────────────────────────── */
+const deletePayroll = async (payroll) => {
+  try {
+    // DELETE /payroll/{id}
+    await apiFetch(`/${payroll.id}`, { method: 'DELETE' })
+    showToast('Payroll deleted', 'success')
+    payrolls.value = payrolls.value.filter(p => p.id !== payroll.id)
+  } catch (e) {
+    showToast(e?.message || 'Delete failed', 'error')
+  }
+}
+
+/* ── Confirm modal ──────────────────────────────────────── */
+const showConfirmModal = ref(false)
+const confirmData      = ref({ title: '', message: '', action: '', danger: false, fn: null })
+
+const confirmMarkPaid = (payroll) => {
+  confirmData.value = {
+    title:   'Confirm Payment',
+    message: `Mark ${payroll.employee?.user?.name ?? 'this employee'}'s payroll as paid? This cannot be undone.`,
+    action:  'Mark as Paid',
+    danger:  false,
+    fn:      () => markAsPaid(payroll)
+  }
+  showConfirmModal.value = true
+}
+
+const confirmDelete = (payroll) => {
+  confirmData.value = {
+    title:   'Delete Payroll',
+    message: 'Delete this payroll record permanently? This action cannot be undone.',
+    action:  'Delete',
+    danger:  true,
+    fn:      () => deletePayroll(payroll)
+  }
+  showConfirmModal.value = true
+}
+
+const executeConfirm = () => {
+  confirmData.value.fn?.()
+  showConfirmModal.value = false
+}
+
+/* ── Share / Download Payslip ───────────────────────────── */
+/**
+ * Generates a self-contained payslip HTML document and triggers
+ * a browser download. Works for any payroll row — fetches full
+ * detail (with items) if they are not already present.
+ */
+const sharePayslip = async (row) => {
+  let payroll = row
+
+  // If items are missing, fetch full detail first
+  if (!payroll.items) {
+    try {
+      const data = await apiFetch(`/${row.id}`)
+      payroll = data.data
+    } catch {
+      showToast('Could not load payslip details', 'error')
+      return
+    }
+  }
+
+  const empName   = payroll.employee?.user?.name ?? 'Employee'
+  const empId     = String(payroll.employee_id).padStart(4, '0')
+  const period    = `${monthName(payroll.month)} ${payroll.year}`
+  const earnings  = (payroll.items ?? []).filter(i => i.type === 'earning')
+  const deductions = (payroll.items ?? []).filter(i => i.type === 'deduction')
+  const paidLabel = payroll.paid_at ? `Paid on ${formatDate(payroll.paid_at)}` : 'Status: Draft'
+
+  const earningsRows = earnings.map(i => `
+    <tr>
+      <td>${i.title}</td>
+      <td class="amt green">${formatCurrency(i.amount)}</td>
+    </tr>`).join('')
+
+  const deductionRows = deductions.map(i => `
+    <tr>
+      <td>${i.title}</td>
+      <td class="amt red">−${formatCurrency(i.amount)}</td>
+    </tr>`).join('')
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Payslip – ${empName} – ${period}</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Jost',sans-serif;background:#0D0D0F;color:#F0EAE0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+  .slip{background:#131316;border:1px solid rgba(201,169,110,0.25);width:100%;max-width:640px;padding:0}
+  /* Header */
+  .slip-head{padding:28px 32px 22px;border-bottom:1px solid rgba(201,169,110,0.15);display:flex;justify-content:space-between;align-items:flex-start}
+  .company{font-size:18px;font-weight:700;color:#C9A96E;letter-spacing:.02em}
+  .slip-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(240,234,224,0.35);margin-top:4px}
+  .period-badge{background:rgba(201,169,110,0.10);border:1px solid rgba(201,169,110,0.30);color:#C9A96E;font-size:11px;font-weight:600;letter-spacing:.08em;padding:5px 14px;text-transform:uppercase;align-self:flex-start}
+  /* Employee strip */
+  .emp-strip{padding:18px 32px;background:rgba(201,169,110,0.04);border-bottom:1px solid rgba(201,169,110,0.10);display:flex;align-items:center;gap:16px}
+  .avatar{width:42px;height:42px;border-radius:50%;background:#8B6F47;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:rgba(255,255,255,0.85);flex-shrink:0}
+  .emp-name{font-size:15px;font-weight:600;color:#F0EAE0}
+  .emp-meta{font-size:11px;color:rgba(240,234,224,0.38);margin-top:3px}
+  /* Summary band */
+  .summary{display:flex;border-bottom:1px solid rgba(201,169,110,0.12)}
+  .sum-item{flex:1;padding:16px 18px;display:flex;flex-direction:column;gap:5px;border-right:1px solid rgba(201,169,110,0.10)}
+  .sum-item:last-child{border-right:none;background:rgba(201,169,110,0.06)}
+  .sum-label{font-size:9px;letter-spacing:.10em;text-transform:uppercase;color:rgba(240,234,224,0.35);font-weight:600}
+  .sum-val{font-size:15px;font-weight:700;font-family:'Georgia',serif}
+  .sum-val.gold{color:#C9A96E}
+  .sum-val.red{color:#EF6B6B}
+  .sum-val.green{color:#6ECFA9}
+  /* Tables */
+  .tables{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid rgba(201,169,110,0.10)}
+  .tbl-col{padding:20px 24px}
+  .tbl-col:first-child{border-right:1px solid rgba(201,169,110,0.10)}
+  .tbl-head{font-size:9px;letter-spacing:.10em;text-transform:uppercase;color:rgba(201,169,110,0.55);font-weight:600;padding-bottom:10px;border-bottom:1px solid rgba(201,169,110,0.10);margin-bottom:2px;display:flex;align-items:center;gap:6px}
+  .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+  .dot.g{background:#6ECFA9}.dot.r{background:#EF6B6B}
+  table{width:100%;border-collapse:collapse}
+  td{padding:7px 0;font-size:12px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(240,234,224,0.65)}
+  tr:last-child td{border-bottom:none}
+  td.amt{text-align:right;font-family:'Georgia',serif;font-weight:600}
+  td.green{color:#6ECFA9}
+  td.red{color:#EF6B6B}
+  /* Net pay footer */
+  .net-foot{padding:20px 32px;display:flex;align-items:center;justify-content:space-between;background:rgba(201,169,110,0.06);border-bottom:1px solid rgba(201,169,110,0.15)}
+  .net-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(240,234,224,0.45);font-weight:600}
+  .net-val{font-size:24px;font-weight:700;color:#C9A96E;font-family:'Georgia',serif}
+  /* Footer */
+  .slip-foot{padding:16px 32px;display:flex;justify-content:space-between;align-items:center}
+  .paid-stamp{display:inline-flex;align-items:center;gap:7px;font-size:11px;color:#6ECFA9;background:rgba(110,207,169,0.08);border:1px solid rgba(110,207,169,0.25);padding:5px 12px}
+  .gen-note{font-size:10px;color:rgba(240,234,224,0.25);letter-spacing:.03em}
+  @media print{body{background:#fff;padding:0}
+    .slip{border:1px solid #ddd;max-width:100%}
+    body,td,.emp-name,.net-val,.sum-val,.company{color:#111!important}
+    .sum-val.gold,.net-val,.company{color:#8B6F47!important}
+    .sum-val.green,td.green,.paid-stamp{color:#2a7a55!important}
+    .sum-val.red,td.red{color:#b22!important}
+  }
+</style>
+</head>
+<body>
+<div class="slip">
+  <div class="slip-head">
+    <div>
+      <div class="company">Company Payroll</div>
+      <div class="slip-label">Official Salary Slip</div>
+    </div>
+    <div class="period-badge">${period}</div>
+  </div>
+
+  <div class="emp-strip">
+    <div class="avatar">${initials(empName)}</div>
+    <div>
+      <div class="emp-name">${empName}</div>
+      <div class="emp-meta">Employee ID: #${empId} &nbsp;·&nbsp; ${period}</div>
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="sum-item">
+      <span class="sum-label">Gross Salary</span>
+      <span class="sum-val">${formatCurrency(payroll.gross_salary)}</span>
+    </div>
+    <div class="sum-item">
+      <span class="sum-label">Deductions</span>
+      <span class="sum-val red">−${formatCurrency((payroll.late_deduction || 0) + (payroll.leave_deduction || 0))}</span>
+    </div>
+    <div class="sum-item">
+      <span class="sum-label">Overtime + Bonus</span>
+      <span class="sum-val green">+${formatCurrency((payroll.overtime_amount || 0) + (payroll.bonus_amount || 0))}</span>
+    </div>
+    <div class="sum-item">
+      <span class="sum-label">Net Pay</span>
+      <span class="sum-val gold">${formatCurrency(payroll.net_salary)}</span>
+    </div>
+  </div>
+
+  <div class="tables">
+    <div class="tbl-col">
+      <div class="tbl-head"><span class="dot g"></span>Earnings</div>
+      <table>
+        <tbody>${earningsRows || '<tr><td colspan="2" style="color:rgba(240,234,224,0.3);font-style:italic">No earnings</td></tr>'}</tbody>
+      </table>
+    </div>
+    <div class="tbl-col">
+      <div class="tbl-head"><span class="dot r"></span>Deductions</div>
+      <table>
+        <tbody>${deductionRows || '<tr><td colspan="2" style="color:rgba(240,234,224,0.3);font-style:italic">No deductions</td></tr>'}</tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="net-foot">
+    <span class="net-label">Total Net Pay</span>
+    <span class="net-val">${formatCurrency(payroll.net_salary)}</span>
+  </div>
+
+  <div class="slip-foot">
+    <span class="paid-stamp">${paidLabel}</span>
+    <span class="gen-note">Generated ${new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })}</span>
+  </div>
+</div>
+</body>
+</html>`
+
+  // Trigger download
+  const blob = new Blob([html], { type: 'text/html' })
+  const url  = URL.createObjectURL(blob)
+  const a    = document.createElement('a')
+  a.href     = url
+  a.download = `Payslip_${empName.replace(/\s+/g, '_')}_${period.replace(/\s+/g, '_')}.html`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+
+  showToast('Payslip downloaded', 'success')
+}
+
+/* ── Toast ──────────────────────────────────────────────── */
+const toast = ref({ visible: false, message: '', type: 'success' })
+
+const showToast = (message, type = 'success') => {
+  toast.value = { visible: true, message, type }
+  setTimeout(() => { toast.value.visible = false }, 3500)
+}
+
+/* ── Utilities ──────────────────────────────────────────── */
+const formatCurrency = (val) =>
+  new Intl.NumberFormat('en-US', {
+    style: 'currency', currency: 'USD', maximumFractionDigits: 0
+  }).format(Number(val) || 0)
+
+const formatDate = (iso) => {
+  if (!iso) return '—'
+  try {
+    return new Date(iso).toLocaleDateString('en-GB', {
+      day: '2-digit', month: 'short', year: 'numeric'
+    })
+  } catch { return iso }
+}
+
+const monthName = (num) =>
+  months.find(m => m.value === Number(num))?.label ?? num
+
 const initials = (name) =>
-  (name ?? '?').split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
+  (name ?? '?').split(' ').slice(0, 2).map(w => w[0] ?? '').join('').toUpperCase()
 
-const payStatusClass = (s) => ({
-  'Paid':    'pr-status-paid',
-  'Unpaid':  'pr-status-unpaid',
-  'Pending': 'pr-status-pending',
-}[s] ?? 'pr-status-unpaid')
+const avatarBg = (name) => {
+  if (!name) return AVATAR_PALETTE[0]
+  return AVATAR_PALETTE[name.charCodeAt(0) % AVATAR_PALETTE.length]
+}
 
-const runStatusClass = (s) => ({
-  'completed': 'pr-status-paid',
-  'draft':     'pr-status-pending',
-  'failed':    'pr-status-unpaid',
-}[s?.toLowerCase()] ?? 'pr-status-pending')
-
-const handleSearch         = () => { currentPage.value = 1 }
-const handleReset          = () => { searchFilters.value = { search: '', department: '', status: '' }; currentPage.value = 1 }
-const handleSort           = (s) => { sortConfig.value = s }
-const handlePageChange     = (p) => { currentPage.value = p }
-const handlePageSizeChange = (ps) => { itemsPerPage.value = ps; currentPage.value = 1 }
-
+/* ── Lifecycle ──────────────────────────────────────────── */
 onMounted(async () => {
   await loadCurrentUser()
-  await loadData()
+  await loadPayrolls()
+  // Pre-load companies if no company is already selected in the store
+  if (companyStore.company_id === 0) {
+    await loadCompanies()
+  }
 })
 </script>
 
 <style scoped>
-/* ── Design tokens (same as leave management) ── */
-.pr-tabs, .pr-modal-shell, .pr-payslip, .pr-salary-summary,
-.pr-form-grid, .pr-adj-toolbar, .pr-run-summary {
-  --gold:           #C9A96E;
-  --gold-light:     #E8D5B0;
-  --gold-dim:       #8B6F47;
-  --gold-glow:      rgba(201,169,110,0.08);
-  --onyx:           #0D0D0F;
-  --onyx-2:         #131316;
-  --onyx-3:         #1A1A1F;
-  --onyx-4:         #222228;
-  --text-primary:   #F0EAE0;
-  --text-secondary: rgba(240,234,224,0.55);
-  --text-muted:     rgba(240,234,224,0.28);
-  --border:         rgba(201,169,110,0.12);
-  --border-strong:  rgba(201,169,110,0.28);
+/* ── Design tokens ──────────────────────────────────────── */
+.pm-wrap {
+  --gold:       #C9A96E;
+  --gold-light: #E8D5B0;
+  --gold-dim:   #8B6F47;
+  --onyx:       #0D0D0F;
+  --onyx-2:     #131316;
+  --onyx-3:     #17171D;
+  --onyx-4:     #1E1E26;
+  --onyx-5:     #242430;
+  --text-1:     #F0EAE0;
+  --text-2:     rgba(240,234,224,0.55);
+  --text-3:     rgba(240,234,224,0.28);
+  --border:     rgba(201,169,110,0.13);
+  --border-s:   rgba(201,169,110,0.28);
+  --green:      #6ECFA9;
+  --green-bg:   rgba(110,207,169,0.10);
+  --green-bd:   rgba(110,207,169,0.30);
+  --red:        #EF6B6B;
+  --red-bg:     rgba(239,107,107,0.10);
+  --red-bd:     rgba(239,107,107,0.30);
+  --blue:       #85B7EB;
+  --blue-bg:    rgba(133,183,235,0.10);
+  --blue-bd:    rgba(133,183,235,0.30);
+
   font-family: 'Jost', 'Inter', sans-serif;
+  background: var(--onyx);
+  min-height: 100vh;
+  color: var(--text-1);
+  padding: 2rem 2rem 4rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  position: relative;
 }
 
-/* ── Tab bar ── */
-.pr-tabs {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  border-bottom: 1px solid rgba(201,169,110,0.15);
-  margin-bottom: 20px;
-  padding-bottom: 0;
+/* ── Header ─────────────────────────────────────────────── */
+.pm-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 2rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
 }
-.pr-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 10px 16px;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: rgba(240,234,224,0.38);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: .05em;
-  cursor: pointer;
-  transition: color .14s, border-color .14s;
-  margin-bottom: -1px;
-  white-space: nowrap;
+.pm-header-left { display: flex; align-items: center; gap: 14px; }
+.pm-header-icon {
+  width: 38px; height: 38px; flex-shrink: 0;
+  background: rgba(201,169,110,0.10);
+  border: 1px solid rgba(201,169,110,0.28);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold);
 }
-.pr-tab:hover { color: rgba(240,234,224,0.65); }
-.pr-tab--active { color: #C9A96E; border-bottom-color: #C9A96E; }
-.pr-tab-label { }
-.pr-tab-badge {
-  display: inline-block;
-  padding: 1px 6px;
-  font-size: 10px;
+.pm-title   { font-size: 1.3rem; font-weight: 600; color: var(--text-1); margin: 0 0 3px; letter-spacing: .01em; }
+.pm-subtitle { font-size: 11px; color: var(--text-3); margin: 0; letter-spacing: .02em; }
+
+.pm-run-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 20px;
+  background: rgba(201,169,110,0.12); border: 1px solid rgba(201,169,110,0.45);
+  color: var(--gold); font-size: 11px; font-weight: 500; letter-spacing: .08em;
+  text-transform: uppercase; cursor: pointer; font-family: inherit;
+  transition: background .14s;
+}
+.pm-run-btn:hover { background: rgba(201,169,110,0.22); }
+
+/* ── Stats ─────────────────────────────────────────────── */
+.pm-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; border: 1px solid var(--border);
+  margin-bottom: 1.75rem; background: var(--border);
+}
+.pm-stat {
+  display: flex; flex-direction: column; gap: 5px;
+  padding: 1.1rem 1.4rem; background: var(--onyx-3);
+  position: relative;
+}
+.pm-stat::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
   background: rgba(201,169,110,0.12);
-  border: 1px solid rgba(201,169,110,0.25);
-  color: rgba(201,169,110,0.75);
-  min-width: 20px;
-  text-align: center;
 }
-.pr-tab-spacer { flex: 1; }
+.pm-stat--gold::after { background: var(--gold); }
+.pm-stat-label {
+  font-size: 10px; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--text-3);
+}
+.pm-stat-value {
+  font-size: 1.4rem; font-weight: 700; color: var(--text-1);
+  font-family: 'Georgia', serif; letter-spacing: -.01em;
+}
 
-.pr-run-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 18px;
-  background: rgba(201,169,110,0.14);
-  border: 1px solid rgba(201,169,110,0.50);
-  color: #C9A96E;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: .07em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all .14s;
-  margin-bottom: 1px;
+/* ── Tab bar ─────────────────────────────────────────────── */
+.pm-tabs {
+  display: flex; align-items: center; gap: 2px;
+  border-bottom: 1px solid rgba(201,169,110,0.15);
+  margin-bottom: 1.25rem;
 }
-.pr-run-btn:hover { background: rgba(201,169,110,0.24); }
+.pm-tab {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 16px; background: transparent; border: none;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  color: var(--text-3); font-size: 12px; font-weight: 500; letter-spacing: .05em;
+  cursor: pointer; transition: color .14s, border-color .14s;
+  white-space: nowrap; font-family: inherit;
+}
+.pm-tab:hover { color: var(--text-2); }
+.pm-tab--active { color: var(--gold); border-bottom-color: var(--gold); }
+.pm-tab-badge {
+  padding: 1px 6px; font-size: 10px;
+  background: rgba(201,169,110,0.10); border: 1px solid rgba(201,169,110,0.22);
+  color: rgba(201,169,110,0.65);
+}
+.pm-tab-spacer { flex: 1; }
+.pm-search {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--onyx-4); border: 1px solid var(--border);
+  padding: 0 12px; margin-bottom: 1px; color: var(--text-3);
+}
+.pm-search input {
+  border: none; outline: none; background: transparent;
+  color: var(--text-1); font-size: 12px; font-family: inherit;
+  padding: 8px 0; width: 160px;
+}
+.pm-search input::placeholder { color: var(--text-3); }
 
-/* ── Adj toolbar ── */
-.pr-adj-toolbar {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
+/* ── Filter row ─────────────────────────────────────────── */
+.pm-filter-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px; gap: 12px; flex-wrap: wrap;
 }
-.pr-adj-add-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all .14s;
-  background: rgba(239,107,107,0.10);
-  border: 1px solid rgba(239,107,107,0.35);
-  color: #EF6B6B;
+.pm-filter-tabs { display: flex; border: 1px solid var(--border); overflow: hidden; }
+.pm-filter-tab {
+  background: none; border: none; border-right: 1px solid var(--border);
+  padding: 7px 14px; font-family: inherit; font-size: 11px; font-weight: 500;
+  letter-spacing: .05em; color: var(--text-3); cursor: pointer; transition: all .14s;
+  display: flex; align-items: center; gap: 6px;
 }
-.pr-adj-add-btn:hover { background: rgba(239,107,107,0.18); }
-.pr-adj-add-btn--bonus {
-  background: rgba(110,207,169,0.10);
-  border-color: rgba(110,207,169,0.35);
-  color: #6ECFA9;
+.pm-filter-tab:last-child { border-right: none; }
+.pm-filter-tab--active { background: rgba(201,169,110,0.12); color: var(--gold); }
+.pm-filter-count {
+  font-size: 10px; padding: 0 5px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+  color: inherit;
 }
-.pr-adj-add-btn--bonus:hover { background: rgba(110,207,169,0.18); }
+.pm-period-filters { display: flex; gap: 8px; }
+.pm-select {
+  font-family: inherit; font-size: 12px; color: var(--text-2);
+  background: var(--onyx-4); border: 1px solid var(--border);
+  padding: 7px 30px 7px 12px; outline: none; cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(201,169,110,0.50)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+  transition: border-color .14s;
+}
+.pm-select:focus { border-color: var(--border-s); }
+.pm-select option { background: var(--onyx-3); color: var(--text-1); }
 
-/* ── Cell components ── */
-.pr-name-cell {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+/* ── Table ─────────────────────────────────────────────── */
+.pm-table-wrap { border: 1px solid var(--border); background: var(--onyx-3); overflow: hidden; }
+.pm-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.pm-table thead tr { background: var(--onyx-4); border-bottom: 1px solid var(--border); }
+.pm-table th {
+  padding: .85rem 1rem; font-size: 10px; font-weight: 600; letter-spacing: .10em;
+  text-transform: uppercase; color: var(--text-3); text-align: left; white-space: nowrap;
 }
-.pr-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: rgba(201,169,110,0.15);
-  border: 1px solid rgba(201,169,110,0.30);
-  color: #C9A96E;
-  font-size: 11px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+.pm-tr { border-bottom: 1px solid var(--border); transition: background .12s; cursor: pointer; }
+.pm-tr:hover { background: rgba(201,169,110,0.04); }
+.pm-tr:last-child { border-bottom: none; }
+.pm-table td { padding: .85rem 1rem; color: var(--text-2); vertical-align: middle; }
+.ta-r { text-align: right; }
+.ta-c { text-align: center; }
+
+.pm-name-cell { display: flex; align-items: center; gap: 10px; }
+.pm-avatar {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.85); font-size: 10px; font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.12);
 }
-.pr-avatar--lg { width: 40px; height: 40px; font-size: 13px; }
+.pm-avatar--md { width: 38px; height: 38px; font-size: 12px; }
+.pm-emp-name { display: block; font-size: 12px; color: var(--text-1); font-weight: 500; }
+.pm-emp-id   { display: block; font-size: 10px; color: var(--text-3); margin-top: 1px; }
 
-.pr-emp-name { display: block; font-size: 12px; color: #E8D5B0; font-weight: 500; }
-.pr-emp-dept { display: block; font-size: 10px; color: rgba(240,234,224,0.35); margin-top: 1px; }
+.pm-period {
+  font-size: 11px; color: var(--text-3);
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  padding: 2px 8px; letter-spacing: .03em;
+}
+.pm-mono   { font-family: 'Georgia', serif; font-size: 12px; color: var(--text-2); font-weight: 600; }
+.pm-deduct { color: var(--red); }
+.pm-bonus  { color: var(--green); }
+.pm-net    { color: var(--gold); }
 
-.pr-amount { font-size: 12px; font-weight: 600; font-family: 'Georgia', serif; color: rgba(240,234,224,0.75); }
-.pr-amount--deduct { color: #EF6B6B; }
-.pr-amount--bonus  { color: #6ECFA9; }
-.pr-amount--net    { color: #C9A96E; font-size: 13px; }
-
-.pr-status-badge {
-  display: inline-block;
-  padding: 3px 9px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .07em;
-  text-transform: uppercase;
+.pm-badge {
+  display: inline-block; padding: 3px 9px;
+  font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
   border: 1px solid;
 }
-.pr-status-paid    { color: #6ECFA9; border-color: rgba(110,207,169,0.35); background: rgba(110,207,169,0.08); }
-.pr-status-unpaid  { color: #EF6B6B; border-color: rgba(239,107,107,0.35); background: rgba(239,107,107,0.08); }
-.pr-status-pending { color: #E8B84B; border-color: rgba(232,184,75,0.35);  background: rgba(232,184,75,0.08);  }
+.pm-badge-inline { margin-left: 8px; vertical-align: middle; }
+.pm-badge--draft { color: var(--blue);  border-color: var(--blue-bd);  background: var(--blue-bg);  }
+.pm-badge--paid  { color: var(--green); border-color: var(--green-bd); background: var(--green-bg); }
 
-.pr-adj-type {
-  display: inline-block;
-  padding: 2px 8px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  border: 1px solid;
+.pm-actions { display: flex; align-items: center; justify-content: center; gap: 5px; }
+.pm-act {
+  width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: 1px solid var(--border); cursor: pointer;
+  color: var(--text-3); transition: all .14s;
 }
-.pr-adj-bonus  { color: #6ECFA9; border-color: rgba(110,207,169,0.35); background: rgba(110,207,169,0.08); }
-.pr-adj-deduct { color: #EF6B6B; border-color: rgba(239,107,107,0.35); background: rgba(239,107,107,0.08); }
+.pm-act--view:hover { background: var(--blue-bg);  color: var(--blue);  border-color: var(--blue-bd);  }
+.pm-act--slip:hover { background: rgba(201,169,110,0.12); color: var(--gold); border-color: rgba(201,169,110,0.45); }
+.pm-act--pay:hover  { background: var(--green-bg); color: var(--green); border-color: var(--green-bd); }
+.pm-act--del:hover  { background: var(--red-bg);   color: var(--red);   border-color: var(--red-bd);   }
 
-.pr-period-cell  { display: flex; flex-direction: column; gap: 3px; }
-.pr-period-label { font-size: 12px; color: #E8D5B0; font-weight: 500; }
-.pr-period-sub   { font-size: 10px; color: rgba(240,234,224,0.35); }
-
-/* ── Deep table overrides ── */
-:deep(table) { table-layout: auto; width: 100%; }
-:deep(.action-btn.btn-payslip),
-:deep(.action-btn.action-btn--btn-payslip) {
-  color: #85B7EB !important;
-  border-color: rgba(133,183,235,0.35) !important;
-  background: rgba(133,183,235,0.08) !important;
-}
-:deep(.action-btn.btn-payslip:hover:not(:disabled)),
-:deep(.action-btn.action-btn--btn-payslip:hover:not(:disabled)) {
-  background: rgba(133,183,235,0.18) !important;
-  border-color: #85B7EB !important;
+.pm-empty {
+  display: flex; flex-direction: column; align-items: center; gap: .75rem;
+  padding: 3rem; color: var(--text-3); font-style: italic; font-size: 12px;
 }
 
-/* ══════════════════════════════════════════════════
-   MODAL BASE
-══════════════════════════════════════════════════ */
-.pr-modal-backdrop {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+.pm-state {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 3rem; font-size: 13px; color: var(--text-3);
+  border: 1px solid var(--border);
+}
+.pm-state--error {
+  color: var(--red); border-color: var(--red-bd); background: var(--red-bg);
+}
+.pm-state--error button {
+  margin-left: 12px; padding: 4px 10px; font-size: 11px; font-family: inherit;
+  background: none; border: 1px solid var(--red-bd); color: var(--red); cursor: pointer;
+}
+
+/* Pagination */
+.pm-pagination {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  margin-top: 1.25rem;
+}
+.pm-page-btn {
+  width: 28px; height: 28px; background: var(--onyx-4);
+  border: 1px solid var(--border); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--text-3); transition: all .14s;
+}
+.pm-page-btn:hover:not(:disabled) { border-color: var(--border-s); color: var(--gold); }
+.pm-page-btn:disabled { opacity: .3; cursor: not-allowed; }
+.pm-page-info { font-size: 11px; color: var(--text-3); }
+
+/* Spinners */
+.pm-spinner {
+  width: 16px; height: 16px; border: 2px solid rgba(201,169,110,0.15);
+  border-top-color: var(--gold); border-radius: 50%; animation: pm-spin .7s linear infinite;
+}
+.pm-spinner-sm {
+  width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.15);
+  border-top-color: currentColor; border-radius: 50%; animation: pm-spin .6s linear infinite;
+}
+@keyframes pm-spin { to { transform: rotate(360deg); } }
+
+/* ══ Modals ══ */
+.pm-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.78);
   display: flex; align-items: flex-start; justify-content: center;
-  padding: 40px 16px; z-index: 9999; overflow-y: auto;
+  padding: 48px 16px; z-index: 9999; overflow-y: auto;
+  backdrop-filter: blur(3px);
 }
-.pr-modal-shell {
-  background: #17171D;
-  border: 1px solid rgba(201,169,110,0.25);
-  width: 100%; max-width: 620px;
+.pm-modal {
+  background: var(--onyx-3); border: 1px solid rgba(201,169,110,0.25);
+  width: 100%; max-width: 560px;
   display: flex; flex-direction: column;
   box-shadow: 0 24px 80px rgba(0,0,0,0.65);
 }
-.pr-emp-shell     { max-width: 560px; }
-.pr-payslip-shell { max-width: 580px; }
+.pm-modal--wide { max-width: 700px; }
+.pm-modal--sm   { max-width: 420px; }
+/* ── Modal interior: force light text regardless of host page reset ── */
+.pm-modal .pm-section-title  { color: rgba(201,169,110,0.70); }
+.pm-modal .pm-label           { color: rgba(240,234,224,0.55); }
+.pm-modal .pm-control         { color: #F0EAE0 !important; background: #131316 !important; }
+.pm-modal .pm-control option  { background: #17171D !important; color: #F0EAE0 !important; }
+.pm-modal .pm-run-prev-label  { color: rgba(240,234,224,0.40); }
+.pm-modal .pm-run-prev-val    { color: var(--text-1); }
+.pm-modal .pm-run-prev-val--gold { color: var(--gold); }
+.pm-modal .pm-run-warning     { color: rgba(232,184,75,0.75); }
+.pm-modal .pm-confirm-msg     { color: var(--text-2); }
+.pm-modal .pm-modal-title     { color: var(--text-1); }
+.pm-modal .pm-modal-sub       { color: var(--text-3); }
+.pm-modal .pm-field-hint {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--text-3); margin-top: 4px;
+}
+.pm-modal .pm-field-hint--warn { color: rgba(239,107,107,0.75); }
+.pm-field--full { grid-column: 1 / -1; }
 
-.pr-modal-head {
+
+.pm-modal-head {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 20px 26px 16px; border-bottom: 1px solid rgba(201,169,110,0.15); flex-shrink: 0;
+  padding: 20px 24px 16px; border-bottom: 1px solid rgba(201,169,110,0.12);
+  flex-shrink: 0;
 }
-.pr-modal-head-left { display: flex; align-items: center; gap: 12px; }
-.pr-modal-icon {
-  width: 36px; height: 36px; flex-shrink: 0;
+.pm-modal-head-left { display: flex; align-items: center; gap: 12px; }
+.pm-modal-icon {
+  width: 34px; height: 34px; flex-shrink: 0;
   background: rgba(201,169,110,0.10); border: 1px solid rgba(201,169,110,0.28);
-  display: flex; align-items: center; justify-content: center; color: #C9A96E;
+  display: flex; align-items: center; justify-content: center; color: var(--gold);
 }
-.pr-icon-bonus   { background: rgba(110,207,169,0.10) !important; border-color: rgba(110,207,169,0.35) !important; color: #6ECFA9 !important; }
-.pr-icon-deduct  { background: rgba(239,107,107,0.10) !important; border-color: rgba(239,107,107,0.35) !important; color: #EF6B6B !important; }
-.pr-icon-payslip { background: rgba(133,183,235,0.10) !important; border-color: rgba(133,183,235,0.28) !important; color: rgba(133,183,235,0.85) !important; }
-
-.pr-modal-title    { font-size: 15px; font-weight: 600; color: #F0EAE0; margin: 0; }
-.pr-modal-subtitle { font-size: 11px; color: rgba(240,234,224,0.38); margin: 3px 0 0; }
-.pr-modal-close {
-  width: 30px; height: 30px; background: transparent;
-  border: 1px solid rgba(240,234,224,0.12); color: rgba(240,234,224,0.40);
+.pm-icon--gold   { background: rgba(201,169,110,0.10); border-color: rgba(201,169,110,0.28); color: var(--gold); }
+.pm-icon--danger { background: var(--red-bg); border-color: var(--red-bd); color: var(--red); }
+.pm-modal-title { font-size: 14px; font-weight: 600; color: var(--text-1); margin: 0; }
+.pm-modal-sub   { font-size: 11px; color: var(--text-3); margin: 3px 0 0; display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
+.pm-modal-close {
+  width: 28px; height: 28px; background: transparent;
+  border: 1px solid rgba(240,234,224,0.12); color: var(--text-3);
   cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .13s;
 }
-.pr-modal-close:hover { border-color: rgba(240,234,224,0.28); color: #F0EAE0; }
-.pr-modal-close svg { width: 13px; height: 13px; }
+.pm-modal-close:hover { border-color: rgba(240,234,224,0.28); color: var(--text-1); }
 
-.pr-modal-notif { padding: 10px 26px; font-size: 12px; flex-shrink: 0; }
-.pr-notif-success { background: rgba(110,207,169,0.12); color: #6ECFA9; border-bottom: 1px solid rgba(110,207,169,0.20); }
-.pr-notif-error   { background: rgba(239,107,107,0.12); color: #EF6B6B; border-bottom: 1px solid rgba(239,107,107,0.20); }
+.pm-modal-notif { padding: 10px 24px; font-size: 12px; flex-shrink: 0; }
+.pm-notif--success { background: var(--green-bg); color: var(--green); border-bottom: 1px solid var(--green-bd); }
+.pm-notif--error   { background: var(--red-bg);   color: var(--red);   border-bottom: 1px solid var(--red-bd);   }
 
-.pr-modal-body { padding: 24px 26px; overflow-y: auto; max-height: calc(100vh - 220px); }
-.pr-modal-foot {
+.pm-modal-body { padding: 22px 24px; overflow-y: auto; max-height: calc(100vh - 220px); }
+.pm-modal-foot {
   display: flex; align-items: center; justify-content: flex-end; gap: 10px;
-  padding: 14px 26px; border-top: 1px solid rgba(201,169,110,0.12); flex-shrink: 0;
+  padding: 14px 24px; border-top: 1px solid rgba(201,169,110,0.12); flex-shrink: 0;
 }
 
-/* ── Buttons ── */
-.pr-btn-cancel {
-  padding: 9px 20px; background: transparent; border: 1px solid rgba(240,234,224,0.15);
-  color: rgba(240,234,224,0.50); font-size: 12px; cursor: pointer; letter-spacing: .05em; transition: all .13s;
-}
-.pr-btn-cancel:hover { border-color: rgba(240,234,224,0.30); color: rgba(240,234,224,0.75); }
-.pr-btn-submit {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 9px 22px; background: rgba(201,169,110,0.14); border: 1px solid rgba(201,169,110,0.50);
-  color: #C9A96E; font-size: 12px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
-  cursor: pointer; transition: all .14s;
-}
-.pr-btn-submit:hover:not(:disabled) { background: rgba(201,169,110,0.24); }
-.pr-btn-submit:disabled { opacity: .45; cursor: not-allowed; }
-.pr-btn-run   { background: rgba(201,169,110,0.18) !important; border-color: rgba(201,169,110,0.60) !important; }
-.pr-btn-bonus { background: rgba(110,207,169,0.12) !important; border-color: rgba(110,207,169,0.45) !important; color: #6ECFA9 !important; }
-.pr-btn-deduct{ background: rgba(239,107,107,0.12) !important; border-color: rgba(239,107,107,0.45) !important; color: #EF6B6B !important; }
-
-/* ── Form fields ── */
-.pr-form-section-title {
+/* Form */
+.pm-section-title {
+  display: flex; align-items: center; gap: 8px;
   font-size: 10px; font-weight: 600; letter-spacing: .10em; text-transform: uppercase;
-  color: rgba(201,169,110,0.70); padding-bottom: 10px;
-  border-bottom: 1px solid rgba(201,169,110,0.15); margin-bottom: 18px;
+  color: rgba(201,169,110,0.60);
+  padding-bottom: 10px; border-bottom: 1px solid rgba(201,169,110,0.12); margin-bottom: 18px;
 }
-.pr-form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
-.pr-form-field { display: flex; flex-direction: column; gap: 6px; }
-.pr-field-full { grid-column: 1 / -1; }
-.pr-form-label {
-  font-size: 11px; letter-spacing: .05em; text-transform: uppercase;
-  color: rgba(240,234,224,0.45);
-}
-.pr-req { color: rgba(239,107,107,0.80); }
-.pr-form-input, .pr-form-select, .pr-form-textarea {
-  background: rgba(18,18,24,0.98); border: 1px solid rgba(201,169,110,0.22);
-  color: #F0EAE0; font-size: 13px; padding: 10px 13px; outline: none;
-  font-family: inherit; transition: border-color .14s; box-sizing: border-box; width: 100%;
-}
-.pr-form-input:focus, .pr-form-select:focus, .pr-form-textarea:focus { border-color: rgba(201,169,110,0.55); }
-.pr-form-textarea { resize: vertical; min-height: 60px; }
-.pr-form-select {
-  cursor: pointer; appearance: none; padding-right: 30px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(201,169,110,0.55)'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 10px center; background-color: rgba(18,18,24,0.98);
-}
-.pr-form-select option { background: #17171D; color: #F0EAE0; }
+.pm-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.pm-dot--green { background: var(--green); }
+.pm-dot--red   { background: var(--red);   }
 
-/* ── Type toggle ── */
-.pr-type-toggle { display: flex; }
-.pr-type-btn {
-  flex: 1; padding: 9px 16px; background: transparent;
-  border: 1px solid rgba(201,169,110,0.18); color: rgba(240,234,224,0.35);
-  font-size: 12px; font-weight: 500; cursor: pointer; transition: all .13s;
+.pm-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pm-field  { display: flex; flex-direction: column; gap: 6px; }
+.pm-label  { font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--text-3); }
+.pm-req    { color: rgba(239,107,107,0.80); }
+.pm-control {
+  background: var(--onyx-2); border: 1px solid rgba(201,169,110,0.20);
+  color: #F0EAE0 !important; font-size: 13px; padding: 9px 30px 9px 12px;
+  outline: none; font-family: inherit; transition: border-color .14s;
+  appearance: none; width: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(201,169,110,0.50)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
 }
-.pr-type-btn:first-child { border-right: none; }
-.pr-type-btn--active-deduct {
-  background: rgba(239,107,107,0.12); border-color: rgba(239,107,107,0.40); color: #EF6B6B;
-}
-.pr-type-btn--active-bonus {
-  background: rgba(110,207,169,0.12); border-color: rgba(110,207,169,0.40); color: #6ECFA9;
-}
+.pm-control:focus { border-color: rgba(201,169,110,0.55); }
+.pm-control option { background: #17171D; color: #F0EAE0; }
 
-/* ── Run payroll summary strip ── */
-.pr-run-summary {
+/* Run preview */
+.pm-run-preview {
   display: flex; align-items: center; flex-wrap: wrap; gap: 0;
-  margin: 20px 0 16px;
-  border: 1px solid rgba(201,169,110,0.15);
-  background: rgba(201,169,110,0.04);
+  border: 1px solid rgba(201,169,110,0.12); background: rgba(201,169,110,0.04);
+  margin: 18px 0 14px;
 }
-.pr-run-sum-item { flex: 1; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 100px; }
-.pr-run-sum-divider { width: 1px; background: rgba(201,169,110,0.12); align-self: stretch; }
-.pr-run-sum-label { font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: rgba(240,234,224,0.28); }
-.pr-run-sum-val   { font-size: 15px; font-weight: 600; color: rgba(240,234,224,0.80); font-family: 'Georgia', serif; }
-.pr-run-sum-deduct { color: #EF6B6B; }
-.pr-run-sum-net    { color: #C9A96E; }
+.pm-run-prev-item { flex: 1; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; min-width: 90px; }
+.pm-run-prev-sep  { width: 1px; background: rgba(201,169,110,0.10); align-self: stretch; }
+.pm-run-prev-label { font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text-3); }
+.pm-run-prev-val  { font-size: 14px; font-weight: 700; color: var(--text-1); font-family: 'Georgia', serif; }
+.pm-run-prev-val--gold { color: var(--gold); }
 
-.pr-run-warning {
+.pm-run-warning {
   display: flex; align-items: flex-start; gap: 8px;
-  padding: 10px 14px;
+  padding: 10px 13px;
   background: rgba(232,184,75,0.06); border: 1px solid rgba(232,184,75,0.18);
-  color: rgba(232,184,75,0.70); font-size: 11px; line-height: 1.5;
+  color: rgba(232,184,75,0.65); font-size: 11px; line-height: 1.5;
 }
-.pr-run-warning svg { flex-shrink: 0; margin-top: 1px; color: rgba(232,184,75,0.70); }
-.pr-run-warning strong { color: rgba(232,184,75,0.95); }
+.pm-run-warning svg { flex-shrink: 0; margin-top: 1px; }
 
-/* ── Salary summary (employee modal) ── */
-.pr-salary-summary {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 0;
-  border: 1px solid rgba(201,169,110,0.15); overflow: hidden;
+/* Detail summary */
+.pm-detail-summary {
+  display: flex; flex-wrap: wrap; gap: 0;
+  border: 1px solid rgba(201,169,110,0.12); background: rgba(201,169,110,0.03);
+  margin-bottom: 1.5rem;
 }
-.pr-sal-item {
-  display: flex; flex-direction: column; gap: 5px;
-  padding: 14px 16px;
-  border-bottom: 1px solid rgba(201,169,110,0.08);
-  border-right: 1px solid rgba(201,169,110,0.08);
-}
-.pr-sal-item:nth-child(even) { border-right: none; }
-.pr-sal-item--net { background: rgba(201,169,110,0.05); }
-.pr-sal-label { font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: rgba(240,234,224,0.30); }
-.pr-sal-val   { font-size: 16px; font-weight: 600; font-family: 'Georgia', serif; color: rgba(240,234,224,0.80); }
-.pr-sal-item--deduct .pr-sal-val { color: #EF6B6B; }
-.pr-sal-item--bonus  .pr-sal-val { color: #6ECFA9; }
-.pr-sal-item--net    .pr-sal-val { color: #C9A96E; font-size: 18px; }
+.pm-ds-item { flex: 1; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 100px; }
+.pm-ds-item--net { background: rgba(201,169,110,0.07); }
+.pm-ds-sep { width: 1px; background: rgba(201,169,110,0.10); align-self: stretch; }
+.pm-ds-label { font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text-3); }
+.pm-ds-val { font-size: 14px; font-weight: 700; color: var(--text-1); font-family: 'Georgia', serif; }
+.pm-ds-val--red   { color: var(--red); }
+.pm-ds-val--green { color: var(--green); }
+.pm-ds-val--gold  { color: var(--gold); font-size: 16px; }
 
-/* ── Adj list in employee modal ── */
-.pr-adj-list { display: flex; flex-direction: column; gap: 0; border: 1px solid rgba(201,169,110,0.12); }
-.pr-adj-row {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 14px; border-bottom: 1px solid rgba(201,169,110,0.08);
-}
-.pr-adj-row:last-child { border-bottom: none; }
-.pr-adj-label { flex: 1; font-size: 12px; color: rgba(240,234,224,0.65); }
-.pr-no-adj { font-size: 12px; color: rgba(240,234,224,0.25); padding: 16px 0; font-style: italic; }
-
-/* ── Payslip ── */
-.pr-payslip { background: rgba(255,255,255,0.02); border: 1px solid rgba(201,169,110,0.15); }
-.pr-payslip-header {
-  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
-  padding: 20px 22px; border-bottom: 2px solid rgba(201,169,110,0.20);
-  background: rgba(201,169,110,0.05);
-}
-.pr-payslip-company { display: flex; flex-direction: column; gap: 4px; }
-.pr-payslip-company-name {
-  font-size: 16px; font-weight: 600; color: #E8D5B0;
-  font-family: 'Cormorant Garamond', 'Georgia', serif; letter-spacing: .04em;
-}
-.pr-payslip-period { font-size: 11px; color: rgba(201,169,110,0.65); letter-spacing: .06em; text-transform: uppercase; }
-.pr-payslip-meta { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
-.pr-payslip-meta-row { display: flex; gap: 10px; font-size: 11px; }
-.pr-payslip-meta-row span { color: rgba(240,234,224,0.35); }
-.pr-payslip-meta-row strong { color: rgba(240,234,224,0.75); }
-
-.pr-payslip-section-title {
-  font-size: 10px; font-weight: 600; letter-spacing: .10em; text-transform: uppercase;
-  color: rgba(201,169,110,0.60); padding: 12px 22px 8px;
-  border-bottom: 1px solid rgba(201,169,110,0.10);
-}
-.pr-payslip-table { }
-.pr-payslip-row {
+/* Breakdown */
+.pm-breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+.pm-breakdown-list { border: 1px solid rgba(201,169,110,0.10); }
+.pm-breakdown-row {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 9px 22px; border-bottom: 1px solid rgba(201,169,110,0.06);
-  font-size: 12px; color: rgba(240,234,224,0.65);
+  padding: 8px 12px; border-bottom: 1px solid rgba(201,169,110,0.07); font-size: 12px;
 }
-.pr-payslip-row--head {
-  background: rgba(201,169,110,0.04);
-  font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
-  color: rgba(240,234,224,0.28);
-}
-.pr-payslip-row--total {
-  background: rgba(201,169,110,0.06);
-  font-weight: 600; color: rgba(240,234,224,0.80);
-  border-top: 1px solid rgba(201,169,110,0.15);
-}
-.pr-payslip-net {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 16px 22px;
-  background: rgba(201,169,110,0.10); border-top: 2px solid rgba(201,169,110,0.30);
-  font-size: 13px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
-  color: rgba(240,234,224,0.55);
-}
-.pr-payslip-net-amount {
-  font-size: 20px; font-weight: 700; color: #C9A96E;
-  font-family: 'Cormorant Garamond', 'Georgia', serif; letter-spacing: .04em;
+.pm-breakdown-row:last-child { border-bottom: none; }
+.pm-br-label { color: var(--text-2); }
+.pm-br-val   { font-weight: 600; font-family: 'Georgia', serif; color: var(--text-1); }
+.pm-br-empty { padding: 12px; font-size: 11px; color: var(--text-3); font-style: italic; }
+
+.pm-paid-stamp {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--green);
+  background: var(--green-bg); border: 1px solid var(--green-bd);
+  padding: 5px 12px;
 }
 
-/* ── Spinner ── */
-.pr-spinner-sm {
-  width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.15);
-  border-top-color: currentColor; border-radius: 50%; animation: prspin .6s linear infinite;
+.pm-confirm-msg { font-size: 13px; color: var(--text-2); line-height: 1.6; margin: 0; }
+
+/* Buttons */
+.pm-btn-cancel {
+  padding: 9px 20px; background: transparent;
+  border: 1px solid rgba(240,234,224,0.13); color: var(--text-3);
+  font-size: 12px; font-family: inherit; cursor: pointer; letter-spacing: .04em; transition: all .13s;
 }
-@keyframes prspin { to { transform: rotate(360deg); } }
+.pm-btn-cancel:hover { border-color: rgba(240,234,224,0.28); color: var(--text-2); }
+
+.pm-btn-primary {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 22px;
+  background: rgba(201,169,110,0.13); border: 1px solid rgba(201,169,110,0.45);
+  color: var(--gold); font-size: 12px; font-weight: 500; letter-spacing: .07em;
+  text-transform: uppercase; font-family: inherit; cursor: pointer; transition: all .14s;
+}
+.pm-btn-primary:hover:not(:disabled) { background: rgba(201,169,110,0.22); }
+.pm-btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+.pm-btn-danger {
+  background: var(--red-bg) !important; border-color: var(--red-bd) !important;
+  color: var(--red) !important;
+}
+.pm-btn-danger:hover:not(:disabled) { background: rgba(239,107,107,0.20) !important; }
+
+/* Download Payslip button */
+.pm-btn-slip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px;
+  background: rgba(110,207,169,0.08); border: 1px solid rgba(110,207,169,0.30);
+  color: var(--green); font-size: 12px; font-weight: 500; letter-spacing: .06em;
+  text-transform: uppercase; font-family: inherit; cursor: pointer; transition: all .14s;
+}
+.pm-btn-slip:hover { background: rgba(110,207,169,0.16); }
+
+/* Toast */
+.pm-toast {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 10000;
+  display: flex; align-items: center; gap: 9px;
+  padding: 11px 18px; font-size: 12px; font-family: inherit; letter-spacing: .02em;
+  border: 1px solid;
+}
+.pm-toast--success { background: rgba(110,207,169,0.12); color: var(--green); border-color: var(--green-bd); }
+.pm-toast--error   { background: var(--red-bg); color: var(--red); border-color: var(--red-bd); }
+
+/* Transitions */
+.pm-modal-enter-active, .pm-modal-leave-active { transition: opacity .2s; }
+.pm-modal-enter-active .pm-modal, .pm-modal-leave-active .pm-modal { transition: transform .2s, opacity .2s; }
+.pm-modal-enter-from, .pm-modal-leave-to { opacity: 0; }
+.pm-modal-enter-from .pm-modal, .pm-modal-leave-to .pm-modal { transform: translateY(14px); opacity: 0; }
+
+.pm-toast-enter-active, .pm-toast-leave-active { transition: opacity .3s, transform .3s; }
+.pm-toast-enter-from, .pm-toast-leave-to { opacity: 0; transform: translateY(8px); }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .pm-stats { grid-template-columns: repeat(2, 1fr); }
+  .pm-table th:nth-child(5), .pm-table td:nth-child(5) { display: none; }
+  .pm-breakdown-grid { grid-template-columns: 1fr; }
+  .pm-detail-summary { flex-direction: column; }
+  .pm-ds-sep { display: none; }
+}
+@media (max-width: 640px) {
+  .pm-wrap   { padding: 1.25rem 1rem; }
+  .pm-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .pm-stats  { grid-template-columns: 1fr 1fr; }
+  .pm-filter-row { flex-direction: column; align-items: stretch; }
+  .pm-form-grid  { grid-template-columns: 1fr; }
+  .pm-tabs  { flex-wrap: wrap; }
+  .pm-tab-spacer { display: none; }
+}
 </style>

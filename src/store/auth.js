@@ -1,80 +1,68 @@
-// stores/auth.js
-import { defineStore } from 'pinia';
-import axios from 'axios';
+import { defineStore } from 'pinia'
+import axios from 'axios'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    isAuthenticated: false, // Authentication status
-    isUser: false, // User's role (user)
-    isAgent: false, // User's role (agent)
-    token: localStorage.getItem('token'), // Token from localStorage
-    user: {}
+    isAuthenticated: false,
+    token: localStorage.getItem('token'),
+    user: {},
+    permissions: [],
+    roles: []
   }),
-  
+
   actions: {
     async getUser() {
       if (!this.token) {
-        this.isAuthenticated = false;
-        return;
+        this.isAuthenticated = false
+        return
       }
-      
-      axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
-      
-      try {
-        // MOCK: Use mock data for testing without backend
-        this.user = {
-          id: 1,
-          name: 'Admin User',
-          email: 'admin@domain.com',
-          roleId: 3
-        }
-        
-        if (this.user.roleId === 3) {
-          this.isAgent = false;
-          this.isUser = true;
-        } else if (this.user.roleId === 4) {
-          this.isUser = false;
-          this.isAgent = true;
-        }
+      await this.fetchUser()
+    },
 
-        this.isAuthenticated = true;
+    async fetchUser() {
+      try {
+        const baseApi = process.env.VUE_APP_BASE_API
+        axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
+        const res = await axios.get(`${baseApi}/user`)
+        this.user        = res.data.user
+        this.permissions = res.data.permissions
+        this.roles       = res.data.roles
+        this.isAuthenticated = true
       } catch (error) {
-        if (error.response && error.response.status === 401) {
-          this.isAuthenticated = false;
-          this.user = {};
-          localStorage.removeItem('token');
-        } else {
-          console.error('An error occurred while fetching user data:', error);
+        if (error.response?.status === 401) {
+          this.isAuthenticated = false
+          this.user        = {}
+          this.permissions = []
+          this.roles       = []
+          localStorage.removeItem('token')
         }
       }
     },
 
     async changePass(api, data) {
       try {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
-          return await axios.post(process.env.VUE_APP_BASE_API_URL+api, data)
+        axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
+        return await axios.post(process.env.VUE_APP_BASE_API_URL + api, data)
       } catch(e) {
-          return await e
+        return e
       }
     },
-    
-    // Additional method to logout and reset state
+
+    login(token) {
+      this.token = token
+      localStorage.setItem('token', token)
+      this.fetchUser()
+    },
+
     logout() {
-      axios.get(process.env.VUE_APP_BASE_API_URL+'logout').then(() => {
-        this.isAuthenticated = false;
-        this.isUser = false;
-        this.isAgent = false;
-        this.user = {};
-        this.token = null;
+      axios.get(process.env.VUE_APP_BASE_API_URL + 'logout').then(() => {
+        this.isAuthenticated = false
+        this.user        = {}
+        this.permissions = []
+        this.roles       = []
+        this.token       = null
         localStorage.removeItem('token')
       })
     },
-    
-    // Method to login (set token and get user)
-    login(token) {
-      this.token = token;
-      localStorage.setItem('token', token); // Store token in localStorage
-      this.getUser(); // Fetch user data after login
-    },
   },
-});
+})

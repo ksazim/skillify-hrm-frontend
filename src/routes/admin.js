@@ -75,25 +75,31 @@ export default [
         meta: { layout: adminLayout, requiresAuth:true }
     },
     {
-        path: '/admin/dashboard/projects',
+        path: '/admin/project/list',
         name: 'ProjectsModule',
         component: () => import('@/admin/modules/projects/ProjecTs'),
         meta: { layout: adminLayout, requiresAuth:true }
     },
     {
-        path: '/admin/dashboard/tasks',
+        path: '/my-projects',
+        name: 'EmployeeProjects',
+        component: () => import('@/admin/modules/projects/EmployeeProjects'),
+        meta: { layout: adminLayout, requiresAuth:true }
+    },
+    {
+        path: '/admin/project/tasks',
         name: 'TasksModule',
         component: () => import('@/admin/modules/projects/TaskModuLe'),
         meta: { layout: adminLayout, requiresAuth:true }
     },
     {
-        path: '/admin/dashboard/team-assignments',
+        path: '/admin/project/team-assignments',
         name: 'TeamAssignmentModule',
         component: () => import('@/admin/modules/projects/TeamAssignment'),
         meta: { layout: adminLayout, requiresAuth:true }
     },
     {
-        path: '/admin/dashboard/milestones',
+        path: '/admin/project/milestones',
         name: 'MilestonesModule',
         component: () => import('@/admin/modules/projects/MilestoneManagement'),
         meta: { layout: adminLayout, requiresAuth:true }
@@ -111,9 +117,9 @@ export default [
         meta: { layout: adminLayout, requiresAuth:true }
     },
     {
-        path: '/admin/announcements/notice',
+        path: '/announcements/notice',
         name: 'NoticeBoard',
-        component: () => import('@/admin/modules/announcements/NoticeManagement'),
+        component: () => import('@/admin/modules/announcements/NoticeBoard'),
         meta: { layout: adminLayout, requiresAuth:true }
     },
     {

@@ -189,8 +189,8 @@
                   </svg>
                 </div>
               </template>
-              <span v-else :class="['status-badge', `status-badge--${rec.attendance?.status || 'absent'}`]">
-                {{ rec.attendance?.status || 'absent' }}
+              <span v-else :class="['status-badge', `status-badge--${resolveStatus(rec)}`]">
+                {{ resolveStatus(rec) }}
               </span>
             </td>
 
@@ -234,18 +234,18 @@ const baseApi  = process.env.VUE_APP_BASE_API
 const layoutRef = ref(null)
 
 // ── State ────────────────────────────────────────────────────────────────────
-const companies     = ref([])
+const companies       = ref([])
 const selectedCompany = ref('')
-const records       = ref([])
-const isLoading     = ref(false)
-const hasError      = ref(false)
-const errorMessage  = ref('')
-const searchQuery   = ref('')
-const statusFilter  = ref('')
-const editingId     = ref(null)
-const editForm      = ref({})
-const isSaving      = ref(false)
-const notification  = ref({ show: false, type: 'info', title: '', message: '', autoClose: 0 })
+const records         = ref([])
+const isLoading       = ref(false)
+const hasError        = ref(false)
+const errorMessage    = ref('')
+const searchQuery     = ref('')
+const statusFilter    = ref('')
+const editingId       = ref(null)
+const editForm        = ref({})
+const isSaving        = ref(false)
+const notification    = ref({ show: false, type: 'info', title: '', message: '', autoClose: 0 })
 
 // ── Breadcrumbs ───────────────────────────────────────────────────────────────
 const breadcrumbs = [
@@ -260,12 +260,24 @@ const todayLabel = computed(() => {
   })
 })
 
+// ── Status resolver ───────────────────────────────────────────────────────────
+// The API returns `is_present` / `is_late` flags rather than a `status` string,
+// so we derive the display status from whichever field is available.
+const resolveStatus = (rec) => {
+  if (!rec.attendance) return 'absent'
+  // If the backend ever starts returning a status string, prefer it
+  if (rec.attendance.status) return rec.attendance.status
+  if (rec.attendance.is_late  === 1) return 'late'
+  if (rec.attendance.is_present === 1) return 'present'
+  return 'absent'
+}
+
 // ── Stats ─────────────────────────────────────────────────────────────────────
 const pageStats = computed(() => {
   const total   = records.value.length
-  const present = records.value.filter(r => r.attendance?.status === 'present').length
-  const absent  = records.value.filter(r => !r.attendance || r.attendance.status === 'absent').length
-  const late    = records.value.filter(r => r.attendance?.status === 'late').length
+  const present = records.value.filter(r => resolveStatus(r) === 'present').length
+  const absent  = records.value.filter(r => resolveStatus(r) === 'absent').length
+  const late    = records.value.filter(r => resolveStatus(r) === 'late').length
   return [
     { label: 'Total',   value: total   },
     { label: 'Present', value: present },
@@ -282,7 +294,7 @@ const filteredRecords = computed(() => {
     const matchSearch = !searchQuery.value ||
       name.includes(searchQuery.value.toLowerCase()) ||
       id.includes(searchQuery.value)
-    const recStatus = rec.attendance?.status || 'absent'
+    const recStatus  = resolveStatus(rec)
     const matchStatus = !statusFilter.value || recStatus === statusFilter.value
     return matchSearch && matchStatus
   })
@@ -335,7 +347,7 @@ const loadData = async () => {
     const data   = await res.json()
     records.value = Array.isArray(data) ? data : []
   } catch (e) {
-    hasError.value  = true
+    hasError.value     = true
     errorMessage.value = e.message || 'Failed to load attendance.'
     notify('error', errorMessage.value)
   } finally {
@@ -355,7 +367,7 @@ const startEdit = (rec) => {
   editForm.value  = {
     check_in:  rec.attendance.check_in  ? rec.attendance.check_in.slice(0, 5)  : '',
     check_out: rec.attendance.check_out ? rec.attendance.check_out.slice(0, 5) : '',
-    status:    rec.attendance.status || 'present',
+    status:    resolveStatus(rec),
   }
 }
 
@@ -380,6 +392,7 @@ const saveEdit = async (rec) => {
     // Patch local data so we don't re-fetch the whole list
     rec.attendance.check_in  = editForm.value.check_in
     rec.attendance.check_out = editForm.value.check_out
+    // Store the status so resolveStatus picks it up on next render
     rec.attendance.status    = editForm.value.status
     editingId.value = null
     notify('success', `Attendance updated for ${rec.employee.user?.name || 'employee'}.`, { autoClose: 3000 })
@@ -654,7 +667,7 @@ onMounted(() => { loadCompanies() })
   font-size: 13px;
   font-variant-numeric: tabular-nums;
   outline: none;
-  colorscheme: dark;
+  color-scheme: dark;
 }
 
 .time-input:focus { border-color: rgba(201, 169, 110, 0.6); }
@@ -678,9 +691,9 @@ onMounted(() => { loadCompanies() })
   white-space: nowrap;
 }
 
-.status-badge--present  { background: rgba(74, 222, 128, 0.10); border: 1px solid rgba(74, 222, 128, 0.25); color: #4ADE80; }
+.status-badge--present  { background: rgba(74, 222, 128, 0.10);  border: 1px solid rgba(74, 222, 128, 0.25);  color: #4ADE80; }
 .status-badge--absent   { background: rgba(248, 113, 113, 0.10); border: 1px solid rgba(248, 113, 113, 0.25); color: #F87171; }
-.status-badge--late     { background: rgba(251, 191, 36, 0.10); border: 1px solid rgba(251, 191, 36, 0.25); color: #FBBF24; }
+.status-badge--late     { background: rgba(251, 191, 36, 0.10);  border: 1px solid rgba(251, 191, 36, 0.25);  color: #FBBF24; }
 .status-badge--leave    { background: rgba(147, 197, 253, 0.10); border: 1px solid rgba(147, 197, 253, 0.25); color: #93C5FD; }
 .status-badge--half_day { background: rgba(196, 181, 253, 0.10); border: 1px solid rgba(196, 181, 253, 0.25); color: #C4B5FD; }
 
@@ -722,11 +735,11 @@ onMounted(() => { loadCompanies() })
   transition: background .15s;
 }
 
-.btn-save   { background: rgba(74, 222, 128, 0.10); border-color: rgba(74, 222, 128, 0.3); color: #4ADE80; }
+.btn-save         { background: rgba(74, 222, 128, 0.10);  border-color: rgba(74, 222, 128, 0.3);  color: #4ADE80; }
 .btn-save:hover   { background: rgba(74, 222, 128, 0.20); }
 .btn-save:disabled { opacity: .5; cursor: not-allowed; }
 
-.btn-cancel { background: rgba(248, 113, 113, 0.08); border-color: rgba(248, 113, 113, 0.25); color: #F87171; }
+.btn-cancel       { background: rgba(248, 113, 113, 0.08); border-color: rgba(248, 113, 113, 0.25); color: #F87171; }
 .btn-cancel:hover { background: rgba(248, 113, 113, 0.16); }
 
 /* ── Empty state ── */

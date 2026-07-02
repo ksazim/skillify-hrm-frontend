@@ -56,45 +56,69 @@
           </div>
         </div>
 
-        <div class="role-list">
-          <div
-            v-for="role in filteredRoles"
-            :key="role.id"
-            class="role-card"
-            :class="{ 'role-card--active': selectedRole?.id === role.id }"
-            @click="selectRole(role)"
-          >
-            <div class="role-card__left">
-              <div class="role-card__mark" :style="{ '--rc': role.color }">
-                {{ role.initials }}
-              </div>
-              <div class="role-card__info">
-                <p class="role-card__name">{{ role.name }}</p>
-                <p class="role-card__desc">{{ role.description || 'No description' }}</p>
-              </div>
-            </div>
-            <div class="role-card__right">
-              <span class="role-card__badge">{{ countPermissions(role) }} perms</span>
-              <div class="role-card__actions">
-                <button class="icon-btn icon-btn--edit" @click.stop="openEditModal(role)" title="Edit role">
-                  <svg viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
-                </button>
-                <button
-                  class="icon-btn icon-btn--del"
-                  @click.stop="openDeleteConfirm(role)"
-                  title="Delete role"
-                  :disabled="role.protected"
-                >
-                  <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                </button>
-              </div>
-            </div>
-          </div>
+        <!-- API error -->
+        <div v-if="apiError" class="api-error">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+          {{ apiError }}
+        </div>
 
-          <div v-if="!filteredRoles.length" class="role-empty">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-            <p>No roles found</p>
-          </div>
+        <div class="role-list">
+          <!-- Loading skeleton -->
+          <template v-if="loading">
+            <div class="role-skeleton" v-for="n in 4" :key="n">
+              <div class="skeleton-circle" />
+              <div class="skeleton-lines">
+                <div class="skeleton-line skeleton-line--wide" />
+                <div class="skeleton-line skeleton-line--narrow" />
+              </div>
+            </div>
+          </template>
+
+          <template v-else>
+            <div
+              v-for="role in filteredRoles"
+              :key="role.id"
+              class="role-card"
+              :class="{ 'role-card--active': selectedRole?.id === role.id }"
+              @click="selectRole(role)"
+            >
+              <div class="role-card__left">
+                <div class="role-card__mark" :style="{ '--rc': role.color }">
+                  {{ role.initials }}
+                </div>
+                <div class="role-card__info">
+                  <p class="role-card__name">{{ role.name }}</p>
+                  <p class="role-card__desc">{{ role.description || 'No description' }}</p>
+                </div>
+              </div>
+              <div class="role-card__right">
+                <!--
+                  FIX: countPermissions reads from draftPerms when this role is
+                  selected (badge updates live as toggles change), and from
+                  role.permissions for all other roles (saved/confirmed state).
+                -->
+                <span class="role-card__badge">{{ countPermissions(role) }} perms</span>
+                <div class="role-card__actions">
+                  <button class="icon-btn icon-btn--edit" @click.stop="openEditModal(role)" title="Edit role">
+                    <svg viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
+                  </button>
+                  <button
+                    class="icon-btn icon-btn--del"
+                    @click.stop="openDeleteConfirm(role)"
+                    title="Delete role"
+                    :disabled="role.protected"
+                  >
+                    <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="!filteredRoles.length" class="role-empty">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              <p>No roles found</p>
+            </div>
+          </template>
         </div>
       </div>
 
@@ -132,6 +156,14 @@
           </div>
         </Transition>
 
+        <!-- Save error banner -->
+        <Transition name="banner">
+          <div v-if="saveError" class="error-banner">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+            {{ saveError }}
+          </div>
+        </Transition>
+
         <!-- Module groups -->
         <div class="module-groups">
           <div v-for="group in MODULE_GROUPS" :key="group.name" class="module-group">
@@ -139,8 +171,8 @@
             <div class="module-group__header">
               <span class="module-group__name">{{ group.name }}</span>
               <div class="module-group__toggles">
-                <button class="micro-btn" @click="toggleGroup(group, 'view', false)">None</button>
-                <button class="micro-btn micro-btn--gold" @click="toggleGroup(group, 'full', true)">All</button>
+                <button class="micro-btn" @click="toggleGroup(group, false)">None</button>
+                <button class="micro-btn micro-btn--gold" @click="toggleGroup(group, true)">All</button>
               </div>
             </div>
 
@@ -221,24 +253,35 @@
             </div>
 
             <div class="modal-body">
-              <!-- Role name -->
+              <!-- Modal-level error -->
+              <div v-if="modalError" class="modal-error">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                {{ modalError }}
+              </div>
+
               <div class="form-group" :class="{ 'form-group--error': formErrors.name }">
                 <label class="form-label">Role name <span class="req">*</span></label>
                 <input v-model="form.name" class="form-input" placeholder="e.g. HR Manager" @blur="validateForm" />
                 <span v-if="formErrors.name" class="form-error">{{ formErrors.name }}</span>
               </div>
 
-              <!-- Description -->
               <div class="form-group">
                 <label class="form-label">Description</label>
                 <textarea v-model="form.description" class="form-textarea" placeholder="Brief description of this role's responsibilities…" rows="3" />
               </div>
 
-              <!-- Initials + colour -->
               <div class="form-row">
                 <div class="form-group" :class="{ 'form-group--error': formErrors.initials }">
                   <label class="form-label">Initials <span class="req">*</span></label>
-                  <input v-model="form.initials" class="form-input" placeholder="SA" maxlength="2" style="text-transform:uppercase" @input="form.initials = form.initials.toUpperCase()" @blur="validateForm" />
+                  <input
+                    v-model="form.initials"
+                    class="form-input"
+                    placeholder="SA"
+                    maxlength="2"
+                    style="text-transform:uppercase"
+                    @input="form.initials = form.initials.toUpperCase()"
+                    @blur="validateForm"
+                  />
                   <span v-if="formErrors.initials" class="form-error">{{ formErrors.initials }}</span>
                 </div>
                 <div class="form-group">
@@ -256,7 +299,6 @@
                 </div>
               </div>
 
-              <!-- Protected toggle -->
               <div class="form-group">
                 <label class="form-checkbox-label">
                   <input type="checkbox" class="form-checkbox-input" v-model="form.protected" />
@@ -307,9 +349,13 @@
             </div>
             <div class="modal-footer">
               <button class="btn-ghost" @click="showDeleteModal = false">Cancel</button>
-              <button class="btn-danger" @click="confirmDelete">
-                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9z" clip-rule="evenodd"/></svg>
-                Delete role
+              <button class="btn-danger" @click="confirmDelete" :disabled="deleting">
+                <svg v-if="!deleting" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9z" clip-rule="evenodd"/></svg>
+                <svg v-else class="btn-spinner" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-opacity=".25"/>
+                  <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" stroke-width="3" fill="none"/>
+                </svg>
+                {{ deleting ? 'Deleting…' : 'Delete role' }}
               </button>
             </div>
           </div>
@@ -321,15 +367,38 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, onMounted } from 'vue'
+import axios from 'axios'
 
-// ── Module groups + actions ────────────────────────────────────────────────────
+// ── API base ───────────────────────────────────────────────────────────────────
+const API = `${process.env.VUE_APP_BASE_API}/admin/roles`
+
+// ── Actions ───────────────────────────────────────────────────────────────────
 const ACTIONS = [
   { key: 'view',   label: 'View'   },
   { key: 'create', label: 'Create' },
   { key: 'edit',   label: 'Edit'   },
   { key: 'delete', label: 'Delete' },
 ]
+
+// ── All module keys — must stay in sync with MODULE_GROUPS below ───────────────
+// FIX: used by selectRole() to guarantee every module key exists in draftPerms,
+//      even if the server returned no permissions for that module. Without this,
+//      hasPermission() returned undefined and togglePermission() spread undefined.
+const ALL_MODULE_KEYS = [
+  'company', 'employee', 'department',
+  'attendance', 'leave', 'holiday',
+  'payroll', 'salary',
+  'users', 'roles',
+  'recruitment', 'training', 'performance',
+  'announcements',
+  'reports', 'setup',
+]
+
+// ── Helper: build an empty permission object for one module ───────────────────
+function emptyModulePerms() {
+  return ACTIONS.reduce((acc, a) => { acc[a.key] = false; return acc }, {})
+}
 
 const MOD_ICON = (path) => `<svg width="13" height="13" viewBox="0 0 20 20" fill="currentColor">${path}</svg>`
 
@@ -389,192 +458,279 @@ const MODULE_GROUPS = [
 
 const ROLE_COLORS = ['#C9A96E','#5DCAA5','#85B7EB','#F09595','#AFA9EC','#EF9F27','#ED93B1','#97C459']
 
-// ── Default roles ─────────────────────────────────────────────────────────────
-const roles = ref([
-  {
-    id: 1, name: 'Super Administrator', description: 'Full system access — all modules, all actions',
-    initials: 'SA', color: '#C9A96E', protected: true,
-    permissions: buildFullPermissions(),
-  },
-  {
-    id: 2, name: 'Administrator', description: 'Full operational access across all modules',
-    initials: 'AD', color: '#85B7EB', protected: false,
-    permissions: buildFullPermissions(),
-  },
-  {
-    id: 3, name: 'HR Manager', description: 'Manages employees, attendance, leave and payroll',
-    initials: 'HM', color: '#5DCAA5', protected: false,
-    permissions: buildPartialPermissions(['employee','attendance','leave','payroll','reports']),
-  },
-  {
-    id: 4, name: 'Employee', description: 'Self-service — attendance punch, leave application, work updates',
-    initials: 'EM', color: '#AFA9EC', protected: false,
-    permissions: buildViewPermissions(['attendance','leave','announcements']),
-  },
-])
+// ── Roles state — populated from API ─────────────────────────────────────────
+const roles    = ref([])
+const loading  = ref(false)
+const apiError = ref('')
 
-function buildFullPermissions() {
-  const p = {}
-  MODULE_GROUPS.flatMap(g => g.modules).forEach(m => {
-    p[m.key] = { view:true, create:true, edit:true, delete:true }
-  })
-  return p
+async function fetchRoles() {
+  loading.value  = true
+  apiError.value = ''
+  try {
+    const { data } = await axios.get(API)
+    roles.value = data.data
+  } catch (e) {
+    apiError.value = e?.response?.data?.message ?? 'Failed to load roles.'
+  } finally {
+    loading.value = false
+  }
 }
 
-function buildPartialPermissions(allowed) {
-  const p = {}
-  MODULE_GROUPS.flatMap(g => g.modules).forEach(m => {
-    p[m.key] = allowed.includes(m.key)
-      ? { view:true, create:true, edit:true, delete:false }
-      : { view:false, create:false, edit:false, delete:false }
-  })
-  return p
-}
-
-function buildViewPermissions(allowed) {
-  const p = {}
-  MODULE_GROUPS.flatMap(g => g.modules).forEach(m => {
-    p[m.key] = allowed.includes(m.key)
-      ? { view:true, create:true, edit:false, delete:false }
-      : { view:false, create:false, edit:false, delete:false }
-  })
-  return p
-}
-
-// ── State ──────────────────────────────────────────────────────────────────────
-let nextId          = 5
-const roleSearch    = ref('')
-const selectedRole  = ref(null)
-// Deep-copy of permissions being edited (avoid mutating original until Save)
-const draftPerms    = ref({})
-const saving        = ref(false)
-const savedBanner   = ref(false)
+// ── State ─────────────────────────────────────────────────────────────────────
+const roleSearch   = ref('')
+const selectedRole = ref(null)
+const draftPerms   = ref({})
+const saving       = ref(false)
+const savedBanner  = ref(false)
+const saveError    = ref('')
+let   savedBannerTimer = null
 
 // Modal
-const showModal     = ref(false)
-const isEditing     = ref(false)
-const modalSaving   = ref(false)
-const form          = reactive({ name:'', description:'', initials:'', color: ROLE_COLORS[0], protected: false })
-const formErrors    = reactive({ name:'', initials:'' })
-let   editingId     = null
+const showModal   = ref(false)
+const isEditing   = ref(false)
+const modalSaving = ref(false)
+const modalError  = ref('')
+const form        = reactive({ name:'', description:'', initials:'', color: ROLE_COLORS[0], protected: false })
+const formErrors  = reactive({ name:'', initials:'' })
+let   editingId   = null
 
 // Delete
 const showDeleteModal = ref(false)
 const roleToDelete    = ref(null)
+const deleting        = ref(false)
 
-// ── Computed ───────────────────────────────────────────────────────────────────
+// ── Bootstrap ─────────────────────────────────────────────────────────────────
+onMounted(fetchRoles)
+
+// ── Computed ──────────────────────────────────────────────────────────────────
 const filteredRoles = computed(() =>
   roles.value.filter(r => r.name.toLowerCase().includes(roleSearch.value.toLowerCase()))
 )
 
-// ── Permission helpers ─────────────────────────────────────────────────────────
+// ── Permission helpers ────────────────────────────────────────────────────────
+
+/**
+ * FIX: selectRole now always builds a COMPLETE draftPerms map covering every
+ * module key, regardless of what the server returned for role.permissions.
+ *
+ * Previously, modules with zero permissions were absent from the map entirely.
+ * This caused hasPermission() to return undefined (not false), which made
+ * the toggle button render incorrectly and caused togglePermission() to spread
+ * undefined into the new object — silently producing NaN action keys.
+ */
 function selectRole(role) {
   selectedRole.value = role
-  // Deep-copy permissions into draft
-  draftPerms.value = JSON.parse(JSON.stringify(role.permissions))
+  saveError.value    = ''
+
+  // Build a full map: every module key present, every action key a real boolean
+  const full = {}
+  ALL_MODULE_KEYS.forEach(moduleKey => {
+    full[moduleKey] = {}
+    ACTIONS.forEach(a => {
+      // FIX: double-bang coerces null / undefined / 0 / 1 to a real boolean
+      full[moduleKey][a.key] = !!(role.permissions?.[moduleKey]?.[a.key])
+    })
+  })
+
+  draftPerms.value = full
 }
 
+/**
+ * FIX: always returns a concrete boolean — never undefined.
+ * The ?. chain is safe because selectRole() guarantees the key exists,
+ * but the || false keeps it honest if called before any role is selected.
+ */
 function hasPermission(mod, action) {
-  return !!draftPerms.value[mod]?.[action]
+  return draftPerms.value[mod]?.[action] || false
 }
 
+/**
+ * FIX: guard against a missing module key before spreading.
+ * Previously, if draftPerms[mod] was undefined (fresh role, no permissions),
+ * the spread produced { ...undefined } = {} and the toggle was silently lost.
+ */
 function togglePermission(mod, action) {
-  if (!draftPerms.value[mod]) draftPerms.value[mod] = {}
-  draftPerms.value[mod][action] = !draftPerms.value[mod][action]
+  const current = draftPerms.value[mod] ?? emptyModulePerms()
+  draftPerms.value = {
+    ...draftPerms.value,
+    [mod]: {
+      ...current,
+      [action]: !current[action],
+    },
+  }
 }
 
 function isRowFull(mod) {
   return ACTIONS.every(a => draftPerms.value[mod]?.[a.key])
 }
 
+/**
+ * FIX: countPermissions uses draftPerms for the selected role (live badge update
+ * as toggles change) and role.permissions for all other roles (stable saved state).
+ * Both sources are now guaranteed to have the same complete key structure.
+ */
 function countPermissions(role) {
-  return Object.values(role.permissions).reduce((sum, p) => {
-    return sum + Object.values(p).filter(Boolean).length
-  }, 0)
+  const source = (selectedRole.value?.id === role.id)
+    ? draftPerms.value
+    : role.permissions
+  if (!source) return 0
+  return Object.values(source).reduce((sum, p) =>
+    sum + Object.values(p).filter(Boolean).length, 0)
 }
 
-function toggleGroup(group, _type, value) {
+function toggleGroup(group, value) {
+  const updated = { ...draftPerms.value }
   group.modules.forEach(m => {
-    if (!draftPerms.value[m.key]) draftPerms.value[m.key] = {}
-    ACTIONS.forEach(a => { draftPerms.value[m.key][a.key] = value })
+    updated[m.key] = ACTIONS.reduce((acc, a) => ({ ...acc, [a.key]: value }), {})
   })
+  draftPerms.value = updated
 }
 
 function toggleAllPermissions(value) {
-  MODULE_GROUPS.flatMap(g => g.modules).forEach(m => {
-    if (!draftPerms.value[m.key]) draftPerms.value[m.key] = {}
-    ACTIONS.forEach(a => { draftPerms.value[m.key][a.key] = value })
+  const updated = {}
+  ALL_MODULE_KEYS.forEach(key => {
+    updated[key] = ACTIONS.reduce((acc, a) => ({ ...acc, [a.key]: value }), {})
   })
+  draftPerms.value = updated
 }
 
+// ── Save permissions → POST /admin/roles/{id}/permissions ─────────────────────
 async function savePermissions() {
   if (!selectedRole.value) return
-  saving.value = true
-  await new Promise(r => setTimeout(r, 600)) // simulate API
-  selectedRole.value.permissions = JSON.parse(JSON.stringify(draftPerms.value))
-  saving.value = false
-  savedBanner.value = true
-  setTimeout(() => { savedBanner.value = false }, 3000)
+  saving.value    = true
+  saveError.value = ''
+
+  // Clear any existing success banner timer
+  if (savedBannerTimer) clearTimeout(savedBannerTimer)
+
+  try {
+    const { data } = await axios.post(
+      `${API}/${selectedRole.value.id}/permissions`,
+      { permissions: draftPerms.value }
+    )
+
+    // FIX: update the local role list with the server-confirmed permissions
+    // so that the non-selected role badges also reflect the saved state
+    const idx = roles.value.findIndex(r => r.id === selectedRole.value.id)
+    if (idx > -1) {
+      roles.value[idx] = { ...roles.value[idx], permissions: data.data.permissions }
+    }
+    // FIX: also refresh selectedRole so its description/meta stays in sync
+    selectedRole.value = { ...selectedRole.value, permissions: data.data.permissions }
+
+    savedBanner.value  = true
+    savedBannerTimer   = setTimeout(() => { savedBanner.value = false }, 3000)
+
+  } catch (e) {
+    saveError.value = e?.response?.data?.message ?? 'Failed to save permissions.'
+  } finally {
+    saving.value = false
+  }
 }
 
-// ── Role CRUD ──────────────────────────────────────────────────────────────────
+// ── Role CRUD ─────────────────────────────────────────────────────────────────
 function openCreateModal() {
-  isEditing.value = false; editingId = null
+  isEditing.value  = false
+  editingId        = null
+  modalError.value = ''
   Object.assign(form, { name:'', description:'', initials:'', color: ROLE_COLORS[0], protected: false })
   formErrors.name = ''; formErrors.initials = ''
-  showModal.value = true
+  showModal.value  = true
 }
 
 function openEditModal(role) {
-  isEditing.value = true; editingId = role.id
-  Object.assign(form, { name: role.name, description: role.description, initials: role.initials, color: role.color, protected: role.protected })
+  isEditing.value  = true
+  editingId        = role.id
+  modalError.value = ''
+  Object.assign(form, {
+    name:        role.name,
+    description: role.description,
+    initials:    role.initials,
+    color:       role.color,
+    protected:   !!role.protected,
+  })
   formErrors.name = ''; formErrors.initials = ''
   showModal.value = true
 }
 
 function validateForm() {
-  let ok = true
-  if (!form.name.trim()) { formErrors.name = 'Role name is required'; ok = false } else formErrors.name = ''
-  if (!form.initials.trim()) { formErrors.initials = 'Initials are required'; ok = false } else formErrors.initials = ''
-  return ok
+  formErrors.name     = form.name.trim()     ? '' : 'Role name is required'
+  formErrors.initials = form.initials.trim() ? '' : 'Initials are required'
+  return !formErrors.name && !formErrors.initials
 }
 
+// Create → POST /admin/roles   |   Edit → PUT /admin/roles/{id}
 async function submitModal() {
   if (!validateForm()) return
   modalSaving.value = true
-  await new Promise(r => setTimeout(r, 500))
-
-  if (isEditing.value) {
-    const idx = roles.value.findIndex(r => r.id === editingId)
-    if (idx > -1) Object.assign(roles.value[idx], { name: form.name, description: form.description, initials: form.initials, color: form.color, protected: form.protected })
-    if (selectedRole.value?.id === editingId) Object.assign(selectedRole.value, { name: form.name, description: form.description, initials: form.initials, color: form.color })
-  } else {
-    const newRole = {
-      id: nextId++, name: form.name, description: form.description,
-      initials: form.initials, color: form.color, protected: form.protected,
-      permissions: buildViewPermissions([]),
+  modalError.value  = ''
+  try {
+    if (isEditing.value) {
+      const { data } = await axios.put(`${API}/${editingId}`, {
+        name:        form.name,
+        description: form.description,
+        initials:    form.initials,
+        color:       form.color,
+        protected:   form.protected,
+      })
+      const updated = data.data
+      const idx = roles.value.findIndex(r => r.id === editingId)
+      if (idx > -1) roles.value[idx] = { ...roles.value[idx], ...updated }
+      // FIX: keep selectedRole in sync if we just edited the currently selected role
+      if (selectedRole.value?.id === editingId) {
+        selectedRole.value = { ...selectedRole.value, ...updated }
+      }
+    } else {
+      const { data } = await axios.post(API, {
+        name:        form.name,
+        description: form.description,
+        initials:    form.initials,
+        color:       form.color,
+        protected:   form.protected,
+      })
+      roles.value.push(data.data)
     }
-    roles.value.push(newRole)
+    showModal.value = false
+  } catch (e) {
+    const errors = e?.response?.data?.errors
+    if (errors?.name)     formErrors.name     = errors.name[0]
+    if (errors?.initials) formErrors.initials = errors.initials[0]
+    modalError.value = e?.response?.data?.message ?? 'Something went wrong.'
+  } finally {
+    modalSaving.value = false
   }
-
-  modalSaving.value = false
-  showModal.value = false
 }
 
 function closeModal() { showModal.value = false }
 
 function openDeleteConfirm(role) {
+  // FIX: explicit boolean cast — avoids truthy/falsy surprises if the local
+  //      role object still has a raw DB integer for protected (e.g. from a
+  //      stale cache before formatRole cast it server-side)
   if (role.protected) return
-  roleToDelete.value = role
+  roleToDelete.value    = role
   showDeleteModal.value = true
 }
 
-function confirmDelete() {
+// Delete → DELETE /admin/roles/{id}
+async function confirmDelete() {
   if (!roleToDelete.value) return
-  roles.value = roles.value.filter(r => r.id !== roleToDelete.value.id)
-  if (selectedRole.value?.id === roleToDelete.value.id) { selectedRole.value = null; draftPerms.value = {} }
-  showDeleteModal.value = false
-  roleToDelete.value = null
+  deleting.value = true
+  try {
+    await axios.delete(`${API}/${roleToDelete.value.id}`)
+    roles.value = roles.value.filter(r => r.id !== roleToDelete.value.id)
+    if (selectedRole.value?.id === roleToDelete.value.id) {
+      selectedRole.value = null
+      draftPerms.value   = {}
+    }
+  } catch (e) {
+    // Surface the error — role may be protected or server errored
+    apiError.value = e?.response?.data?.message ?? 'Failed to delete role.'
+  } finally {
+    deleting.value        = false
+    showDeleteModal.value = false
+    roleToDelete.value    = null
+  }
 }
 </script>
 
@@ -652,9 +808,21 @@ function confirmDelete() {
 .search-input::placeholder { color:var(--text-muted); }
 .search-input:focus { border-color:var(--gold-dim); }
 
+.api-error { display:flex; align-items:center; gap:8px; padding:10px 16px; background:rgba(240,149,149,0.07); border-bottom:1px solid rgba(240,149,149,0.25); font-size:12px; color:#F09595; }
+.api-error svg { width:14px; height:14px; flex-shrink:0; }
+
 .role-list { flex:1; overflow-y:auto; padding:6px 0; }
 .role-list::-webkit-scrollbar { width:3px; }
 .role-list::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
+
+/* Skeleton loader */
+.role-skeleton { display:flex; align-items:center; gap:10px; padding:11px 16px; border-bottom:1px solid var(--border); }
+.skeleton-circle { width:32px; height:32px; border-radius:50%; background:var(--onyx-4); flex-shrink:0; animation:shimmer 1.4s infinite; }
+.skeleton-lines { display:flex; flex-direction:column; gap:6px; flex:1; }
+.skeleton-line { height:10px; background:var(--onyx-4); border-radius:2px; animation:shimmer 1.4s infinite; }
+.skeleton-line--wide { width:70%; }
+.skeleton-line--narrow { width:45%; }
+@keyframes shimmer { 0%,100%{opacity:.5} 50%{opacity:1} }
 
 .role-card { display:flex; align-items:center; justify-content:space-between; padding:11px 16px; cursor:pointer; transition:background .14s; border-bottom:1px solid var(--border); position:relative; }
 .role-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--gold); transform:scaleY(0); transition:transform .16s; }
@@ -678,7 +846,7 @@ function confirmDelete() {
 
 .role-card__info { min-width:0; }
 .role-card__name { font-size:12.5px; font-weight:500; color:var(--text-primary); margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.role-card__desc { font-size:10.5px; color:var(--text-muted); margin:1px 0 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px; }
+.role-card__desc { font-size:10.5px; color:var(--text-muted); margin:1px 0 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
 .role-card__badge { font-size:9.5px; letter-spacing:.06em; padding:2px 7px; border:1px solid var(--border); color:var(--text-muted); white-space:nowrap; }
 
@@ -728,9 +896,11 @@ function confirmDelete() {
 .btn-spinner { animation:spin .8s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
 
-/* Save banner */
+/* Banners */
 .saved-banner { display:flex; align-items:center; gap:9px; padding:10px 24px; background:rgba(29,158,117,0.08); border-bottom:1px solid rgba(29,158,117,0.3); font-size:12.5px; color:#5DCAA5; letter-spacing:.04em; }
 .saved-banner svg { width:14px; height:14px; flex-shrink:0; }
+.error-banner { display:flex; align-items:center; gap:9px; padding:10px 24px; background:rgba(240,149,149,0.07); border-bottom:1px solid rgba(240,149,149,0.3); font-size:12.5px; color:#F09595; letter-spacing:.04em; }
+.error-banner svg { width:14px; height:14px; flex-shrink:0; }
 .banner-enter-active { transition:max-height .2s ease,opacity .18s ease; max-height:60px; overflow:hidden; }
 .banner-leave-active { transition:max-height .16s ease,opacity .14s ease; }
 .banner-enter-from,.banner-leave-to { max-height:0; opacity:0; }
@@ -750,7 +920,7 @@ function confirmDelete() {
 .module-table { width:100%; }
 .module-table__head { display:grid; grid-template-columns:1fr repeat(4,64px); background:var(--onyx-4); border-bottom:1px solid var(--border); }
 .mt-col { padding:8px 12px; display:flex; align-items:center; }
-.mt-col--module { font-size:9px; text-transform:uppercase; letter-spacing:.16em; color:var(--text-muted); }
+.mt-col--module { font-size:9px; text-transform:uppercase; letter-spacing:.16em; color:var(--text-muted); gap:8px; }
 .mt-col--action { justify-content:center; font-size:9px; text-transform:uppercase; letter-spacing:.14em; color:var(--text-muted); }
 
 .module-row { display:grid; grid-template-columns:1fr repeat(4,64px); border-bottom:1px solid var(--border); transition:background .12s; }
@@ -822,6 +992,10 @@ function confirmDelete() {
 .modal-body   { padding:20px; display:flex; flex-direction:column; gap:16px; }
 .modal-footer { padding:14px 20px; border-top:1px solid var(--border); background:var(--onyx-3); display:flex; justify-content:flex-end; gap:8px; }
 
+/* Modal-level error */
+.modal-error { display:flex; align-items:center; gap:8px; padding:10px 12px; background:rgba(240,149,149,0.07); border:1px solid rgba(240,149,149,0.3); font-size:12px; color:#F09595; }
+.modal-error svg { width:13px; height:13px; flex-shrink:0; }
+
 /* Form fields in modal */
 .form-group { display:flex; flex-direction:column; gap:6px; }
 .form-group--error .form-input,
@@ -858,7 +1032,8 @@ function confirmDelete() {
 .delete-msg { font-size:13.5px; color:var(--text-secondary); line-height:1.6; margin:0; }
 .delete-msg strong { color:var(--text-primary); }
 .btn-danger { display:inline-flex; align-items:center; gap:7px; padding:8px 18px; background:rgba(240,149,149,0.10); border:1px solid rgba(240,149,149,0.4); color:#F09595; font-family:inherit; font-size:10.5px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; transition:background .14s,border-color .14s; }
-.btn-danger:hover { background:rgba(240,149,149,0.18); border-color:#F09595; }
+.btn-danger:hover:not(:disabled) { background:rgba(240,149,149,0.18); border-color:#F09595; }
+.btn-danger:disabled { opacity:.5; cursor:not-allowed; }
 .btn-danger svg { width:12px; height:12px; }
 
 /* ── Modal transition ── */

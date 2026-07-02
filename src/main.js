@@ -3,6 +3,7 @@ import App from './App.vue'
 
 import Router from './routes/'
 import { createPinia } from 'pinia'
+import { canDirective } from '@/directives/can'
 import { useAppConfig } from '@/composables/useAppConfig'
 
 /* Import the FontAwesome core */
@@ -27,6 +28,7 @@ const initApp = async () => {
   const app = createApp(App)
   .component('font-awesome-icon', FontAwesomeIcon)
   app.use(pinia)
+  app.directive('can', canDirective)
   app.use(Router)
   
   await useAppConfig()

@@ -358,39 +358,33 @@ const login = async () => {
   loading.value = true;
 
   try {
-    // MOCK LOGIN - Accept any valid email/password for testing
-    if (form.email && form.password) {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 800));
+    const response = await fetch(
+      `${process.env.VUE_APP_BASE_API}/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ email: form.email, password: form.password }),
+      }
+    );
 
-      // Generate mock token
-      const mockToken = "mock_token_" + btoa(form.email).substring(0, 20);
+    const data = await response.json();
 
-      authStore.login(mockToken);
-      successMessage.value = "Login successful! (Mock mode)";
+    if (data.status === 200) {
+      authStore.login(data.token);
+      successMessage.value = "Login successful! Redirecting…";
       setTimeout(() => router.push("/admin/dashboard"), 1000);
+    } else if (data.status === 401) {
+      errorMessage.value = "Invalid email or password. Please try again.";
+    } else if (data.status === 422) {
+      errorMessage.value = data.errors
+        ? Object.values(data.errors).flat().join(", ")
+        : data.message || "Validation failed.";
     } else {
-      errorMessage.value = "Invalid response from server. Please try again.";
+      errorMessage.value = data.message || "Login failed. Please try again.";
     }
   } catch (error) {
-    if (error.response) {
-      if (error.response.status === 401) {
-        errorMessage.value = "Invalid email or password. Please try again.";
-      } else if (error.response.status === 422) {
-        const errors = error.response.data.errors;
-        errorMessage.value = errors
-          ? Object.values(errors).flat().join(", ")
-          : error.response.data.message || "Validation failed.";
-      } else {
-        errorMessage.value =
-          error.response.data.message || "Login failed. Please try again.";
-      }
-    } else if (error.request) {
-      errorMessage.value =
-        "Unable to connect to server. Please check your connection.";
-    } else {
-      errorMessage.value = "An unexpected error occurred. Please try again.";
-    }
+    console.error('Full error:', error);
+    errorMessage.value = "Unable to connect to server. Please check your connection.";
   } finally {
     loading.value = false;
   }

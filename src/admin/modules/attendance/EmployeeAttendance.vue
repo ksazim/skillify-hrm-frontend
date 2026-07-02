@@ -553,12 +553,16 @@ let clockInterval   = null
 let elapsedInterval = null
 
 // ── Date helpers ──────────────────────────────────────────────────────────────
-const dateOf  = (dt) => dt?.slice(0, 10) ?? ''
-const todayStr = new Date().toLocaleDateString('en-CA')
+const dateOf = (dt) => {
+  if (!dt) return ''
+  const d = new Date(dt)
+  return d.toLocaleDateString('en-CA') // "YYYY-MM-DD" in local timezone
+}
+const todayStr = computed(() => new Date().toLocaleDateString('en-CA'))
 
 // ── Derived state ─────────────────────────────────────────────────────────────
 const todayLogs = computed(() =>
-  logs.value.filter(l => dateOf(l.check_time) === todayStr)
+  logs.value.filter(l => dateOf(l.check_time) === todayStr.value)
 )
 const firstCheckIn = computed(() => {
   const ins = todayLogs.value.filter(l => l.type === 'check_in')

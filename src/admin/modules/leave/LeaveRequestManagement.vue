@@ -758,8 +758,8 @@ const docFileInput = ref(null)
 // ─────────────────────────────────────────────────────────────────────────────
 const APPROVAL_STAGES = [
   { label: 'Team Lead',  roles: ['team_lead', 'manager']             },
-  { label: 'Admin / HR', roles: ['admin', 'hr', 'superadmin']        },
-  { label: 'CEO',        roles: ['ceo', 'super_admin', 'executive']   },
+  { label: 'Admin / HR', roles: ['admin', 'hr', 'Super Administrator']        },
+  { label: 'CEO',        roles: ['ceo', 'Super Administrator', 'executive']   },
 ]
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
