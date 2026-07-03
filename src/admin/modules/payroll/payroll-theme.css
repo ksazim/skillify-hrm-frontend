@@ -1,0 +1,246 @@
+/* ─────────────────────────────────────────────────────────
+   Payroll design system — light, modern SaaS palette.
+   Defined once on .payroll-app and inherited by every child
+   component (CSS custom properties cascade through the DOM
+   regardless of Vue's scoped-style attribute selectors).
+   ───────────────────────────────────────────────────────── */
+
+.payroll-app {
+  --primary:        #4F46E5;
+  --primary-hover:  #4338CA;
+  --primary-light:  #EEF2FF;
+  --primary-border: #C7D2FE;
+
+  --bg:        #F7F8FA;
+  --surface:   #FFFFFF;
+  --surface-2: #F3F4F6;
+  --border:    #E5E7EB;
+  --border-strong: #D1D5DB;
+  /* --layout-bg: #FFFFFF; */
+
+  --text-1: #111827;
+  --text-2: #4B5563;
+  --text-3: #9CA3AF;
+
+  --green-text:   #059669;
+  --green-bg:     #ECFDF5;
+  --green-border: #A7F3D0;
+
+  --red-text:   #DC2626;
+  --red-bg:     #FEF2F2;
+  --red-border: #FECACA;
+
+  --amber-text:   #B45309;
+  --amber-bg:     #FFFBEB;
+  --amber-border: #FDE68A;
+
+  --blue-text:   #2563EB;
+  --blue-bg:     #EFF6FF;
+  --blue-border: #BFDBFE;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.07);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text-1);
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 18px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, opacity .15s;
+  white-space: nowrap;
+}
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.btn--primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.btn--primary:hover:not(:disabled) { background: var(--primary-hover); border-color: var(--primary-hover); }
+
+.btn--ghost {
+  background: var(--surface);
+  color: var(--text-2);
+  border-color: var(--border);
+}
+.btn--ghost:hover { border-color: var(--border-strong); color: var(--text-1); }
+
+.btn--danger {
+  background: var(--red-text);
+  color: #fff;
+}
+.btn--danger:hover:not(:disabled) { background: #B91C1C; }
+
+.btn--success-outline {
+  background: var(--green-bg);
+  color: var(--green-text);
+  border-color: var(--green-border);
+}
+.btn--success-outline:hover { background: #DCFCE7; }
+
+/* ── Modal shell (shared by all modal components) ─────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 16px;
+  z-index: 9999;
+  overflow-y: auto;
+}
+.modal-panel {
+  background: #FFFFFF;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+}
+.modal-panel--wide { max-width: 700px; }
+.modal-panel--sm   { max-width: 420px; }
+
+.modal-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.modal-panel__head-left { display: flex; align-items: center; gap: 12px; }
+.modal-panel__icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-panel__icon--primary { background: var(--primary-light); color: var(--primary); }
+.modal-panel__icon--danger  { background: var(--red-bg); color: var(--red-text); }
+
+.modal-panel__title { font-size: 15px; font-weight: 700; color: var(--text-1); margin: 0; }
+.modal-panel__subtitle {
+  font-size: 12px; color: var(--text-3); margin: 3px 0 0;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 4px;
+}
+.modal-panel__close {
+  width: 30px; height: 30px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-3);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.modal-panel__close:hover { border-color: var(--border-strong); color: var(--text-1); }
+
+.modal-notif { padding: 10px 24px; font-size: 12.5px; font-weight: 500; flex-shrink: 0; }
+.modal-notif--success { background: var(--green-bg); color: var(--green-text); border-bottom: 1px solid var(--green-border); }
+.modal-notif--error   { background: var(--red-bg);   color: var(--red-text);   border-bottom: 1px solid var(--red-border);   }
+
+.modal-panel__body { padding: 22px 24px; overflow-y: auto; max-height: calc(100vh - 220px); }
+.modal-panel__foot {
+  display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+  padding: 14px 24px; border-top: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap;
+}
+
+/* ── Form primitives ───────────────────────────────────────── */
+.section-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--text-3);
+  padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 18px;
+}
+.dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.dot--green { background: var(--green-text); }
+.dot--red   { background: var(--red-text); }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.form-field--full { grid-column: 1 / -1; }
+.form-field__label { font-size: 12px; font-weight: 600; color: var(--text-2); }
+.form-field__required { color: var(--red-text); }
+.form-field__hint { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-3); margin-top: 4px; }
+.form-field__hint--warn { color: var(--red-text); }
+
+.form-control {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-1);
+  font-size: 13.5px;
+  padding: 9px 30px 9px 12px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color .15s;
+  appearance: none;
+  width: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239CA3AF'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+.form-control:focus { border-color: var(--primary-border); box-shadow: 0 0 0 3px var(--primary-light); }
+
+.preview-strip {
+  display: flex; flex-wrap: wrap;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  margin: 4px 0 14px;
+  overflow: hidden;
+}
+.preview-strip__item { flex: 1; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; min-width: 100px; }
+.preview-strip__sep  { width: 1px; background: var(--border); align-self: stretch; }
+.preview-strip__label { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--text-3); }
+.preview-strip__value  { font-size: 14px; font-weight: 700; color: var(--text-1); }
+.preview-strip__value--accent { color: var(--primary); }
+
+/* ── Spinners ─────────────────────────────────────────────── */
+.spinner-sm {
+  width: 13px; height: 13px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: payroll-spin .6s linear infinite;
+  display: inline-block;
+}
+@keyframes payroll-spin { to { transform: rotate(360deg); } }
+
+/* ── Modal transition ───────────────────────────────────────── */
+.modal-enter-active, .modal-leave-active { transition: opacity .2s; }
+.modal-enter-active .modal-panel, .modal-leave-active .modal-panel { transition: transform .2s, opacity .2s; }
+.modal-enter-from, .modal-leave-to { opacity: 0; }
+.modal-enter-from .modal-panel, .modal-leave-to .modal-panel { transform: translateY(14px); opacity: 0; }
+
+@media (max-width: 640px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .modal-panel__foot { justify-content: stretch; }
+  .modal-panel__foot .btn { flex: 1; }
+}
