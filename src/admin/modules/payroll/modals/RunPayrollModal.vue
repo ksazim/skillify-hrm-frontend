@@ -140,21 +140,23 @@
             <!-- Summary Cards -->
             <div class="summary-grid">
               <div class="summary-card">
-                <div class="summary-card__icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <div class="summary-card__icon summary-card__icon--blue">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                     <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                   </svg>
                 </div>
                 <div class="summary-card__content">
-                  <span class="summary-card__label">COMPANY</span>
+                  <span class="summary-card__label">Company</span>
                   <span class="summary-card__value">{{ selectedCompanyName }}</span>
                 </div>
               </div>
 
               <div class="summary-card">
-                <div class="summary-card__icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <div class="summary-card__icon summary-card__icon--purple">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                     <line x1="16" y1="2" x2="16" y2="6"></line>
                     <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -162,19 +164,21 @@
                   </svg>
                 </div>
                 <div class="summary-card__content">
-                  <span class="summary-card__label">PERIOD</span>
+                  <span class="summary-card__label">Period</span>
                   <span class="summary-card__value">{{ monthName(form.month) }} {{ form.year }}</span>
                 </div>
               </div>
 
               <div class="summary-card summary-card--highlight">
-                <div class="summary-card__icon">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2v20M17 7H7M17 12H7M17 17H7"></path>
+                <div class="summary-card__icon summary-card__icon--primary">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
                   </svg>
                 </div>
                 <div class="summary-card__content">
-                  <span class="summary-card__label">ESTIMATED NET PAY</span>
+                  <span class="summary-card__label">Estimated Net Pay</span>
                   <span class="summary-card__value summary-card__value--accent">{{ formatCurrency(totalNet) }}</span>
                 </div>
               </div>
@@ -199,7 +203,8 @@
           <!-- Footer -->
           <div class="modal-panel__foot">
             <button class="btn btn--ghost" @click="$emit('update:modelValue', false)">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
@@ -258,6 +263,140 @@ const selectedCompanyName = computed(() => {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ── Modal Backdrop ────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 16px;
+  z-index: 9999;
+  overflow-y: auto;
+}
+
+/* ── Modal Panel ───────────────────────────────────────────── */
+.modal-panel {
+  background: #FFFFFF;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  max-height: 90vh;
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.modal-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 24px 28px 20px;
+  border-bottom: 1.5px solid #E5E7EB;
+  flex-shrink: 0;
+}
+
+.modal-panel__head-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.modal-panel__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modal-panel__icon--primary {
+  background: #EEF2FF;
+  color: #4F46E5;
+}
+
+.modal-panel__title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.modal-panel__subtitle {
+  font-size: 14px;
+  color: #6B7280;
+  margin: 2px 0 0;
+  letter-spacing: -0.01em;
+}
+
+.modal-panel__close {
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  color: #9CA3AF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.modal-panel__close:hover {
+  border-color: #6B7280;
+  color: #111827;
+  background: #F3F4F6;
+  transform: rotate(90deg);
+}
+
+/* ── Notification ──────────────────────────────────────────── */
+.modal-notif {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 28px;
+  font-size: 14px;
+  font-weight: 500;
+  flex-shrink: 0;
+  border-bottom: 1.5px solid transparent;
+  letter-spacing: -0.01em;
+}
+
+.modal-notif__icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.modal-notif--success {
+  background: #ECFDF5;
+  color: #059669;
+  border-bottom-color: #A7F3D0;
+}
+
+.modal-notif--error {
+  background: #FEF2F2;
+  color: #DC2626;
+  border-bottom-color: #FECACA;
+}
+
+/* ── Body ───────────────────────────────────────────────────── */
+.modal-panel__body {
+  padding: 24px 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+
 /* ── Form Sections ────────────────────────────────────────── */
 .form-section {
   margin-bottom: 32px;
@@ -287,22 +426,22 @@ const selectedCompanyName = computed(() => {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: var(--primary);
-  color: var(--text-1);
+  background: #4F46E5;
+  color: #FFFFFF;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   flex-shrink: 0;
 }
 
 .form-section__step--single {
-  background: var(--primary-light);
-  color: var(--primary);
+  background: #EEF2FF;
+  color: #4F46E5;
 }
 
 .form-section__title {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
-  color: var(--text-1);
+  color: #111827;
   margin: 0;
   letter-spacing: -0.01em;
 }
@@ -312,15 +451,15 @@ const selectedCompanyName = computed(() => {
   font-weight: 600;
   padding: 3px 12px;
   border-radius: 12px;
-  background: var(--red-bg);
-  color: var(--red-text);
+  background: #FEF2F2;
+  color: #DC2626;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .form-section__badge--info {
-  background: var(--blue-bg);
-  color: var(--blue-text);
+  background: #EFF6FF;
+  color: #2563EB;
 }
 
 /* ── Form Fields ──────────────────────────────────────────── */
@@ -333,12 +472,12 @@ const selectedCompanyName = computed(() => {
 .form-field__label {
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-2);
+  color: #4B5563;
   letter-spacing: -0.01em;
 }
 
 .form-field__required {
-  color: var(--red-text);
+  color: #DC2626;
   margin-left: 2px;
 }
 
@@ -352,9 +491,9 @@ const selectedCompanyName = computed(() => {
   gap: 10px;
   margin-top: 8px;
   padding: 8px 12px;
-  background: var(--blue-bg);
-  border-radius: var(--radius-sm);
-  color: var(--blue-text);
+  background: #EFF6FF;
+  border-radius: 6px;
+  color: #2563EB;
   font-size: 13px;
 }
 
@@ -367,25 +506,22 @@ const selectedCompanyName = computed(() => {
   align-items: center;
   gap: 8px;
   font-size: 13px;
-  color: var(--text-3);
+  color: #6B7280;
   margin-top: 6px;
   padding: 8px 12px;
-  background: var(--surface-2);
-  border-radius: var(--radius-sm);
+  background: #F3F4F6;
+  border-radius: 6px;
 }
 
 .form-field__help--error {
-  color: var(--red-text);
-  background: var(--red-bg);
+  color: #DC2626;
+  background: #FEF2F2;
 }
 
 /* ── Professional Select Container ────────────────────────── */
 .select-container {
   position: relative;
   width: 100%;
-  border: 1px solid gray;
-  border-radius: 5px;
-  /* background: #DDDDDD; */
 }
 
 .select-container .form-control {
@@ -398,26 +534,26 @@ const selectedCompanyName = computed(() => {
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
-  color: var(--text-3);
+  color: #9CA3AF;
   display: flex;
   align-items: center;
   transition: color 0.15s ease;
 }
 
 .select-container:hover .select-arrow {
-  color: var(--text-2);
+  color: #6B7280;
 }
 
 .select-container .form-control:focus~.select-arrow {
-  color: var(--primary);
+  color: #4F46E5;
 }
 
 /* ── Professional Select Dropdown ──────────────────────────── */
 .form-control {
-  background: var(--surface);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-md);
-  color: var(--text-1);
+  background: #FFFFFF;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  color: #111827;
   font-size: 14px;
   font-family: inherit;
   padding: 10px 14px;
@@ -432,19 +568,19 @@ const selectedCompanyName = computed(() => {
 }
 
 .form-control:hover:not(:disabled) {
-  border-color: var(--border-strong);
-  background: var(--surface);
+  border-color: #D1D5DB;
+  background: #FFFFFF;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .form-control:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px var(--primary-light);
-  background: var(--surface);
+  border-color: #4F46E5;
+  box-shadow: 0 0 0 4px #EEF2FF;
+  background: #FFFFFF;
 }
 
 .form-control:disabled {
-  background: var(--surface-2);
+  background: #F3F4F6;
   cursor: not-allowed;
   opacity: 0.7;
 }
@@ -454,10 +590,10 @@ const selectedCompanyName = computed(() => {
   padding: 10px 16px;
   font-size: 14px;
   font-family: inherit;
-  background: var(--surface);
-  color: var(--text-1);
+  background: #FFFFFF;
+  color: #111827;
   min-height: 40px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid #E5E7EB;
   transition: all 0.15s ease;
 }
 
@@ -467,20 +603,20 @@ const selectedCompanyName = computed(() => {
 
 .form-control option:hover,
 .form-control option:checked {
-  background: var(--primary-light) !important;
-  color: var(--primary);
+  background: #EEF2FF !important;
+  color: #4F46E5;
 }
 
 .form-control option:disabled {
-  color: var(--text-3);
-  background: var(--surface-2);
+  color: #9CA3AF;
+  background: #F3F4F6;
   cursor: not-allowed;
 }
 
 .form-control optgroup {
   font-weight: 600;
-  color: var(--text-2);
-  background: var(--surface-2);
+  color: #4B5563;
+  background: #F3F4F6;
   padding: 8px 16px;
 }
 
@@ -500,46 +636,60 @@ const selectedCompanyName = computed(() => {
 }
 
 .summary-card {
-  background: var(--surface);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-md);
+  background: #F9FAFB;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
   padding: 14px 16px;
   display: flex;
   align-items: center;
   gap: 12px;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .summary-card:hover {
-  border-color: var(--border-strong);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-xs);
+  border-color: #D1D5DB;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .summary-card--highlight {
-  background: var(--primary-light);
-  border-color: var(--primary-border);
+  background: #EEF2FF;
+  border-color: #C7D2FE;
 }
 
 .summary-card--highlight:hover {
-  border-color: var(--primary);
+  border-color: #818CF8;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.15);
 }
 
 .summary-card__icon {
   flex-shrink: 0;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-sm);
-  background: var(--surface-2);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-2);
+}
+
+.summary-card__icon--blue {
+  background: #EFF6FF;
+  color: #2563EB;
+}
+
+.summary-card__icon--purple {
+  background: #F3E8FF;
+  color: #7C3AED;
+}
+
+.summary-card__icon--primary {
+  background: #EEF2FF;
+  color: #4F46E5;
 }
 
 .summary-card--highlight .summary-card__icon {
-  background: var(--primary);
-  color: white;
+  background: #4F46E5;
+  color: #FFFFFF;
 }
 
 .summary-card__content {
@@ -554,13 +704,13 @@ const selectedCompanyName = computed(() => {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-3);
+  color: #6B7280;
 }
 
 .summary-card__value {
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-1);
+  color: #111827;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -568,8 +718,8 @@ const selectedCompanyName = computed(() => {
 }
 
 .summary-card__value--accent {
-  color: var(--primary);
-  font-size: 16px;
+  color: #4F46E5;
+  font-size: 17px;
 }
 
 /* ── Info Banner ──────────────────────────────────────────── */
@@ -577,15 +727,15 @@ const selectedCompanyName = computed(() => {
   display: flex;
   gap: 12px;
   padding: 14px 16px;
-  background: var(--amber-bg);
-  border: 2px solid var(--amber-border);
-  border-radius: var(--radius-md);
+  background: #FFFBEB;
+  border: 1.5px solid #FDE68A;
+  border-radius: 10px;
   margin-top: 8px;
 }
 
 .info-banner__icon {
   flex-shrink: 0;
-  color: var(--amber-text);
+  color: #B45309;
   margin-top: 1px;
 }
 
@@ -598,150 +748,46 @@ const selectedCompanyName = computed(() => {
 .info-banner__title {
   font-size: 13px;
   font-weight: 600;
-  color: var(--amber-text);
+  color: #B45309;
   letter-spacing: -0.01em;
 }
 
 .info-banner__text {
   font-size: 13px;
-  color: var(--amber-text);
+  color: #B45309;
   line-height: 1.5;
   opacity: 0.9;
 }
 
-/* ── Notification ──────────────────────────────────────────── */
-.modal-notif {
+/* ── Footer ─────────────────────────────────────────────────── */
+.modal-panel__foot {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 24px;
-  font-size: 13px;
-  font-weight: 500;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 18px 28px;
+  border-top: 1.5px solid #E5E7EB;
   flex-shrink: 0;
-  border-bottom: 2px solid transparent;
-  letter-spacing: -0.01em;
-}
-
-.modal-notif__icon {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.modal-notif--success {
-  background: var(--green-bg);
-  color: var(--green-text);
-  border-bottom-color: var(--green-border);
-}
-
-.modal-notif--error {
-  background: var(--red-bg);
-  color: var(--red-text);
-  border-bottom-color: var(--red-border);
-}
-
-/* ── Modal Enhancements ────────────────────────────────────── */
-.modal-panel {
-  border-radius: 14px;
-}
-
-.modal-panel__icon {
-  width: 42px;
-  height: 42px;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-panel__icon--primary {
-  background: var(--primary-light);
-  color: var(--primary);
-}
-
-.modal-panel__title {
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text-1);
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
-.modal-panel__subtitle {
-  font-size: 13px;
-  color: var(--text-3);
-  margin: 2px 0 0;
-  letter-spacing: -0.01em;
-}
-
-.modal-panel__close {
-  width: 36px;
-  height: 36px;
-  background: transparent;
-  border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-3);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
-}
-
-.modal-panel__close:hover {
-  border-color: var(--text-2);
-  color: var(--text-1);
-  background: var(--surface-2);
-  transform: rotate(90deg);
+  flex-wrap: wrap;
 }
 
 /* ── Buttons ────────────────────────────────────────────────── */
 .btn {
   padding: 10px 20px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  border-radius: var(--radius-md);
-  border: 2px solid transparent;
-  transition: all 0.15s ease;
-  display: flex;
+  border-radius: 8px;
+  border: 1.5px solid transparent;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   height: 44px;
   font-family: inherit;
   letter-spacing: -0.01em;
-  border-radius: 5px;
-}
-
-.btn--primary {
-  background: var(--primary);
-  color: #111;
-  border-color: var(--primary);
-
-
-}
-
-.btn--primary:hover:not(:disabled) {
-  background: var(--primary-hover);
-  border-color: var(--primary-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
-}
-
-.btn--primary:active:not(:disabled) {
-  transform: translateY(0px);
-}
-
-.btn--ghost {
-  background: transparent;
-  color: var(--text-2);
-  border-color: var(--border);
-}
-
-.btn--ghost:hover {
-  border-color: var(--border-strong);
-  color: var(--text-1);
-  background: var(--surface-2);
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 .btn:disabled {
@@ -750,12 +796,58 @@ const selectedCompanyName = computed(() => {
   transform: none !important;
 }
 
+/* Ghost Button */
+.btn--ghost {
+  background: transparent;
+  color: #6B7280;
+  border-color: #E5E7EB;
+}
+
+.btn--ghost:hover:not(:disabled) {
+  color: #111827;
+  border-color: #D1D5DB;
+  background: #F9FAFB;
+  transform: translateY(-1px);
+}
+
+.btn--ghost:active:not(:disabled) {
+  transform: translateY(0px) scale(0.98);
+}
+
+/* Primary Button */
+.btn--primary {
+  background: #4F46E5;
+  color: #FFFFFF;
+  border-color: #4F46E5;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: #4338CA;
+  border-color: #4338CA;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
+}
+
+.btn--primary:active:not(:disabled) {
+  transform: translateY(0px) scale(0.98);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+
+.btn--primary svg {
+  transition: transform 0.25s ease;
+}
+
+.btn--primary:hover:not(:disabled) svg {
+  transform: scale(1.15);
+}
+
 /* ── Spinner ───────────────────────────────────────────────── */
 .spinner-sm {
   width: 16px;
   height: 16px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
+  border-top-color: #FFFFFF;
   border-radius: 50%;
   animation: payroll-spin 0.7s linear infinite;
   display: inline-block;
@@ -770,12 +862,12 @@ const selectedCompanyName = computed(() => {
 /* ── Modal Transition ───────────────────────────────────── */
 .modal-enter-active,
 .modal-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 0.25s ease;
 }
 
 .modal-enter-active .modal-panel,
 .modal-leave-active .modal-panel {
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
 .modal-enter-from,
@@ -785,32 +877,28 @@ const selectedCompanyName = computed(() => {
 
 .modal-enter-from .modal-panel,
 .modal-leave-to .modal-panel {
-  transform: translateY(16px) scale(0.98);
+  transform: translateY(20px) scale(0.98);
   opacity: 0;
 }
 
 /* ── Responsive ────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .summary-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .modal-panel__body {
-    padding: 20px;
+  .modal-panel {
+    max-width: 95vw;
+    margin: 20px;
   }
 
   .modal-panel__head {
-    padding: 16px 20px;
+    padding: 18px 20px;
+  }
+
+  .modal-panel__body {
+    padding: 18px 20px;
   }
 
   .modal-panel__foot {
     padding: 14px 20px;
     flex-direction: column-reverse;
-    gap: 8px;
   }
 
   .modal-panel__foot .btn {
@@ -818,15 +906,44 @@ const selectedCompanyName = computed(() => {
     justify-content: center;
   }
 
+  .summary-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
   .form-section__header {
     flex-wrap: wrap;
     gap: 8px;
   }
+
+  .modal-panel__title {
+    font-size: 16px;
+  }
+
+  .modal-panel__subtitle {
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 480px) {
+  .modal-panel {
+    max-width: 100vw;
+    margin: 10px;
+    border-radius: 12px;
+  }
+
   .modal-panel__head-left {
     flex-wrap: wrap;
+  }
+
+  .modal-panel__icon {
+    width: 38px;
+    height: 38px;
   }
 
   .summary-card {
@@ -847,6 +964,17 @@ const selectedCompanyName = computed(() => {
   .select-arrow svg {
     width: 10px;
     height: 7px;
+  }
+
+  .btn {
+    font-size: 13px;
+    padding: 8px 16px;
+    height: 40px;
+  }
+
+  .modal-panel__close {
+    width: 32px;
+    height: 32px;
   }
 }
 </style>

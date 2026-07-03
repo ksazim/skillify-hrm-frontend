@@ -1,5 +1,5 @@
-import { ref, computed } from 'vue'
 import { ADMIN_ROLES } from '@/utils/constants'
+import { computed, ref } from 'vue'
 
 /**
  * usePayrollApi
@@ -32,7 +32,9 @@ export function usePayrollApi() {
       ...options,
       headers: { ...authHeader(), ...(options.headers ?? {}) }
     })
+    console.log(`API ${res.status} ${res.url}`, options, res)
     const json = await res.json()
+    console.log(`API response`, json)
     if (!res.ok) throw json
     return json
   }
@@ -84,6 +86,8 @@ export function usePayrollApi() {
   }
 
   const generatePayroll = async (payload) => {
+    console.log("Payload:--->", payload);
+    
     // POST /payroll/generate
     return apiFetch('/generate', {
       method:  'POST',

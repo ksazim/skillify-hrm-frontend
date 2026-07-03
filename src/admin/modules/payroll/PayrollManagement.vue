@@ -41,28 +41,28 @@
 
 <script setup>
 import { useCompanyStore } from '@/store/company'; // adjust path to match your project
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue';
 
-import { CURRENT_MONTH, CURRENT_YEAR, MONTHS, YEARS } from '@/utils/constants'
+import { CURRENT_MONTH, CURRENT_YEAR, MONTHS, YEARS } from '@/utils/constants';
 
-import { useConfirmDialog } from '@/composables/payroll/useConfirmDialog'
-import { usePayrollApi } from '@/composables/payroll/usePayrollApi'
-import { usePayrollFilters } from '@/composables/payroll/usePayrollFilters'
-import { usePayslipGenerator } from '@/composables/payroll/usePayslipGenerator'
-import { useToast } from '@/composables/payroll/useToast'
+import { useConfirmDialog } from '@/composables/payroll/useConfirmDialog';
+import { usePayrollApi } from '@/composables/payroll/usePayrollApi';
+import { usePayrollFilters } from '@/composables/payroll/usePayrollFilters';
+import { usePayslipGenerator } from '@/composables/payroll/usePayslipGenerator';
+import { useToast } from '@/composables/payroll/useToast';
 
-import PayrollFiltersBar from './PayrollFiltersBar.vue'
-import PayrollHistoryTable from './PayrollHistoryTable.vue'
-import PayrollPageHeader from './PayrollPageHeader.vue'
-import PayrollRecordsTable from './PayrollRecordsTable.vue'
-import PayrollStatsCards from './PayrollStatsCards.vue'
-import PayrollTabs from './PayrollTabs.vue'
-import ConfirmDialog from './modals/ConfirmDialog.vue'
-import PayrollDetailModal from './modals/PayrollDetailModal.vue'
-import RunPayrollModal from './modals/RunPayrollModal.vue'
-import AppToast from './ui/AppToast.vue'
+import PayrollFiltersBar from './PayrollFiltersBar.vue';
+import PayrollHistoryTable from './PayrollHistoryTable.vue';
+import PayrollPageHeader from './PayrollPageHeader.vue';
+import PayrollRecordsTable from './PayrollRecordsTable.vue';
+import PayrollStatsCards from './PayrollStatsCards.vue';
+import PayrollTabs from './PayrollTabs.vue';
+import ConfirmDialog from './modals/ConfirmDialog.vue';
+import PayrollDetailModal from './modals/PayrollDetailModal.vue';
+import RunPayrollModal from './modals/RunPayrollModal.vue';
+import AppToast from './ui/AppToast.vue';
 
-import './payroll-theme.css'
+import './payroll-theme.css';
 
 /* ── Store ──────────────────────────────────────────────── */
 const companyStore = useCompanyStore()
@@ -186,6 +186,8 @@ const openRunModal = () => {
 }
 
 const submitGenerate = async () => {
+  console.log("Submit Generate Button Click");
+
   // Use store company_id if it was set, otherwise use what user picked in the form
   const effectiveCompanyId = companyStore.company_id !== 0
     ? companyStore.company_id
@@ -200,6 +202,7 @@ const submitGenerate = async () => {
   try {
     const payload = { ...runForm.value, company_id: effectiveCompanyId }
     const data = await generatePayroll(payload)
+    console.log('Payroll generated successfully', data)
     showRunModal.value = false
     showToast(data.message ?? 'Payroll generated successfully', 'success')
     await loadPayrolls()
