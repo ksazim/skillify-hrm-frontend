@@ -1,12 +1,7 @@
 <template>
   <div class="tab-bar">
-    <button
-      v-for="tab in tabs"
-      :key="tab.key"
-      class="tab-bar__tab"
-      :class="{ 'tab-bar__tab--active': activeTab === tab.key }"
-      @click="$emit('change', tab.key)"
-    >
+    <button v-for="tab in tabs" :key="tab.key" class="tab-bar__tab"
+      :class="{ 'tab-bar__tab--active': activeTab === tab.key }" @click="$emit('change', tab.key)">
       {{ tab.label }}
       <span v-if="tab.badge" class="tab-bar__badge">{{ tab.badge }}</span>
     </button>
@@ -15,24 +10,21 @@
 
     <div v-if="showSearch" class="search-input">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.35-4.35" />
       </svg>
-      <input
-        :value="searchQuery"
-        type="text"
-        placeholder="Search employees…"
-        @input="$emit('update:searchQuery', $event.target.value)"
-      />
+      <input :value="searchQuery" type="text" placeholder="Search employees…"
+        @input="$emit('update:searchQuery', $event.target.value)" />
     </div>
   </div>
 </template>
 
 <script setup>
 defineProps({
-  tabs:        { type: Array, required: true }, // [{ key, label, badge }]
-  activeTab:   { type: String, required: true },
+  tabs: { type: Array, required: true }, // [{ key, label, badge }]
+  activeTab: { type: String, required: true },
   searchQuery: { type: String, default: '' },
-  showSearch:  { type: Boolean, default: true }
+  showSearch: { type: Boolean, default: true }
 })
 defineEmits(['change', 'update:searchQuery'])
 </script>
@@ -46,6 +38,7 @@ defineEmits(['change', 'update:searchQuery'])
   margin-bottom: 1.25rem;
   flex-wrap: wrap;
 }
+
 .tab-bar__tab {
   display: inline-flex;
   align-items: center;
@@ -64,8 +57,16 @@ defineEmits(['change', 'update:searchQuery'])
   white-space: nowrap;
   font-family: inherit;
 }
-.tab-bar__tab:hover { color: var(--text-2); }
-.tab-bar__tab--active { color: var(--primary); border-bottom-color: var(--primary); }
+
+.tab-bar__tab:hover {
+  color: var(--text-2);
+}
+
+.tab-bar__tab--active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
 .tab-bar__badge {
   padding: 1px 7px;
   border-radius: 999px;
@@ -74,11 +75,15 @@ defineEmits(['change', 'update:searchQuery'])
   background: var(--surface-2);
   color: var(--text-3);
 }
+
 .tab-bar__tab--active .tab-bar__badge {
   background: var(--primary-light);
   color: var(--primary);
 }
-.tab-bar__spacer { flex: 1; }
+
+.tab-bar__spacer {
+  flex: 1;
+}
 
 .search-input {
   display: flex;
@@ -91,6 +96,7 @@ defineEmits(['change', 'update:searchQuery'])
   margin-bottom: 8px;
   color: var(--text-3);
 }
+
 .search-input input {
   border: none;
   outline: none;
@@ -98,13 +104,22 @@ defineEmits(['change', 'update:searchQuery'])
   color: var(--text-1);
   font-size: 13px;
   font-family: inherit;
-  padding: 8px 0;
-  width: 180px;
+  padding: 12px 0;
+  width: 280px;
 }
-.search-input input::placeholder { color: var(--text-3); }
+
+.search-input input::placeholder {
+  color: var(--text-3);
+}
 
 @media (max-width: 640px) {
-  .search-input { width: 100%; margin-bottom: 10px; }
-  .search-input input { width: 100%; }
+  .search-input {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .search-input input {
+    width: 100%;
+  }
 }
 </style>

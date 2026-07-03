@@ -2,51 +2,22 @@
   <div class="payroll-app">
     <PayrollPageHeader :is-admin="isAdmin" @run-payroll="openRunModal" />
 
-    <PayrollStatsCards
-      :employee-count="payrolls.length"
-      :total-gross="totalGross"
-      :total-net="totalNet"
-      :draft-count="draftCount"
-    />
+    <PayrollStatsCards :employee-count="payrolls.length" :total-gross="totalGross" :total-net="totalNet"
+      :draft-count="draftCount" />
 
-    <PayrollTabs
-      :tabs="tabs"
-      :active-tab="activeTab"
-      :search-query="searchQuery"
-      :show-search="activeTab === 'payrolls'"
-      @change="switchTab"
-      @update:search-query="searchQuery = $event"
-    />
+    <PayrollTabs :tabs="tabs" :active-tab="activeTab" :search-query="searchQuery"
+      :show-search="activeTab === 'payrolls'" @change="switchTab" @update:search-query="searchQuery = $event" />
 
     <!-- ════ TAB: PAYROLL RECORDS ════ -->
     <div v-if="activeTab === 'payrolls'">
-      <PayrollFiltersBar
-        v-model="statusFilter"
-        v-model:month="selectedMonth"
-        v-model:year="selectedYear"
-        :status-filters="statusFilters"
-        :months="MONTHS"
-        :years="YEARS"
-        @update:model-value="resetPage"
-        @update:month="resetPage"
-        @update:year="resetPage"
-      />
+      <PayrollFiltersBar v-model="statusFilter" v-model:month="selectedMonth" v-model:year="selectedYear"
+        :status-filters="statusFilters" :months="MONTHS" :years="YEARS" @update:model-value="resetPage"
+        @update:month="resetPage" @update:year="resetPage" />
 
-      <PayrollRecordsTable
-        :rows="paginatedPayrolls"
-        :is-loading="isLoading"
-        :has-error="hasError"
-        :error-message="errorMessage"
-        :is-admin="isAdmin"
-        :current-page="currentPage"
-        :total-pages="totalPages"
-        @retry="loadPayrolls"
-        @open-detail="openDetail"
-        @share-payslip="sharePayslip"
-        @mark-paid="confirmMarkPaid"
-        @delete="confirmDelete"
-        @update:current-page="currentPage = $event"
-      />
+      <PayrollRecordsTable :rows="paginatedPayrolls" :is-loading="isLoading" :has-error="hasError"
+        :error-message="errorMessage" :is-admin="isAdmin" :current-page="currentPage" :total-pages="totalPages"
+        @retry="loadPayrolls" @open-detail="openDetail" @share-payslip="sharePayslip" @mark-paid="confirmMarkPaid"
+        @delete="confirmDelete" @update:current-page="currentPage = $event" />
     </div>
 
     <!-- ════ TAB: HISTORY ════ -->
@@ -54,59 +25,41 @@
       <PayrollHistoryTable :rows="historyRows" />
     </div>
 
-    <RunPayrollModal
-      v-model="showRunModal"
-      v-model:form="runForm"
-      :companies="companies"
-      :companies-loading="companiesLoading"
-      :show-company-selector="companyStore.company_id === 0"
-      :months="MONTHS"
-      :years="YEARS"
-      :total-net="totalNet"
-      :saving="runSaving"
-      :notif="runNotif"
-      @submit="submitGenerate"
-    />
+    <RunPayrollModal v-model="showRunModal" v-model:form="runForm" :companies="companies"
+      :companies-loading="companiesLoading" :show-company-selector="companyStore.company_id === 0" :months="MONTHS"
+      :years="YEARS" :total-net="totalNet" :saving="runSaving" :notif="runNotif" @submit="submitGenerate" />
 
-    <PayrollDetailModal
-      v-model="showDetailModal"
-      :payroll="detailPayroll"
-      :is-admin="isAdmin"
-      @share-payslip="sharePayslip"
-      @mark-paid="(p) => { confirmMarkPaid(p); showDetailModal = false }"
-    />
+    <PayrollDetailModal v-model="showDetailModal" :payroll="detailPayroll" :is-admin="isAdmin"
+      @share-payslip="sharePayslip" @mark-paid="(p) => { confirmMarkPaid(p); showDetailModal = false }" />
 
-    <ConfirmDialog
-      v-model="confirmDialog.isOpen.value"
-      :data="confirmDialog.data.value"
-      @confirm="confirmDialog.confirm"
-    />
+    <ConfirmDialog v-model="confirmDialog.isOpen.value" :data="confirmDialog.data.value"
+      @confirm="confirmDialog.confirm" />
 
     <AppToast :toast="toast" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useCompanyStore } from '@/store/company' // adjust path to match your project
+import { useCompanyStore } from '@/store/company'; // adjust path to match your project
+import { computed, onMounted, ref } from 'vue'
 
-import { MONTHS, YEARS, CURRENT_MONTH, CURRENT_YEAR } from '@/utils/constants'
+import { CURRENT_MONTH, CURRENT_YEAR, MONTHS, YEARS } from '@/utils/constants'
 
+import { useConfirmDialog } from '@/composables/payroll/useConfirmDialog'
 import { usePayrollApi } from '@/composables/payroll/usePayrollApi'
 import { usePayrollFilters } from '@/composables/payroll/usePayrollFilters'
-import { useToast } from '@/composables/payroll/useToast'
-import { useConfirmDialog } from '@/composables/payroll/useConfirmDialog'
 import { usePayslipGenerator } from '@/composables/payroll/usePayslipGenerator'
+import { useToast } from '@/composables/payroll/useToast'
 
+import PayrollFiltersBar from './PayrollFiltersBar.vue'
+import PayrollHistoryTable from './PayrollHistoryTable.vue'
 import PayrollPageHeader from './PayrollPageHeader.vue'
+import PayrollRecordsTable from './PayrollRecordsTable.vue'
 import PayrollStatsCards from './PayrollStatsCards.vue'
 import PayrollTabs from './PayrollTabs.vue'
-import PayrollFiltersBar from './PayrollFiltersBar.vue'
-import PayrollRecordsTable from './PayrollRecordsTable.vue'
-import PayrollHistoryTable from './PayrollHistoryTable.vue'
-import RunPayrollModal from './modals/RunPayrollModal.vue'
-import PayrollDetailModal from './modals/PayrollDetailModal.vue'
 import ConfirmDialog from './modals/ConfirmDialog.vue'
+import PayrollDetailModal from './modals/PayrollDetailModal.vue'
+import RunPayrollModal from './modals/RunPayrollModal.vue'
 import AppToast from './ui/AppToast.vue'
 
 import './payroll-theme.css'
@@ -123,18 +76,18 @@ const {
 } = usePayrollApi()
 
 /* ── Core list state ───────────────────────────────────── */
-const payrolls     = ref([])
-const isLoading    = ref(false)
-const hasError     = ref(false)
+const payrolls = ref([])
+const isLoading = ref(false)
+const hasError = ref(false)
 const errorMessage = ref('')
 
 const loadPayrolls = async () => {
   isLoading.value = true
-  hasError.value  = false
+  hasError.value = false
   try {
     payrolls.value = await fetchPayrolls()
   } catch (e) {
-    hasError.value     = true
+    hasError.value = true
     errorMessage.value = e?.message || 'Failed to load payroll data.'
   } finally {
     isLoading.value = false
@@ -145,7 +98,7 @@ const loadPayrolls = async () => {
 const activeTab = ref('payrolls')
 const tabs = computed(() => [
   { key: 'payrolls', label: 'Payroll Records', badge: payrolls.value.length || null },
-  { key: 'history',  label: 'History by Period', badge: null }
+  { key: 'history', label: 'History by Period', badge: null }
 ])
 const switchTab = (key) => {
   activeTab.value = key
@@ -166,21 +119,21 @@ const confirmDialog = useConfirmDialog()
 
 const confirmMarkPaid = (payroll) => {
   confirmDialog.open({
-    title:   'Confirm Payment',
+    title: 'Confirm Payment',
     message: `Mark ${payroll.employee?.user?.name ?? 'this employee'}'s payroll as paid? This cannot be undone.`,
-    action:  'Mark as Paid',
-    danger:  false,
-    fn:      () => markAsPaid(payroll)
+    action: 'Mark as Paid',
+    danger: false,
+    fn: () => markAsPaid(payroll)
   })
 }
 
 const confirmDelete = (payroll) => {
   confirmDialog.open({
-    title:   'Delete Payroll',
+    title: 'Delete Payroll',
     message: 'Delete this payroll record permanently? This action cannot be undone.',
-    action:  'Delete',
-    danger:  true,
-    fn:      () => deletePayroll(payroll)
+    action: 'Delete',
+    danger: true,
+    fn: () => deletePayroll(payroll)
   })
 }
 
@@ -193,7 +146,7 @@ const markAsPaid = async (payroll) => {
     if (idx !== -1) {
       payrolls.value[idx] = {
         ...payrolls.value[idx],
-        status:  'paid',
+        status: 'paid',
         paid_at: new Date().toISOString()
       }
     }
@@ -214,18 +167,18 @@ const deletePayroll = async (payroll) => {
 
 /* ── Run / Generate payroll modal ──────────────────────── */
 const showRunModal = ref(false)
-const runSaving    = ref(false)
-const runNotif     = ref({ show: false, type: 'success', message: '' })
-const runForm      = ref({ company_id: 0, month: CURRENT_MONTH, year: CURRENT_YEAR })
+const runSaving = ref(false)
+const runNotif = ref({ show: false, type: 'success', message: '' })
+const runForm = ref({ company_id: 0, month: CURRENT_MONTH, year: CURRENT_YEAR })
 
 const openRunModal = () => {
   runForm.value = {
     company_id: companyStore.company_id !== 0 ? companyStore.company_id : 0,
-    month:      CURRENT_MONTH,
-    year:       CURRENT_YEAR
+    month: CURRENT_MONTH,
+    year: CURRENT_YEAR
   }
   runNotif.value.show = false
-  showRunModal.value  = true
+  showRunModal.value = true
   // Fetch company list when store has no pre-selected company
   if (companyStore.company_id === 0 && companies.value.length === 0) {
     loadCompanies()
@@ -259,7 +212,7 @@ const submitGenerate = async () => {
 
 /* ── Detail modal ───────────────────────────────────────── */
 const showDetailModal = ref(false)
-const detailPayroll   = ref(null)
+const detailPayroll = ref(null)
 
 const openDetail = async (row) => {
   try {
