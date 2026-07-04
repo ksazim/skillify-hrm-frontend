@@ -195,9 +195,9 @@ onUnmounted(() => {
   flex-shrink: 0;
 
   /* Dark luxury surface */
-  background: var(--onyx-2);
+  /* background: var(--onyx-2); */
+  background: #FFFFFF;
   border-bottom: 1px solid var(--border);
-
   display: flex;
   align-items: center;
   padding: 0 24px;
@@ -213,8 +213,8 @@ onUnmounted(() => {
   flex: 1;
   padding: 28px 28px 24px;
   overflow-y: auto;
-  background: var(--onyx-3);
-  /* background: #FFFFFF; */
+  /* background: var(--onyx-3); */
+  background: #FFFFFF;
   /* subtle gold-to-transparent top fade on content area */
   background-image:
     radial-gradient(ellipse 60% 160px at 50% 0%, rgba(201, 169, 110, 0.04) 0%, transparent 100%);

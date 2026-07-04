@@ -1,8 +1,8 @@
 <template>
   <footer class="footer">
 
-    <!-- Gold top rule is provided by the layout border-top — we add the inner glow -->
-    <div class="footer__glow" />
+    <!-- Top border accent -->
+    <div class="footer__accent" />
 
     <div class="footer__inner">
 
@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps } from 'vue'
+import { computed, defineProps } from 'vue';
 
 defineProps({
   version: { type: String, default: '2.4.0' },
@@ -56,31 +56,52 @@ const currentYear = computed(() => new Date().getFullYear())
 </script>
 
 <style scoped>
+/* ── Light Theme Tokens ── */
 .footer {
-  --gold:           #C9A96E;
-  --gold-light:     #E8D5B0;
-  --gold-dim:       #8B6F47;
-  --gold-glow:      rgba(201,169,110,0.06);
-  --onyx-2:         #131316;
-  --text-primary:   #F0EAE0;
-  --text-secondary: rgba(240,234,224,0.55);
-  --text-muted:     rgba(240,234,224,0.28);
-  --border:         rgba(201,169,110,0.12);
-  --border-strong:  rgba(201,169,110,0.28);
+  --primary: #4F46E5;
+  --primary-light: #EEF2FF;
+  --primary-hover: #4338CA;
 
-  font-family: 'Jost', 'Inter', sans-serif;
+  --bg: #FFFFFF;
+  --bg-hover: #F8FAFC;
+  --bg-secondary: #F8FAFC;
+
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --text-light: #64748B;
+
+  --border: #E2E8F0;
+  --border-strong: #CBD5E1;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   position: relative;
-  background: var(--onyx-2);
-  min-height: 48px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  min-height: 56px;
 }
 
-/* Subtle gold radial glow at the top-centre of the footer */
-.footer__glow {
+/* Top accent line */
+.footer__accent {
   position: absolute;
-  top: -1px; left: 50%; transform: translateX(-50%);
-  width: 60%; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold-dim), var(--gold), var(--gold-dim), transparent);
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      var(--primary) 20%,
+      var(--primary-light) 50%,
+      var(--primary) 80%,
+      transparent 100%);
   pointer-events: none;
+  opacity: 0.6;
 }
 
 .footer__inner {
@@ -88,47 +109,66 @@ const currentYear = computed(() => new Date().getFullYear())
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 0 24px;
-  height: 48px;
+  padding: 0 28px;
+  height: 56px;
   flex-wrap: wrap;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 /* ── Brand ── */
 .footer__brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-shrink: 0;
 }
 
 .brand-mark {
-  width: 22px; height: 22px;
-  border: 1px solid var(--gold-dim);
-  display: flex; align-items: center; justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  color: var(--gold);
+  color: var(--primary);
   flex-shrink: 0;
+  background: var(--primary-light);
+  transition: all 0.2s ease;
 }
-.brand-mark::before {
-  content: '';
-  position: absolute; inset: 2px;
-  border: 1px solid var(--gold);
-  opacity: .25;
-}
-.brand-mark svg { width: 10px; height: 10px; }
 
-.brand-text { display: flex; align-items: baseline; gap: 4px; }
+.brand-mark:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.15);
+}
+
+.brand-mark svg {
+  width: 14px;
+  height: 14px;
+}
+
+.brand-text {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
 .brand-name {
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
-  font-size: 14px; font-weight: 500;
-  letter-spacing: .08em;
-  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
   line-height: 1;
 }
+
 .brand-sub {
-  font-size: 8.5px; font-weight: 400;
-  letter-spacing: .18em; text-transform: uppercase;
-  color: var(--gold-dim);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
   line-height: 1;
 }
 
@@ -136,20 +176,57 @@ const currentYear = computed(() => new Date().getFullYear())
 .footer__status {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 10.5px;
-  letter-spacing: .06em;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
   color: var(--text-muted);
+  padding: 4px 12px;
+  background: var(--bg-secondary);
+  border-radius: 20px;
+  border: 1px solid var(--border);
 }
 
 .status-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: #5DCAA5;
-  box-shadow: 0 0 5px rgba(93,202,165,0.6);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
   flex-shrink: 0;
+  animation: pulse-dot 2s ease-in-out infinite;
 }
-.status-label { color: #5DCAA5; letter-spacing: .06em; }
-.footer__version { color: var(--gold-dim); font-size: 10px; letter-spacing: .1em; }
+
+@keyframes pulse-dot {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.7;
+    transform: scale(0.85);
+  }
+}
+
+.status-label {
+  color: #10B981;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.footer__sep {
+  color: var(--border-strong);
+  font-size: 12px;
+}
+
+.footer__version {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
 
 /* ── Right ── */
 .footer__right {
@@ -163,31 +240,106 @@ const currentYear = computed(() => new Date().getFullYear())
 .footer__links {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
 }
+
 .footer__link {
-  font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--text-muted);
   text-decoration: none;
-  transition: color .14s;
+  transition: all 0.15s ease;
+  font-weight: 500;
+  padding: 2px 0;
+  position: relative;
 }
-.footer__link:hover { color: var(--gold); }
 
-.footer__sep { color: var(--border-strong); font-size: 10px; }
+.footer__link::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: var(--primary);
+  transform: scaleX(0);
+  transition: transform 0.2s ease;
+}
+
+.footer__link:hover {
+  color: var(--primary);
+}
+
+.footer__link:hover::after {
+  transform: scaleX(1);
+}
+
+.footer__sep {
+  color: var(--border-strong);
+  font-size: 12px;
+}
 
 .footer__copy {
-  font-size: 9.5px; letter-spacing: .06em;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
   color: var(--text-muted);
+  font-weight: 400;
 }
 
 /* ── Responsive ── */
-@media (max-width: 767px) {
-  .footer__inner { padding: 0 16px; height: auto; padding-top: 10px; padding-bottom: 10px; gap: 8px; }
-  .footer__status { display: none; }
-  .footer__right  { align-items: flex-start; }
+@media (max-width: 768px) {
+  .footer__inner {
+    padding: 0 16px;
+    height: auto;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer__status {
+    display: flex;
+    font-size: 11px;
+    padding: 3px 10px;
+  }
+
+  .footer__right {
+    align-items: center;
+  }
+
+  .footer__links {
+    gap: 6px;
+  }
+
+  .footer__link {
+    font-size: 10px;
+  }
 }
 
 @media (max-width: 480px) {
-  .footer__brand { display: none; }
+  .footer__brand {
+    display: none;
+  }
+
+  .footer__status {
+    font-size: 10px;
+    padding: 2px 8px;
+    gap: 5px;
+  }
+
+  .status-dot {
+    width: 5px;
+    height: 5px;
+  }
+
+  .footer__copy {
+    font-size: 9px;
+  }
+
+  .footer__link {
+    font-size: 9px;
+  }
 }
 </style>
