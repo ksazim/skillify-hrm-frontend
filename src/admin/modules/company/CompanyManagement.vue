@@ -5,7 +5,9 @@
       <div class="header-left">
         <div class="header-icon">
           <svg width="22" height="22" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12H4V4zm2 1h2v2H6V5zm0 4h2v2H6V9zm0 4h2v2H6v-2zm4-8h2v2h-2V5zm0 4h2v2h-2V9zm0 4h2v2h-2v-2z" clip-rule="evenodd"/>
+            <path fill-rule="evenodd"
+              d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12H4V4zm2 1h2v2H6V5zm0 4h2v2H6V9zm0 4h2v2H6v-2zm4-8h2v2h-2V5zm0 4h2v2h-2V9zm0 4h2v2h-2v-2z"
+              clip-rule="evenodd" />
           </svg>
         </div>
         <div>
@@ -21,17 +23,21 @@
           </div>
           <div class="hstat-divider"></div>
           <div class="hstat">
-            <span class="hstat-value active-color">{{ companies.filter(c => c.status === 'active').length }}</span>
+            <span class="hstat-value active-color">{{companies.filter(c => c.status === 'active').length}}</span>
             <span class="hstat-label">Active</span>
           </div>
           <div class="hstat-divider"></div>
           <div class="hstat">
-            <span class="hstat-value inactive-color">{{ companies.filter(c => c.status !== 'active').length }}</span>
+            <span class="hstat-value inactive-color">{{companies.filter(c => c.status !== 'active').length}}</span>
             <span class="hstat-label">Inactive</span>
           </div>
         </div>
         <button class="btn-add" @click="openCreateCompanyModal">
-          <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+              clip-rule="evenodd" />
+          </svg>
           New Company
         </button>
       </div>
@@ -40,7 +46,11 @@
     <!-- Search / Filter bar -->
     <div class="filter-bar">
       <div class="search-wrap">
-        <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+        <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+            clip-rule="evenodd" />
+        </svg>
         <input v-model="searchQuery" class="search-input" placeholder="Search companies…" @input="filterCompanies" />
       </div>
       <select v-model="filterStatus" class="filter-select" @change="filterCompanies">
@@ -62,24 +72,28 @@
 
     <!-- Error -->
     <div v-else-if="hasError && !companies.length" class="state-error">
-      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+      <svg viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd"
+          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+          clip-rule="evenodd" />
+      </svg>
       <p>{{ errorMessage }}</p>
       <button class="btn-retry" @click="loadData">Retry</button>
     </div>
 
     <!-- Company Cards Grid -->
     <div v-else class="cards-grid">
-      <div
-        v-for="company in filteredCompanies"
-        :key="company.id"
-        class="company-card"
-        :class="{ 'card-inactive': company.status !== 'active' }"
-      >
+      <div v-for="company in filteredCompanies" :key="company.id" class="company-card"
+        :class="{ 'card-inactive': company.status !== 'active' }">
         <div class="card-header">
           <div class="card-logo-wrap">
             <img v-if="company.logo" :src="getFileUrl(company.logo)" alt="logo" class="card-logo" />
             <div v-else class="card-logo-placeholder">
-              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12H4V4zm2 1h2v2H6V5zm0 4h2v2H6V9zm4-4h2v2h-2V5z" clip-rule="evenodd"/></svg>
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12H4V4zm2 1h2v2H6V5zm0 4h2v2H6V9zm4-4h2v2h-2V5z"
+                  clip-rule="evenodd" />
+              </svg>
             </div>
           </div>
           <div class="card-title-block">
@@ -95,15 +109,25 @@
 
         <div class="card-meta">
           <div v-if="company.email" class="meta-item">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+            </svg>
             <span>{{ company.email }}</span>
           </div>
           <div v-if="company.phone" class="meta-item">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path
+                d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+            </svg>
             <span>{{ company.phone }}</span>
           </div>
           <div v-if="company.country" class="meta-item">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                clip-rule="evenodd" />
+            </svg>
             <span>{{ company.city ? company.city + ', ' : '' }}{{ company.country }}</span>
           </div>
         </div>
@@ -125,27 +149,46 @@
 
         <div class="card-footer">
           <button class="card-btn btn-view-c" @click="openModal(company, 'company-view')">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+              <path fill-rule="evenodd"
+                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                clip-rule="evenodd" />
+            </svg>
             View
           </button>
           <button class="card-btn btn-edit-c" @click="openModal(company, 'company-edit')">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path
+                d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+            </svg>
             Edit
           </button>
           <button class="card-btn btn-delete-c" @click="confirmDelete(company)">
-            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                clip-rule="evenodd" />
+            </svg>
             Delete
           </button>
         </div>
       </div>
 
       <div v-if="!isLoading && filteredCompanies.length === 0 && companies.length === 0" class="state-empty">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12H4V4zm2 1h2v2H6V5zm0 4h2v2H6V9zm4-4h2v2h-2V5z" clip-rule="evenodd"/></svg>
+        <svg viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12H4V4zm2 1h2v2H6V5zm0 4h2v2H6V9zm4-4h2v2h-2V5z"
+            clip-rule="evenodd" />
+        </svg>
         <p>No companies found</p>
         <button class="btn-add" @click="openCreateCompanyModal">Add First Company</button>
       </div>
       <div v-else-if="!isLoading && filteredCompanies.length === 0 && companies.length > 0" class="state-empty">
-        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+        <svg viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+            clip-rule="evenodd" />
+        </svg>
         <p>No companies match your filters</p>
         <button class="btn-retry" @click="clearFilters">Clear Filters</button>
       </div>
@@ -159,7 +202,11 @@
             <div class="modal-head-left">
               <div class="modal-company-logo" v-if="selectedCompany">
                 <img v-if="selectedCompany.logo" :src="getFileUrl(selectedCompany.logo)" alt="logo" />
-                <svg v-else viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12H4V4zm2 1h2v2H6V5zm0 4h2v2H6V9zm4-4h2v2h-2V5z" clip-rule="evenodd"/></svg>
+                <svg v-else viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd"
+                    d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12H4V4zm2 1h2v2H6V5zm0 4h2v2H6V9zm4-4h2v2h-2V5z"
+                    clip-rule="evenodd" />
+                </svg>
               </div>
               <div>
                 <h2 class="modal-title">{{ modalTitle }}</h2>
@@ -167,18 +214,17 @@
               </div>
             </div>
             <button class="modal-close" @click="closeModal">
-              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                  clip-rule="evenodd" />
+              </svg>
             </button>
           </div>
 
           <div class="modal-tabs" v-if="selectedCompany && modalMode !== 'create-company'">
-            <button
-              v-for="tab in modalTabs"
-              :key="tab.key"
-              class="tab-btn"
-              :class="{ 'tab-active': activeTab === tab.key }"
-              @click="switchTab(tab.key)"
-            >{{ tab.label }}</button>
+            <button v-for="tab in modalTabs" :key="tab.key" class="tab-btn"
+              :class="{ 'tab-active': activeTab === tab.key }" @click="switchTab(tab.key)">{{ tab.label }}</button>
           </div>
 
           <div v-if="modalNotif.show" class="modal-notif" :class="'notif-' + modalNotif.type">
@@ -193,116 +239,62 @@
 
             <!-- COMPANY EDIT / CREATE -->
             <div v-if="activeTab === 'company-edit' || activeTab === 'company-create'" class="tab-pane">
-              <CompanyForm
-                :company="activeTab === 'company-edit' ? selectedCompany : null"
-                :loading="subLoading"
-                :industries="INDUSTRIES"
-                :countries="COUNTRIES"
-                @submit="handleCompanyFormSubmit"
-              />
+              <CompanyForm :company="activeTab === 'company-edit' ? selectedCompany : null" :loading="subLoading"
+                :industries="INDUSTRIES" :countries="COUNTRIES" @submit="handleCompanyFormSubmit" />
             </div>
 
             <!-- BRANCHES TAB -->
             <div v-if="activeTab === 'branches'" class="tab-pane">
-              <SubEntityPanel
-                title="Branches"
-                add-label="Add Branch"
-                :items="subData.branches"
-                :loading="subLoading"
-                :columns="branchColumns"
-                :form-fields="branchFormFields"
-                :company-id="selectedCompany?.id"
-                :countries="COUNTRIES"
-                endpoint="branches"
-                @refresh="loadSubData"
-                @notify="showNotif"
-              />
+              <SubEntityPanel title="Branches" add-label="Add Branch" :items="subData.branches" :loading="subLoading"
+                :columns="branchColumns" :form-fields="branchFormFields" :company-id="selectedCompany?.id"
+                :countries="COUNTRIES" endpoint="branches" @refresh="loadSubData" @notify="showNotif" />
             </div>
 
             <!-- DEPARTMENTS TAB -->
             <div v-if="activeTab === 'departments'" class="tab-pane">
               <div class="dept-filter-bar">
                 <label class="dept-filter-label">Filter by Branch:</label>
-                <select v-model="deptBranchFilter" class="filter-select dept-branch-select" @change="onDeptBranchFilterChange">
+                <select v-model="deptBranchFilter" class="filter-select dept-branch-select"
+                  @change="onDeptBranchFilterChange">
                   <option value="">All Branches</option>
                   <option v-for="b in subData.branches" :key="b.id" :value="b.id">{{ b.name }}</option>
                 </select>
               </div>
-              <SubEntityPanel
-                title="Departments"
-                add-label="Add Department"
-                :items="subData.departments"
-                :loading="subLoading"
-                :columns="departmentColumns"
-                :form-fields="departmentFormFields"
-                :company-id="selectedCompany?.id"
-                :branches="subData.branches"
-                endpoint="departments"
-                @refresh="loadSubData"
-                @notify="showNotif"
-              />
+              <SubEntityPanel title="Departments" add-label="Add Department" :items="subData.departments"
+                :loading="subLoading" :columns="departmentColumns" :form-fields="departmentFormFields"
+                :company-id="selectedCompany?.id" :branches="subData.branches" endpoint="departments"
+                @refresh="loadSubData" @notify="showNotif" />
             </div>
 
             <!-- ROLES TAB -->
             <div v-if="activeTab === 'roles'" class="tab-pane">
-              <SubEntityPanel
-                title="Company Roles"
-                add-label="Add Role"
-                :items="subData.roles"
-                :loading="subLoading"
-                :columns="roleColumns"
-                :form-fields="roleFormFields"
-                :company-id="selectedCompany?.id"
-                :departments="subData.departments"
-                endpoint="roles"
-                @refresh="loadSubData"
-                @notify="showNotif"
-              />
+              <SubEntityPanel title="Company Roles" add-label="Add Role" :items="subData.roles" :loading="subLoading"
+                :columns="roleColumns" :form-fields="roleFormFields" :company-id="selectedCompany?.id"
+                :departments="subData.departments" endpoint="roles" @refresh="loadSubData" @notify="showNotif" />
             </div>
 
             <!-- SHIFTS TAB -->
             <div v-if="activeTab === 'shifts'" class="tab-pane">
-              <ShiftPanel
-                :items="subData.shifts"
-                :loading="subLoading"
-                :company-id="selectedCompany?.id"
-                @refresh="loadSubData"
-                @notify="showNotif"
-              />
+              <ShiftPanel :items="subData.shifts" :loading="subLoading" :company-id="selectedCompany?.id"
+                @refresh="loadSubData" @notify="showNotif" />
             </div>
 
             <!-- WEEKENDS TAB -->
             <div v-if="activeTab === 'weekends'" class="tab-pane">
-              <WeekendPanel
-                :items="subData.weekends"
-                :loading="subLoading"
-                :company-id="selectedCompany?.id"
-                @refresh="loadSubData"
-                @notify="showNotif"
-              />
+              <WeekendPanel :items="subData.weekends" :loading="subLoading" :company-id="selectedCompany?.id"
+                @refresh="loadSubData" @notify="showNotif" />
             </div>
 
             <!-- HOLIDAYS TAB -->
             <div v-if="activeTab === 'holidays'" class="tab-pane">
-              <HolidayPanel
-                :items="subData.holidays"
-                :loading="subLoading"
-                :company-id="selectedCompany?.id"
-                @refresh="loadSubData"
-                @notify="showNotif"
-              />
+              <HolidayPanel :items="subData.holidays" :loading="subLoading" :company-id="selectedCompany?.id"
+                @refresh="loadSubData" @notify="showNotif" />
             </div>
 
             <!-- LEAVE POLICIES TAB -->
             <div v-if="activeTab === 'leave-policies'" class="tab-pane">
-              <LeavePolicyPanel
-                :items="subData.leavePolicies"
-                :loading="subLoading"
-                :company-id="selectedCompany?.id"
-                :roles="subData.roles"
-                @refresh="loadSubData"
-                @notify="showNotif"
-              />
+              <LeavePolicyPanel :items="subData.leavePolicies" :loading="subLoading" :company-id="selectedCompany?.id"
+                :roles="subData.roles" @refresh="loadSubData" @notify="showNotif" />
             </div>
           </div>
         </div>
@@ -316,15 +308,24 @@
           <div class="modal-head">
             <h2 class="modal-title danger-title">Delete Company</h2>
             <button class="modal-close" @click="showDeleteConfirm = false">
-              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                  clip-rule="evenodd" />
+              </svg>
             </button>
           </div>
           <div class="modal-body">
             <div class="delete-confirm-body">
               <div class="delete-icon">
-                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd" />
+                </svg>
               </div>
-              <p class="delete-msg">Are you sure you want to delete <strong>{{ deleteTarget?.name }}</strong>? This action cannot be undone and all associated data will be permanently removed.</p>
+              <p class="delete-msg">Are you sure you want to delete <strong>{{ deleteTarget?.name }}</strong>? This
+                action cannot be undone and all associated data will be permanently removed.</p>
               <div class="delete-actions">
                 <button class="btn-cancel" @click="showDeleteConfirm = false">Cancel</button>
                 <button class="btn-danger" :disabled="subLoading" @click="executeDelete">
@@ -345,8 +346,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watchEffect, watch, defineComponent, h } from 'vue'
 import axios from 'axios'
+import { computed, defineComponent, h, onMounted, ref, watch, watchEffect } from 'vue'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // INLINE SUB-COMPONENTS
@@ -395,7 +396,7 @@ const CompanyForm = defineComponent({
   emits: ['submit'],
   setup(props, { emit }) {
     const form = ref({})
-    const SIZES = ['1–10','11–50','51–200','201–500','501–1000','1000+']
+    const SIZES = ['1–10', '11–50', '51–200', '201–500', '501–1000', '1000+']
 
     const resetForm = () => {
       const c = props.company || {}
@@ -413,7 +414,7 @@ const CompanyForm = defineComponent({
     watchEffect(() => resetForm())
 
     const handleSubmit = () => emit('submit', { data: { ...form.value }, mode: props.company ? 'edit' : 'create' })
-    const handleFile   = (e) => { form.value.logo = e.target.files[0] || null }
+    const handleFile = (e) => { form.value.logo = e.target.files[0] || null }
 
     function formInput(label, type, value, onUpdate, placeholder = '') {
       return h('div', { class: 'form-field' }, [
@@ -436,9 +437,9 @@ const CompanyForm = defineComponent({
       h('div', { class: 'form-grid' }, [
         formInput('Company Name *', 'text', form.value.name, v => form.value.name = v, 'Nexara Technologies Ltd.'),
         formInput('Legal Name', 'text', form.value.legal_name, v => form.value.legal_name = v, 'Full registered name'),
-        formSelect('Industry *', form.value.industry, v => form.value.industry = v, (props.industries||[]).map(i=>({value:i,label:i})), 'Select industry'),
+        formSelect('Industry *', form.value.industry, v => form.value.industry = v, (props.industries || []).map(i => ({ value: i, label: i })), 'Select industry'),
         formInput('Founded Year', 'number', form.value.founded_year, v => form.value.founded_year = v, '2010'),
-        formSelect('Company Size', form.value.company_size, v => form.value.company_size = v, SIZES.map(s=>({value:s,label:s})), 'Select size'),
+        formSelect('Company Size', form.value.company_size, v => form.value.company_size = v, SIZES.map(s => ({ value: s, label: s })), 'Select size'),
       ]),
       h('div', { class: 'form-section-title' }, 'Contact'),
       h('div', { class: 'form-grid' }, [
@@ -452,7 +453,7 @@ const CompanyForm = defineComponent({
         formInput('Street Address', 'text', form.value.address, v => form.value.address = v),
         formInput('City', 'text', form.value.city, v => form.value.city = v, 'Dhaka'),
         formInput('State', 'text', form.value.state, v => form.value.state = v),
-        formSelect('Country', form.value.country, v => form.value.country = v, (props.countries||[]).map(c=>({value:c,label:c})), 'Select country'),
+        formSelect('Country', form.value.country, v => form.value.country = v, (props.countries || []).map(c => ({ value: c, label: c })), 'Select country'),
         formInput('Postal Code', 'text', form.value.postal_code, v => form.value.postal_code = v, '1229'),
       ]),
       h('div', { class: 'form-section-title' }, 'Legal & Tax'),
@@ -469,25 +470,33 @@ const CompanyForm = defineComponent({
         ]),
         h('div', { class: 'form-field' }, [
           h('label', { class: 'form-label' }, 'Brand Colour'),
-          h('input', { type: 'color', value: form.value.brand_color, class: 'form-color-input',
-            onInput: e => form.value.brand_color = e.target.value }),
+          h('input', {
+            type: 'color', value: form.value.brand_color, class: 'form-color-input',
+            onInput: e => form.value.brand_color = e.target.value
+          }),
         ]),
         h('div', { class: 'form-field form-field--full' }, [
           h('label', { class: 'form-label' }, 'About Company'),
-          h('textarea', { class: 'form-textarea', rows: 3, value: form.value.description,
-            placeholder: 'Brief company overview…', onInput: e => form.value.description = e.target.value }),
+          h('textarea', {
+            class: 'form-textarea', rows: 3, value: form.value.description,
+            placeholder: 'Brief company overview…', onInput: e => form.value.description = e.target.value
+          }),
         ]),
         h('div', { class: 'form-field' }, [
           h('label', { class: 'form-label' }, 'Status *'),
           h('div', { class: 'radio-group' }, [
             h('label', { class: 'radio-opt' }, [
-              h('input', { type: 'radio', name: 'company_status', value: 'active',
-                checked: form.value.status === 'active', onChange: () => form.value.status = 'active' }),
+              h('input', {
+                type: 'radio', name: 'company_status', value: 'active',
+                checked: form.value.status === 'active', onChange: () => form.value.status = 'active'
+              }),
               h('span', {}, 'Active'),
             ]),
             h('label', { class: 'radio-opt' }, [
-              h('input', { type: 'radio', name: 'company_status', value: 'inactive',
-                checked: form.value.status === 'inactive', onChange: () => form.value.status = 'inactive' }),
+              h('input', {
+                type: 'radio', name: 'company_status', value: 'inactive',
+                checked: form.value.status === 'inactive', onChange: () => form.value.status = 'inactive'
+              }),
               h('span', {}, 'Inactive'),
             ]),
           ]),
@@ -510,11 +519,11 @@ const SubEntityPanel = defineComponent({
   },
   emits: ['refresh', 'notify'],
   setup(props, { emit }) {
-    const showForm   = ref(false)
+    const showForm = ref(false)
     const editTarget = ref(null)
-    const formData   = ref({})
-    const saving     = ref(false)
-    const deleting   = ref(false)
+    const formData = ref({})
+    const saving = ref(false)
+    const deleting = ref(false)
 
     const apiBase2 = process.env.VUE_APP_BASE_API || '/api'
     const panelApi = axios.create({ baseURL: apiBase2 })
@@ -526,14 +535,14 @@ const SubEntityPanel = defineComponent({
 
     const buildDefault = () => {
       const d = { company_id: props.companyId, status: 'active' }
-      ;(props.formFields || []).forEach(f => {
-        if (f.default !== undefined) d[f.name] = f.default
-      })
+        ; (props.formFields || []).forEach(f => {
+          if (f.default !== undefined) d[f.name] = f.default
+        })
       return d
     }
 
     const openCreate = () => { editTarget.value = null; formData.value = buildDefault(); showForm.value = true }
-    const openEdit   = (item) => { editTarget.value = item; formData.value = { company_id: props.companyId, ...item }; showForm.value = true }
+    const openEdit = (item) => { editTarget.value = item; formData.value = { company_id: props.companyId, ...item }; showForm.value = true }
 
     const handleSave = async () => {
       saving.value = true
@@ -551,7 +560,7 @@ const SubEntityPanel = defineComponent({
       } catch (err) {
         const errMsg = err.response?.data?.message ||
           (err.response?.data?.errors
-            ? Object.entries(err.response.data.errors).map(([f,m]) => `${f}: ${Array.isArray(m)?m.join(', '):m}`).join(' · ')
+            ? Object.entries(err.response.data.errors).map(([f, m]) => `${f}: ${Array.isArray(m) ? m.join(', ') : m}`).join(' · ')
             : 'Save failed.')
         emit('notify', { type: 'error', message: errMsg })
       } finally { saving.value = false }
@@ -576,8 +585,10 @@ const SubEntityPanel = defineComponent({
           h('div', { class: 'radio-group' },
             field.options.map(opt =>
               h('label', { class: 'radio-opt' }, [
-                h('input', { type: 'radio', name: `sub_${field.name}_${props.endpoint}`, value: opt.value,
-                  checked: formData.value[field.name] === opt.value, onChange: () => formData.value[field.name] = opt.value }),
+                h('input', {
+                  type: 'radio', name: `sub_${field.name}_${props.endpoint}`, value: opt.value,
+                  checked: formData.value[field.name] === opt.value, onChange: () => formData.value[field.name] = opt.value
+                }),
                 h('span', {}, opt.label),
               ])
             )
@@ -587,8 +598,10 @@ const SubEntityPanel = defineComponent({
       if (field.type === 'select') {
         return h('div', { class: 'form-field' }, [
           h('label', { class: 'form-label' }, field.label + (field.required ? ' *' : '')),
-          h('select', { class: 'form-select', value: formData.value[field.name] || '',
-            onChange: e => formData.value[field.name] = e.target.value }, [
+          h('select', {
+            class: 'form-select', value: formData.value[field.name] || '',
+            onChange: e => formData.value[field.name] = e.target.value
+          }, [
             h('option', { value: '' }, field.placeholder || 'Select…'),
             ...(field.options || []).map(o => h('option', { value: o.value, selected: formData.value[field.name] == o.value }, o.label))
           ]),
@@ -597,16 +610,20 @@ const SubEntityPanel = defineComponent({
       if (field.type === 'textarea') {
         return h('div', { class: 'form-field form-field--full' }, [
           h('label', { class: 'form-label' }, field.label),
-          h('textarea', { class: 'form-textarea', rows: field.rows || 2,
+          h('textarea', {
+            class: 'form-textarea', rows: field.rows || 2,
             value: formData.value[field.name] || '', placeholder: field.placeholder || '',
-            onInput: e => formData.value[field.name] = e.target.value }),
+            onInput: e => formData.value[field.name] = e.target.value
+          }),
         ])
       }
       return h('div', { class: 'form-field' }, [
         h('label', { class: 'form-label' }, field.label + (field.required ? ' *' : '')),
-        h('input', { type: field.type || 'text', class: 'form-input',
+        h('input', {
+          type: field.type || 'text', class: 'form-input',
           value: formData.value[field.name] || '', placeholder: field.placeholder || '',
-          onInput: e => formData.value[field.name] = e.target.value }),
+          onInput: e => formData.value[field.name] = e.target.value
+        }),
       ])
     }
 
@@ -634,24 +651,24 @@ const SubEntityPanel = defineComponent({
           items.length === 0
             ? h('div', { class: 'sub-empty' }, `No ${props.title.toLowerCase()} found`)
             : h('table', { class: 'sub-table' }, [
-                h('thead', {}, [h('tr', {}, [
-                  ...(props.columns || []).map(col => h('th', {}, col.label)),
-                  h('th', {}, 'Actions'),
-                ])]),
-                h('tbody', {}, items.map(item =>
-                  h('tr', { key: item.id }, [
-                    ...(props.columns || []).map(col =>
-                      col.type === 'status'
-                        ? h('td', {}, [h('span', { class: `sub-status ${item[col.key] === 'active' ? 'status-active' : 'status-inactive'}` }, item[col.key] || '—')])
-                        : h('td', {}, item[col.key] || '—')
-                    ),
-                    h('td', { class: 'sub-actions-cell' }, [
-                      h('button', { class: 'sub-btn sub-btn-edit', onClick: () => openEdit(item) }, 'Edit'),
-                      h('button', { class: 'sub-btn sub-btn-delete', onClick: () => handleDelete(item) }, 'Delete'),
-                    ]),
-                  ])
-                )),
-              ])
+              h('thead', {}, [h('tr', {}, [
+                ...(props.columns || []).map(col => h('th', {}, col.label)),
+                h('th', {}, 'Actions'),
+              ])]),
+              h('tbody', {}, items.map(item =>
+                h('tr', { key: item.id }, [
+                  ...(props.columns || []).map(col =>
+                    col.type === 'status'
+                      ? h('td', {}, [h('span', { class: `sub-status ${item[col.key] === 'active' ? 'status-active' : 'status-inactive'}` }, item[col.key] || '—')])
+                      : h('td', {}, item[col.key] || '—')
+                  ),
+                  h('td', { class: 'sub-actions-cell' }, [
+                    h('button', { class: 'sub-btn sub-btn-edit', onClick: () => openEdit(item) }, 'Edit'),
+                    h('button', { class: 'sub-btn sub-btn-delete', onClick: () => handleDelete(item) }, 'Delete'),
+                  ]),
+                ])
+              )),
+            ])
         ]),
       ])
     }
@@ -664,10 +681,10 @@ const ShiftPanel = defineComponent({
   props: { items: Array, loading: Boolean, companyId: [String, Number] },
   emits: ['refresh', 'notify'],
   setup(props, { emit }) {
-    const showForm   = ref(false)
+    const showForm = ref(false)
     const editTarget = ref(null)
-    const saving     = ref(false)
-    const formData   = ref({})
+    const saving = ref(false)
+    const formData = ref({})
 
     const apiBase2 = process.env.VUE_APP_BASE_API || '/api'
     const panelApi = axios.create({ baseURL: apiBase2 })
@@ -703,7 +720,7 @@ const ShiftPanel = defineComponent({
       } catch (err) {
         const errMsg = err.response?.data?.message ||
           (err.response?.data?.errors
-            ? Object.entries(err.response.data.errors).map(([f,m]) => `${f}: ${Array.isArray(m)?m.join(', '):m}`).join(' · ')
+            ? Object.entries(err.response.data.errors).map(([f, m]) => `${f}: ${Array.isArray(m) ? m.join(', ') : m}`).join(' · ')
             : 'Save failed.')
         emit('notify', { type: 'error', message: errMsg })
       } finally { saving.value = false }
@@ -737,20 +754,26 @@ const ShiftPanel = defineComponent({
             // Name
             h('div', { class: 'form-field' }, [
               h('label', { class: 'form-label' }, 'Shift Name *'),
-              h('input', { type: 'text', class: 'form-input', value: formData.value.name || '',
-                placeholder: 'Morning Shift', onInput: e => formData.value.name = e.target.value }),
+              h('input', {
+                type: 'text', class: 'form-input', value: formData.value.name || '',
+                placeholder: 'Morning Shift', onInput: e => formData.value.name = e.target.value
+              }),
             ]),
             // Start time
             h('div', { class: 'form-field' }, [
               h('label', { class: 'form-label' }, 'Start Time *'),
-              h('input', { type: 'time', class: 'form-input', value: formData.value.start_time || '',
-                onInput: e => formData.value.start_time = e.target.value }),
+              h('input', {
+                type: 'time', class: 'form-input', value: formData.value.start_time || '',
+                onInput: e => formData.value.start_time = e.target.value
+              }),
             ]),
             // End time
             h('div', { class: 'form-field' }, [
               h('label', { class: 'form-label' }, 'End Time *'),
-              h('input', { type: 'time', class: 'form-input', value: formData.value.end_time || '',
-                onInput: e => formData.value.end_time = e.target.value }),
+              h('input', {
+                type: 'time', class: 'form-input', value: formData.value.end_time || '',
+                onInput: e => formData.value.end_time = e.target.value
+              }),
             ]),
             // Status
             h('div', { class: 'form-field' }, [
@@ -758,9 +781,11 @@ const ShiftPanel = defineComponent({
               h('div', { class: 'radio-group' },
                 statusOptions.map(opt =>
                   h('label', { class: 'radio-opt' }, [
-                    h('input', { type: 'radio', name: 'shift_status', value: opt.value,
+                    h('input', {
+                      type: 'radio', name: 'shift_status', value: opt.value,
                       checked: formData.value.status === opt.value,
-                      onChange: () => formData.value.status = opt.value }),
+                      onChange: () => formData.value.status = opt.value
+                    }),
                     h('span', {}, opt.label),
                   ])
                 )
@@ -769,9 +794,11 @@ const ShiftPanel = defineComponent({
             // Details (full width)
             h('div', { class: 'form-field form-field--full' }, [
               h('label', { class: 'form-label' }, 'Details'),
-              h('textarea', { class: 'form-textarea', rows: 2,
+              h('textarea', {
+                class: 'form-textarea', rows: 2,
                 value: formData.value.details || '', placeholder: 'Optional description…',
-                onInput: e => formData.value.details = e.target.value }),
+                onInput: e => formData.value.details = e.target.value
+              }),
             ]),
           ]),
           h('div', { class: 'sub-form-actions' }, [
@@ -785,23 +812,23 @@ const ShiftPanel = defineComponent({
           items.length === 0
             ? h('div', { class: 'sub-empty' }, 'No shifts found')
             : h('table', { class: 'sub-table' }, [
-                h('thead', {}, [h('tr', {}, [
-                  h('th', {}, 'Shift Name'), h('th', {}, 'Start Time'),
-                  h('th', {}, 'End Time'), h('th', {}, 'Status'), h('th', {}, 'Actions'),
-                ])]),
-                h('tbody', {}, items.map(item =>
-                  h('tr', { key: item.id }, [
-                    h('td', {}, item.name || '—'),
-                    h('td', {}, item.start_time || '—'),
-                    h('td', {}, item.end_time || '—'),
-                    h('td', {}, [h('span', { class: `sub-status ${item.status === 'active' ? 'status-active' : 'status-inactive'}` }, item.status || '—')]),
-                    h('td', { class: 'sub-actions-cell' }, [
-                      h('button', { class: 'sub-btn sub-btn-edit', onClick: () => openEdit(item) }, 'Edit'),
-                      h('button', { class: 'sub-btn sub-btn-delete', onClick: () => handleDelete(item) }, 'Delete'),
-                    ]),
-                  ])
-                )),
-              ])
+              h('thead', {}, [h('tr', {}, [
+                h('th', {}, 'Shift Name'), h('th', {}, 'Start Time'),
+                h('th', {}, 'End Time'), h('th', {}, 'Status'), h('th', {}, 'Actions'),
+              ])]),
+              h('tbody', {}, items.map(item =>
+                h('tr', { key: item.id }, [
+                  h('td', {}, item.name || '—'),
+                  h('td', {}, item.start_time || '—'),
+                  h('td', {}, item.end_time || '—'),
+                  h('td', {}, [h('span', { class: `sub-status ${item.status === 'active' ? 'status-active' : 'status-inactive'}` }, item.status || '—')]),
+                  h('td', { class: 'sub-actions-cell' }, [
+                    h('button', { class: 'sub-btn sub-btn-edit', onClick: () => openEdit(item) }, 'Edit'),
+                    h('button', { class: 'sub-btn sub-btn-delete', onClick: () => handleDelete(item) }, 'Delete'),
+                  ]),
+                ])
+              )),
+            ])
         ]),
       ])
     }
@@ -857,29 +884,29 @@ const WeekendPanel = defineComponent({
         props.loading
           ? h('div', { class: 'sub-loading' }, [h('div', { class: 'spinner' })])
           : h('div', { class: 'weekend-grid' },
-              DAY_NAMES.map((name, idx) => {
-                const isWeekend = activeDays.value.has(idx)
-                return h('button', {
-                  key: idx,
-                  class: `weekend-day-btn ${isWeekend ? 'weekend-active' : ''}`,
-                  disabled: saving.value,
-                  onClick: () => toggleDay(idx),
-                }, [
-                  h('span', { class: 'weekend-day-abbr' }, name.slice(0, 3).toUpperCase()),
-                  h('span', { class: 'weekend-day-full' }, name),
-                  isWeekend && h('span', { class: 'weekend-check' }, '✓'),
-                ])
-              })
-            ),
+            DAY_NAMES.map((name, idx) => {
+              const isWeekend = activeDays.value.has(idx)
+              return h('button', {
+                key: idx,
+                class: `weekend-day-btn ${isWeekend ? 'weekend-active' : ''}`,
+                disabled: saving.value,
+                onClick: () => toggleDay(idx),
+              }, [
+                h('span', { class: 'weekend-day-abbr' }, name.slice(0, 3).toUpperCase()),
+                h('span', { class: 'weekend-day-full' }, name),
+                isWeekend && h('span', { class: 'weekend-check' }, '✓'),
+              ])
+            })
+          ),
         h('div', { class: 'weekend-summary' }, [
           h('span', { class: 'weekend-summary-label' }, 'Current Weekends:'),
           h('span', { class: 'weekend-summary-days' },
             (props.items || []).length === 0
               ? 'None configured'
               : (props.items || [])
-                  .sort((a,b) => a.day_of_week - b.day_of_week)
-                  .map(i => DAY_NAMES[i.day_of_week])
-                  .join(', ')
+                .sort((a, b) => a.day_of_week - b.day_of_week)
+                .map(i => DAY_NAMES[i.day_of_week])
+                .join(', ')
           ),
         ]),
       ])
@@ -893,10 +920,10 @@ const HolidayPanel = defineComponent({
   props: { items: Array, loading: Boolean, companyId: [String, Number], roles: Array },
   emits: ['refresh', 'notify'],
   setup(props, { emit }) {
-    const showForm   = ref(false)
+    const showForm = ref(false)
     const editTarget = ref(null)
-    const saving     = ref(false)
-    const formData   = ref({})
+    const saving = ref(false)
+    const formData = ref({})
 
     const apiBase2 = process.env.VUE_APP_BASE_API || '/api'
     const panelApi = axios.create({ baseURL: apiBase2 })
@@ -932,7 +959,7 @@ const HolidayPanel = defineComponent({
       } catch (err) {
         const errMsg = err.response?.data?.message ||
           (err.response?.data?.errors
-            ? Object.entries(err.response.data.errors).map(([f,m]) => `${f}: ${Array.isArray(m)?m.join(', '):m}`).join(' · ')
+            ? Object.entries(err.response.data.errors).map(([f, m]) => `${f}: ${Array.isArray(m) ? m.join(', ') : m}`).join(' · ')
             : 'Save failed.')
         emit('notify', { type: 'error', message: errMsg })
       } finally { saving.value = false }
@@ -969,19 +996,25 @@ const HolidayPanel = defineComponent({
           h('div', { class: 'sub-form-grid' }, [
             h('div', { class: 'form-field' }, [
               h('label', { class: 'form-label' }, 'Holiday Name *'),
-              h('input', { type: 'text', class: 'form-input', value: formData.value.name || '',
-                placeholder: 'Eid ul-Fitr', onInput: e => formData.value.name = e.target.value }),
+              h('input', {
+                type: 'text', class: 'form-input', value: formData.value.name || '',
+                placeholder: 'Eid ul-Fitr', onInput: e => formData.value.name = e.target.value
+              }),
             ]),
             h('div', { class: 'form-field' }, [
               h('label', { class: 'form-label' }, 'Date *'),
-              h('input', { type: 'date', class: 'form-input', value: formData.value.date || '',
-                onInput: e => formData.value.date = e.target.value }),
+              h('input', {
+                type: 'date', class: 'form-input', value: formData.value.date || '',
+                onInput: e => formData.value.date = e.target.value
+              }),
             ]),
             h('div', { class: 'form-field form-field--full' }, [
               h('label', { class: 'form-label' }, 'Description'),
-              h('textarea', { class: 'form-textarea', rows: 2,
+              h('textarea', {
+                class: 'form-textarea', rows: 2,
                 value: formData.value.description || '', placeholder: 'Optional notes…',
-                onInput: e => formData.value.description = e.target.value }),
+                onInput: e => formData.value.description = e.target.value
+              }),
             ]),
           ]),
           h('div', { class: 'sub-form-actions' }, [
@@ -995,21 +1028,21 @@ const HolidayPanel = defineComponent({
           items.length === 0
             ? h('div', { class: 'sub-empty' }, 'No holidays found')
             : h('table', { class: 'sub-table' }, [
-                h('thead', {}, [h('tr', {}, [
-                  h('th', {}, 'Holiday'), h('th', {}, 'Date'), h('th', {}, 'Description'), h('th', {}, 'Actions'),
-                ])]),
-                h('tbody', {}, items.map(item =>
-                  h('tr', { key: item.id }, [
-                    h('td', {}, item.name || '—'),
-                    h('td', {}, [h('span', { class: 'holiday-date-badge' }, formatDate(item.date))]),
-                    h('td', {}, item.description || '—'),
-                    h('td', { class: 'sub-actions-cell' }, [
-                      h('button', { class: 'sub-btn sub-btn-edit', onClick: () => openEdit(item) }, 'Edit'),
-                      h('button', { class: 'sub-btn sub-btn-delete', onClick: () => handleDelete(item) }, 'Delete'),
-                    ]),
-                  ])
-                )),
-              ])
+              h('thead', {}, [h('tr', {}, [
+                h('th', {}, 'Holiday'), h('th', {}, 'Date'), h('th', {}, 'Description'), h('th', {}, 'Actions'),
+              ])]),
+              h('tbody', {}, items.map(item =>
+                h('tr', { key: item.id }, [
+                  h('td', {}, item.name || '—'),
+                  h('td', {}, [h('span', { class: 'holiday-date-badge' }, formatDate(item.date))]),
+                  h('td', {}, item.description || '—'),
+                  h('td', { class: 'sub-actions-cell' }, [
+                    h('button', { class: 'sub-btn sub-btn-edit', onClick: () => openEdit(item) }, 'Edit'),
+                    h('button', { class: 'sub-btn sub-btn-delete', onClick: () => handleDelete(item) }, 'Delete'),
+                  ]),
+                ])
+              )),
+            ])
         ]),
       ])
     }
@@ -1022,16 +1055,16 @@ const LeavePolicyPanel = defineComponent({
   props: { items: Array, loading: Boolean, companyId: [String, Number], roles: Array },
   emits: ['refresh', 'notify'],
   setup(props, { emit }) {
-    const showForm        = ref(false)
-    const editTarget      = ref(null)
-    const saving          = ref(false)
-    const formData        = ref({})
-    const expandedPolicy  = ref(null)   // policy whose hierarchy panel is open
-    const hierarchyItems  = ref([])
+    const showForm = ref(false)
+    const editTarget = ref(null)
+    const saving = ref(false)
+    const formData = ref({})
+    const expandedPolicy = ref(null)   // policy whose hierarchy panel is open
+    const hierarchyItems = ref([])
     const hierarchyLoading = ref(false)
     const showHierarchyForm = ref(false)
-    const hierarchyEdit   = ref(null)
-    const hierarchyForm   = ref({})
+    const hierarchyEdit = ref(null)
+    const hierarchyForm = ref({})
     const hierarchySaving = ref(false)
 
     const LEAVE_TYPES = [
@@ -1080,7 +1113,7 @@ const LeavePolicyPanel = defineComponent({
         const errMsg = err.response?.data?.message ||
           (err.response?.data?.errors
             ? Object.entries(err.response.data.errors)
-                .map(([f, m]) => `${f}: ${Array.isArray(m) ? m.join(', ') : m}`).join(' · ')
+              .map(([f, m]) => `${f}: ${Array.isArray(m) ? m.join(', ') : m}`).join(' · ')
             : 'Save failed.')
         emit('notify', { type: 'error', message: errMsg })
       } finally { saving.value = false }
@@ -1101,7 +1134,7 @@ const LeavePolicyPanel = defineComponent({
     // ── Hierarchy ────────────────────────────────────────────────────────────
     const loadHierarchy = async (policy) => {
       hierarchyLoading.value = true
-      hierarchyItems.value   = []
+      hierarchyItems.value = []
       try {
         const { data } = await panelApi.get(
           `/leave/approval-hierarchies/policy/${props.companyId}/${policy.id}`,
@@ -1117,32 +1150,32 @@ const LeavePolicyPanel = defineComponent({
     const toggleHierarchy = async (policy) => {
       // close if same policy clicked again
       if (expandedPolicy.value?.id === policy.id) {
-        expandedPolicy.value    = null
+        expandedPolicy.value = null
         showHierarchyForm.value = false
         return
       }
-      expandedPolicy.value    = policy
+      expandedPolicy.value = policy
       showHierarchyForm.value = false
-      hierarchyEdit.value     = null
+      hierarchyEdit.value = null
       await loadHierarchy(policy)
     }
 
     const openHierarchyCreate = () => {
-      hierarchyEdit.value  = null
-      hierarchyForm.value  = {
-        company_id:      props.companyId,
+      hierarchyEdit.value = null
+      hierarchyForm.value = {
+        company_id: props.companyId,
         leave_policy_id: expandedPolicy.value?.id,
-        level:           '',
-        role_id:         '',
-        mandatory:       true,
+        level: '',
+        role_id: '',
+        mandatory: true,
       }
       showHierarchyForm.value = true
     }
 
     const openHierarchyEdit = (item) => {
-      hierarchyEdit.value  = item
-      hierarchyForm.value  = {
-        company_id:      props.companyId,
+      hierarchyEdit.value = item
+      hierarchyForm.value = {
+        company_id: props.companyId,
         leave_policy_id: expandedPolicy.value?.id,
         ...item,
       }
@@ -1154,7 +1187,7 @@ const LeavePolicyPanel = defineComponent({
       try {
         const payload = { ...hierarchyForm.value }
         // clean up empty optional fields
-        if (!payload.role_id)     delete payload.role_id
+        if (!payload.role_id) delete payload.role_id
         if (!payload.employee_id) delete payload.employee_id
 
         if (hierarchyEdit.value) {
@@ -1170,7 +1203,7 @@ const LeavePolicyPanel = defineComponent({
         const errMsg = err.response?.data?.message ||
           (err.response?.data?.errors
             ? Object.entries(err.response.data.errors)
-                .map(([f, m]) => `${f}: ${Array.isArray(m) ? m.join(', ') : m}`).join(' · ')
+              .map(([f, m]) => `${f}: ${Array.isArray(m) ? m.join(', ') : m}`).join(' · ')
             : 'Save failed.')
         emit('notify', { type: 'error', message: errMsg })
       } finally { hierarchySaving.value = false }
@@ -1194,7 +1227,7 @@ const LeavePolicyPanel = defineComponent({
     }
 
     const statusOptions = [
-      { value: 'active',   label: 'Active'   },
+      { value: 'active', label: 'Active' },
       { value: 'inactive', label: 'Inactive' },
     ]
 
@@ -1225,17 +1258,21 @@ const LeavePolicyPanel = defineComponent({
             // Level
             h('div', { class: 'form-field' }, [
               h('label', { class: 'form-label' }, 'Approval Level *'),
-              h('input', { type: 'number', class: 'form-input', min: '1',
+              h('input', {
+                type: 'number', class: 'form-input', min: '1',
                 value: hierarchyForm.value.level ?? '',
                 placeholder: '1',
-                onInput: e => hierarchyForm.value.level = e.target.value }),
+                onInput: e => hierarchyForm.value.level = e.target.value
+              }),
             ]),
             // Role — dropdown from subData.roles passed via prop
             h('div', { class: 'form-field' }, [
               h('label', { class: 'form-label' }, 'Approver Role *'),
-              h('select', { class: 'form-select',
+              h('select', {
+                class: 'form-select',
                 value: hierarchyForm.value.role_id ?? '',
-                onChange: e => hierarchyForm.value.role_id = e.target.value }, [
+                onChange: e => hierarchyForm.value.role_id = e.target.value
+              }, [
                 h('option', { value: '' }, 'Select role…'),
                 ...(props.roles || []).map(r =>
                   h('option', { value: r.id, selected: hierarchyForm.value.role_id == r.id }, r.name)
@@ -1247,15 +1284,19 @@ const LeavePolicyPanel = defineComponent({
               h('label', { class: 'form-label' }, 'Mandatory'),
               h('div', { class: 'radio-group' }, [
                 h('label', { class: 'radio-opt' }, [
-                  h('input', { type: 'radio', name: 'hier_mandatory', value: 'true',
+                  h('input', {
+                    type: 'radio', name: 'hier_mandatory', value: 'true',
                     checked: hierarchyForm.value.mandatory === true || hierarchyForm.value.mandatory === 'true',
-                    onChange: () => hierarchyForm.value.mandatory = true }),
+                    onChange: () => hierarchyForm.value.mandatory = true
+                  }),
                   h('span', {}, 'Yes'),
                 ]),
                 h('label', { class: 'radio-opt' }, [
-                  h('input', { type: 'radio', name: 'hier_mandatory', value: 'false',
+                  h('input', {
+                    type: 'radio', name: 'hier_mandatory', value: 'false',
                     checked: hierarchyForm.value.mandatory === false || hierarchyForm.value.mandatory === 'false',
-                    onChange: () => hierarchyForm.value.mandatory = false }),
+                    onChange: () => hierarchyForm.value.mandatory = false
+                  }),
                   h('span', {}, 'No'),
                 ]),
               ]),
@@ -1276,33 +1317,33 @@ const LeavePolicyPanel = defineComponent({
           hierarchyItems.value.length === 0
             ? h('div', { class: 'sub-empty' }, 'No approval levels configured yet')
             : h('table', { class: 'sub-table' }, [
-                h('thead', {}, [h('tr', {}, [
-                  h('th', {}, 'Level'),
-                  h('th', {}, 'Approver Role'),
-                  h('th', {}, 'Mandatory'),
-                  h('th', {}, 'Actions'),
-                ])]),
-                h('tbody', {}, hierarchyItems.value.map(item =>
-                  h('tr', { key: item.id }, [
-                    h('td', {}, [h('span', { class: 'hierarchy-level-badge' }, `Level ${item.level}`)]),
-                    h('td', {}, (() => {
-                      const role = (props.roles || []).find(r => r.id == item.role_id)
-                      return role ? role.name : (item.role_id ? `#${item.role_id}` : '—')
-                    })()),
-                    h('td', {}, [
-                      h('span', {
-                        class: item.mandatory
-                          ? 'hierarchy-mandatory-yes'
-                          : 'hierarchy-mandatory-no',
-                      }, item.mandatory ? 'Yes' : 'No'),
-                    ]),
-                    h('td', { class: 'sub-actions-cell' }, [
-                      h('button', { class: 'sub-btn sub-btn-edit',   onClick: () => openHierarchyEdit(item)   }, 'Edit'),
-                      h('button', { class: 'sub-btn sub-btn-delete', onClick: () => handleHierarchyDelete(item) }, 'Delete'),
-                    ]),
-                  ])
-                )),
-              ]),
+              h('thead', {}, [h('tr', {}, [
+                h('th', {}, 'Level'),
+                h('th', {}, 'Approver Role'),
+                h('th', {}, 'Mandatory'),
+                h('th', {}, 'Actions'),
+              ])]),
+              h('tbody', {}, hierarchyItems.value.map(item =>
+                h('tr', { key: item.id }, [
+                  h('td', {}, [h('span', { class: 'hierarchy-level-badge' }, `Level ${item.level}`)]),
+                  h('td', {}, (() => {
+                    const role = (props.roles || []).find(r => r.id == item.role_id)
+                    return role ? role.name : (item.role_id ? `#${item.role_id}` : '—')
+                  })()),
+                  h('td', {}, [
+                    h('span', {
+                      class: item.mandatory
+                        ? 'hierarchy-mandatory-yes'
+                        : 'hierarchy-mandatory-no',
+                    }, item.mandatory ? 'Yes' : 'No'),
+                  ]),
+                  h('td', { class: 'sub-actions-cell' }, [
+                    h('button', { class: 'sub-btn sub-btn-edit', onClick: () => openHierarchyEdit(item) }, 'Edit'),
+                    h('button', { class: 'sub-btn sub-btn-delete', onClick: () => handleHierarchyDelete(item) }, 'Delete'),
+                  ]),
+                ])
+              )),
+            ]),
         ]),
       ])
 
@@ -1324,37 +1365,47 @@ const LeavePolicyPanel = defineComponent({
           h('div', { class: 'sub-form-grid' }, [
             h('div', { class: 'form-field' }, [
               h('label', { class: 'form-label' }, 'Policy Name *'),
-              h('input', { type: 'text', class: 'form-input', value: formData.value.name || '',
-                placeholder: 'Annual Leave Policy', onInput: e => formData.value.name = e.target.value }),
+              h('input', {
+                type: 'text', class: 'form-input', value: formData.value.name || '',
+                placeholder: 'Annual Leave Policy', onInput: e => formData.value.name = e.target.value
+              }),
             ]),
             h('div', { class: 'form-field' }, [
               h('label', { class: 'form-label' }, 'Leave Type *'),
-              h('select', { class: 'form-select', value: formData.value.type || '',
-                onChange: e => formData.value.type = e.target.value }, [
+              h('select', {
+                class: 'form-select', value: formData.value.type || '',
+                onChange: e => formData.value.type = e.target.value
+              }, [
                 h('option', { value: '' }, 'Select type…'),
                 ...LEAVE_TYPES.map(t => h('option', { value: t, selected: formData.value.type === t }, t)),
               ]),
             ]),
             h('div', { class: 'form-field' }, [
               h('label', { class: 'form-label' }, 'Days Per Year *'),
-              h('input', { type: 'number', class: 'form-input', min: '0',
+              h('input', {
+                type: 'number', class: 'form-input', min: '0',
                 value: formData.value.days_per_year ?? '', placeholder: '14',
-                onInput: e => formData.value.days_per_year = e.target.value }),
+                onInput: e => formData.value.days_per_year = e.target.value
+              }),
             ]),
             h('div', { class: 'form-field' }, [
               h('label', { class: 'form-label' }, 'Max Carry‑Forward Days'),
-              h('input', { type: 'number', class: 'form-input', min: '0',
+              h('input', {
+                type: 'number', class: 'form-input', min: '0',
                 value: formData.value.max_carry_forward_days ?? '', placeholder: '0  (0 = disabled)',
-                onInput: e => formData.value.max_carry_forward_days = e.target.value }),
+                onInput: e => formData.value.max_carry_forward_days = e.target.value
+              }),
             ]),
             h('div', { class: 'form-field' }, [
               h('label', { class: 'form-label' }, 'Status *'),
               h('div', { class: 'radio-group' },
                 statusOptions.map(opt =>
                   h('label', { class: 'radio-opt' }, [
-                    h('input', { type: 'radio', name: 'lp_status', value: opt.value,
+                    h('input', {
+                      type: 'radio', name: 'lp_status', value: opt.value,
                       checked: formData.value.status === opt.value,
-                      onChange: () => formData.value.status = opt.value }),
+                      onChange: () => formData.value.status = opt.value
+                    }),
                     h('span', {}, opt.label),
                   ])
                 )
@@ -1362,9 +1413,11 @@ const LeavePolicyPanel = defineComponent({
             ]),
             h('div', { class: 'form-field form-field--full' }, [
               h('label', { class: 'form-label' }, 'Description'),
-              h('textarea', { class: 'form-textarea', rows: 2,
+              h('textarea', {
+                class: 'form-textarea', rows: 2,
                 value: formData.value.description || '', placeholder: 'Optional notes about this policy…',
-                onInput: e => formData.value.description = e.target.value }),
+                onInput: e => formData.value.description = e.target.value
+              }),
             ]),
           ]),
           h('div', { class: 'sub-form-actions' }, [
@@ -1382,52 +1435,52 @@ const LeavePolicyPanel = defineComponent({
           items.length === 0
             ? h('div', { class: 'sub-empty' }, 'No leave policies found')
             : h('table', { class: 'sub-table lp-table' }, [
-                h('thead', {}, [h('tr', {}, [
-                  h('th', {}, 'Policy Name'),
-                  h('th', {}, 'Type'),
-                  h('th', {}, 'Days / Year'),
-                  h('th', {}, 'Carry‑Forward'),
-                  h('th', {}, 'Status'),
-                  h('th', {}, 'Actions'),
-                ])]),
-                h('tbody', {}, items.flatMap(item => {
-                  const isExpanded = expandedPolicy.value?.id === item.id
-                  return [
-                    // policy row
-                    h('tr', { key: item.id, class: isExpanded ? 'lp-row-expanded' : '' }, [
-                      h('td', {}, item.name || '—'),
-                      h('td', {}, [h('span', { class: 'lp-type-badge' }, item.type || '—')]),
-                      h('td', {}, [h('span', { class: 'lp-days-badge' }, getDaysLabel(item.days_per_year))]),
-                      h('td', {}, (() => {
-                        const d = Number(item.max_carry_forward_days)
-                        if (item.max_carry_forward_days == null || item.max_carry_forward_days === '') return '—'
-                        return d > 0 ? `Up to ${d} day${d !== 1 ? 's' : ''}` : 'None'
-                      })()),
-                      h('td', {}, [h('span', { class: `sub-status ${item.status === 'active' ? 'status-active' : 'status-inactive'}` }, item.status || '—')]),
-                      h('td', { class: 'sub-actions-cell' }, [
-                        // Hierarchy toggle button
-                        h('button', {
-                          class: `sub-btn sub-btn-hierarchy ${isExpanded ? 'sub-btn-hierarchy--active' : ''}`,
-                          title: 'Manage Approval Hierarchy',
-                          onClick: () => toggleHierarchy(item),
-                        }, [
-                          h('svg', { viewBox: '0 0 20 20', fill: 'currentColor', width: 11, height: 11, style: 'margin-right:4px' },
-                            [h('path', { d: 'M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z' })]),
-                          isExpanded ? 'Close' : 'Hierarchy',
-                        ]),
-                        h('button', { class: 'sub-btn sub-btn-edit',   onClick: () => openEdit(item)   }, 'Edit'),
-                        h('button', { class: 'sub-btn sub-btn-delete', onClick: () => handleDelete(item) }, 'Delete'),
+              h('thead', {}, [h('tr', {}, [
+                h('th', {}, 'Policy Name'),
+                h('th', {}, 'Type'),
+                h('th', {}, 'Days / Year'),
+                h('th', {}, 'Carry‑Forward'),
+                h('th', {}, 'Status'),
+                h('th', {}, 'Actions'),
+              ])]),
+              h('tbody', {}, items.flatMap(item => {
+                const isExpanded = expandedPolicy.value?.id === item.id
+                return [
+                  // policy row
+                  h('tr', { key: item.id, class: isExpanded ? 'lp-row-expanded' : '' }, [
+                    h('td', {}, item.name || '—'),
+                    h('td', {}, [h('span', { class: 'lp-type-badge' }, item.type || '—')]),
+                    h('td', {}, [h('span', { class: 'lp-days-badge' }, getDaysLabel(item.days_per_year))]),
+                    h('td', {}, (() => {
+                      const d = Number(item.max_carry_forward_days)
+                      if (item.max_carry_forward_days == null || item.max_carry_forward_days === '') return '—'
+                      return d > 0 ? `Up to ${d} day${d !== 1 ? 's' : ''}` : 'None'
+                    })()),
+                    h('td', {}, [h('span', { class: `sub-status ${item.status === 'active' ? 'status-active' : 'status-inactive'}` }, item.status || '—')]),
+                    h('td', { class: 'sub-actions-cell' }, [
+                      // Hierarchy toggle button
+                      h('button', {
+                        class: `sub-btn sub-btn-hierarchy ${isExpanded ? 'sub-btn-hierarchy--active' : ''}`,
+                        title: 'Manage Approval Hierarchy',
+                        onClick: () => toggleHierarchy(item),
+                      }, [
+                        h('svg', { viewBox: '0 0 20 20', fill: 'currentColor', width: 11, height: 11, style: 'margin-right:4px' },
+                          [h('path', { d: 'M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z' })]),
+                        isExpanded ? 'Close' : 'Hierarchy',
                       ]),
+                      h('button', { class: 'sub-btn sub-btn-edit', onClick: () => openEdit(item) }, 'Edit'),
+                      h('button', { class: 'sub-btn sub-btn-delete', onClick: () => handleDelete(item) }, 'Delete'),
                     ]),
-                    // hierarchy expansion row (spans all columns)
-                    isExpanded && h('tr', { key: `hier-${item.id}`, class: 'hierarchy-expansion-row' }, [
-                      h('td', { colspan: 6, style: 'padding: 0;' }, [
-                        renderHierarchyPanel(),
-                      ]),
+                  ]),
+                  // hierarchy expansion row (spans all columns)
+                  isExpanded && h('tr', { key: `hier-${item.id}`, class: 'hierarchy-expansion-row' }, [
+                    h('td', { colspan: 6, style: 'padding: 0;' }, [
+                      renderHierarchyPanel(),
                     ]),
-                  ]
-                })),
-              ]),
+                  ]),
+                ]
+              })),
+            ]),
         ]),
       ])
     }
@@ -1446,32 +1499,32 @@ api.interceptors.request.use(cfg => {
 })
 
 // ── State ─────────────────────────────────────────────────────────────────────
-const companies         = ref([])
+const companies = ref([])
 const filteredCompanies = ref([])
-const isLoading         = ref(false)
-const hasError          = ref(false)
-const errorMessage      = ref('')
-const subLoading        = ref(false)
+const isLoading = ref(false)
+const hasError = ref(false)
+const errorMessage = ref('')
+const subLoading = ref(false)
 
-const searchQuery    = ref('')
-const filterStatus   = ref('')
+const searchQuery = ref('')
+const filterStatus = ref('')
 const filterIndustry = ref('')
 
 const deptBranchFilter = ref('')
 
 // Modal state
-const showModal         = ref(false)
+const showModal = ref(false)
 const showDeleteConfirm = ref(false)
-const selectedCompany   = ref(null)
-const deleteTarget      = ref(null)
-const activeTab         = ref('company-view')
-const modalMode         = ref('view')
+const selectedCompany = ref(null)
+const deleteTarget = ref(null)
+const activeTab = ref('company-view')
+const modalMode = ref('view')
 
 const subData = ref({ branches: [], departments: [], roles: [], shifts: [], weekends: [], holidays: [], leavePolicies: [] })
 
 const systemBranches = ref([])
 
-const modalNotif  = ref({ show: false, type: 'success', message: '' })
+const modalNotif = ref({ show: false, type: 'success', message: '' })
 const globalNotif = ref({ show: false, type: 'success', message: '' })
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -1503,71 +1556,85 @@ const modalSize = computed(() =>
 )
 
 const modalTabs = computed(() => [
-  { key: 'company-view',  label: 'Overview'    },
-  { key: 'company-edit',  label: 'Edit'        },
-  { key: 'branches',      label: 'Branches'    },
-  { key: 'departments',   label: 'Departments' },
-  { key: 'roles',         label: 'Roles'       },
-  { key: 'shifts',        label: 'Shifts'      },
-  { key: 'weekends',      label: 'Weekends'    },
-  { key: 'holidays',      label: 'Holidays'    },
+  { key: 'company-view', label: 'Overview' },
+  { key: 'company-edit', label: 'Edit' },
+  { key: 'branches', label: 'Branches' },
+  { key: 'departments', label: 'Departments' },
+  { key: 'roles', label: 'Roles' },
+  { key: 'shifts', label: 'Shifts' },
+  { key: 'weekends', label: 'Weekends' },
+  { key: 'holidays', label: 'Holidays' },
   { key: 'leave-policies', label: 'Leave Policies' }
 ])
 
 const branchColumns = [
-  { key: 'name',    label: 'Branch Name' },
-  { key: 'city',    label: 'City' },
+  { key: 'name', label: 'Branch Name' },
+  { key: 'city', label: 'City' },
   { key: 'country', label: 'Country' },
-  { key: 'status',  label: 'Status', type: 'status' },
+  { key: 'status', label: 'Status', type: 'status' },
 ]
 const departmentColumns = [
-  { key: 'name',        label: 'Department' },
+  { key: 'name', label: 'Department' },
   { key: 'branch_name', label: 'Branch' },
-  { key: 'hierarchy',   label: 'Hierarchy' },
-  { key: 'status',      label: 'Status', type: 'status' },
+  { key: 'hierarchy', label: 'Hierarchy' },
+  { key: 'status', label: 'Status', type: 'status' },
 ]
 const roleColumns = [
-  { key: 'name',            label: 'Role Name'   },
-  { key: 'abbreviation',    label: 'Short Name'  },
-  { key: 'department_name', label: 'Department'  },
-  { key: 'type',            label: 'Type'        },
-  { key: 'hierarchy',       label: 'Hierarchy'   },
-  { key: 'status',          label: 'Status', type: 'status' },
+  { key: 'name', label: 'Role Name' },
+  { key: 'abbreviation', label: 'Short Name' },
+  { key: 'department_name', label: 'Department' },
+  { key: 'type', label: 'Type' },
+  { key: 'hierarchy', label: 'Hierarchy' },
+  { key: 'status', label: 'Status', type: 'status' },
 ]
 
 const branchFormFields = computed(() => [
-  { name: 'name',        label: 'Branch Name', type: 'text',   required: true,  placeholder: 'Head Office' },
-  { name: 'address',     label: 'Address',     type: 'text',   placeholder: 'Street address' },
-  { name: 'city',        label: 'City',        type: 'text',   placeholder: 'Dhaka' },
-  { name: 'state',       label: 'State',       type: 'text',   placeholder: 'Dhaka Division' },
-  { name: 'country',     label: 'Country',     type: 'select',
-    options: COUNTRIES.map(c => ({ value: c, label: c })) },
-  { name: 'postal_code', label: 'Postal Code', type: 'text',   placeholder: '1229' },
-  { name: 'status',      label: 'Status',      type: 'radio',  required: true, default: 'active',
-    options: [{ value: 'active', label: 'Active' }, { value: 'inactive', label: 'Inactive' }] },
+  { name: 'name', label: 'Branch Name', type: 'text', required: true, placeholder: 'Head Office' },
+  { name: 'address', label: 'Address', type: 'text', placeholder: 'Street address' },
+  { name: 'city', label: 'City', type: 'text', placeholder: 'Dhaka' },
+  { name: 'state', label: 'State', type: 'text', placeholder: 'Dhaka Division' },
+  {
+    name: 'country', label: 'Country', type: 'select',
+    options: COUNTRIES.map(c => ({ value: c, label: c }))
+  },
+  { name: 'postal_code', label: 'Postal Code', type: 'text', placeholder: '1229' },
+  {
+    name: 'status', label: 'Status', type: 'radio', required: true, default: 'active',
+    options: [{ value: 'active', label: 'Active' }, { value: 'inactive', label: 'Inactive' }]
+  },
 ])
 
 const departmentFormFields = computed(() => [
-  { name: 'name',      label: 'Department Name', type: 'text',     required: true, placeholder: 'Human Resources' },
-  { name: 'branch_id', label: 'Branch',          type: 'select',   placeholder: 'Select branch…',
-    options: (subData.value.branches || []).map(b => ({ value: b.id, label: b.name })) },
-  { name: 'details',   label: 'Details',         type: 'textarea', rows: 2, placeholder: 'Department description…' },
-  { name: 'hierarchy', label: 'Hierarchy',        type: 'number',   placeholder: '1' },
-  { name: 'status',    label: 'Status',           type: 'radio',    required: true, default: 'active',
-    options: [{ value: 'active', label: 'Active' }, { value: 'inactive', label: 'Inactive' }] },
+  { name: 'name', label: 'Department Name', type: 'text', required: true, placeholder: 'Human Resources' },
+  {
+    name: 'branch_id', label: 'Branch', type: 'select', placeholder: 'Select branch…',
+    options: (subData.value.branches || []).map(b => ({ value: b.id, label: b.name }))
+  },
+  { name: 'details', label: 'Details', type: 'textarea', rows: 2, placeholder: 'Department description…' },
+  { name: 'hierarchy', label: 'Hierarchy', type: 'number', placeholder: '1' },
+  {
+    name: 'status', label: 'Status', type: 'radio', required: true, default: 'active',
+    options: [{ value: 'active', label: 'Active' }, { value: 'inactive', label: 'Inactive' }]
+  },
 ])
 
 const roleFormFields = computed(() => [
-  { name: 'name',          label: 'Role Name',  type: 'text',     required: true,  placeholder: 'Senior Manager' },
-  { name: 'abbreviation',  label: 'Short Name', type: 'text',     required: false, placeholder: 'Sr. Mgr.' },
-  { name: 'department_id', label: 'Department', type: 'select',   required: true,
-    options: (subData.value.departments || []).map(d => ({ value: d.id, label: d.name })) },
-  { name: 'type',          label: 'Role Type',  type: 'select',   required: true,  placeholder: 'Select type…',
-    options: [{ value: 'admin', label: 'Admin' }, { value: 'general', label: 'General' }] },
-    { name: 'details',       label: 'Details',    type: 'textarea', rows: 2, placeholder: 'Role description…' },
-  { name: 'hierarchy',     label: 'Hierarchy',  type: 'number',   placeholder: '1' },
-  { name: 'status',        label: 'Status',     type: 'radio',    required: true, default: 'active',
-    options: [{ value: 'active', label: 'Active' }, { value: 'inactive', label: 'Inactive' }] },
+  { name: 'name', label: 'Role Name', type: 'text', required: true, placeholder: 'Senior Manager' },
+  { name: 'abbreviation', label: 'Short Name', type: 'text', required: false, placeholder: 'Sr. Mgr.' },
+  {
+    name: 'department_id', label: 'Department', type: 'select', required: true,
+    options: (subData.value.departments || []).map(d => ({ value: d.id, label: d.name }))
+  },
+  {
+    name: 'type', label: 'Role Type', type: 'select', required: true, placeholder: 'Select type…',
+    options: [{ value: 'admin', label: 'Admin' }, { value: 'general', label: 'General' }]
+  },
+  { name: 'details', label: 'Details', type: 'textarea', rows: 2, placeholder: 'Role description…' },
+  { name: 'hierarchy', label: 'Hierarchy', type: 'number', placeholder: '1' },
+  {
+    name: 'status', label: 'Status', type: 'radio', required: true, default: 'active',
+    options: [{ value: 'active', label: 'Active' }, { value: 'inactive', label: 'Inactive' }]
+  },
 ])
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -1583,8 +1650,8 @@ const showGlobalNotif = (type, message) => {
 }
 
 const clearFilters = () => {
-  searchQuery.value    = ''
-  filterStatus.value   = ''
+  searchQuery.value = ''
+  filterStatus.value = ''
   filterIndustry.value = ''
   filterCompanies()
 }
@@ -1603,7 +1670,7 @@ const loadSystemBranches = async (companyId) => {
 // ── Data loading ──────────────────────────────────────────────────────────────
 const loadData = async () => {
   isLoading.value = true
-  hasError.value  = false
+  hasError.value = false
   try {
     const { data } = await api.get('/companies', { params: { limit: 1000 } })
     const list = Array.isArray(data) ? data : (data.list ?? data.data ?? data.companies ?? [])
@@ -1611,7 +1678,7 @@ const loadData = async () => {
     // Always re-run filter after loading fresh data
     filterCompanies()
   } catch (err) {
-    hasError.value     = true
+    hasError.value = true
     errorMessage.value = err.response?.data?.message || 'Failed to load companies.'
   } finally {
     isLoading.value = false
@@ -1622,7 +1689,7 @@ const filterCompanies = () => {
   const q = (searchQuery.value || '').toLowerCase()
   filteredCompanies.value = companies.value.filter(c =>
     (!q || c.name?.toLowerCase().includes(q) || c.email?.toLowerCase().includes(q)) &&
-    (!filterStatus.value   || c.status   === filterStatus.value)   &&
+    (!filterStatus.value || c.status === filterStatus.value) &&
     (!filterIndustry.value || c.industry === filterIndustry.value)
   )
 }
@@ -1641,22 +1708,22 @@ const loadSubData = async (companyId, branchId = null) => {
     if (branchId) deptParams.branch_id = branchId
 
     const [bRes, dRes, rRes, shRes, wkRes, hlRes, lpRes] = await Promise.all([
-      api.get('/branches/company',          { params: { company_id: companyId, limit: 1000 } }),
+      api.get('/branches/company', { params: { company_id: companyId, limit: 1000 } }),
       api.get('/departments/specification', { params: deptParams }),
-      api.get('/roles/company',             { params: { company_id: companyId, limit: 1000 } }),
-      api.get('/shifts',                    { params: { company_id: companyId, limit: 1000 } }),
-      api.get('/weekends',                  { params: { company_id: companyId } }),
-      api.get('/holidays',                  { params: { company_id: companyId, limit: 1000 } }),
+      api.get('/roles/company', { params: { company_id: companyId, limit: 1000 } }),
+      api.get('/shifts', { params: { company_id: companyId, limit: 1000 } }),
+      api.get('/weekends', { params: { company_id: companyId } }),
+      api.get('/holidays', { params: { company_id: companyId, limit: 1000 } }),
       api.get(`/leave/policies/company/${companyId}`, { params: { limit: 1000 } }),  // ← add
     ])
     const extract = (d) => Array.isArray(d) ? d : (d.list ?? d.data ?? [])
     subData.value = {
-      branches:      extract(bRes.data),
-      departments:   extract(dRes.data),
-      roles:         extract(rRes.data),
-      shifts:        extract(shRes.data),
-      weekends:      extract(wkRes.data),
-      holidays:      extract(hlRes.data),
+      branches: extract(bRes.data),
+      departments: extract(dRes.data),
+      roles: extract(rRes.data),
+      shifts: extract(shRes.data),
+      weekends: extract(wkRes.data),
+      holidays: extract(hlRes.data),
       leavePolicies: extract(lpRes.data),  // ← add
     }
   } catch {
@@ -1674,43 +1741,43 @@ const onDeptBranchFilterChange = () => {
 // ── Modal openers ─────────────────────────────────────────────────────────────
 const openModal = async (company, tab) => {
   const companyId = company.id
-  selectedCompany.value  = { ...company }
-  activeTab.value        = tab
-  modalMode.value        = 'view'
+  selectedCompany.value = { ...company }
+  activeTab.value = tab
+  modalMode.value = 'view'
   deptBranchFilter.value = ''
-  showModal.value        = true
+  showModal.value = true
 
   await Promise.all([
     loadSubData(companyId),
     loadSystemBranches(),
     api.get(`/companies/${companyId}`)
       .then(({ data }) => { selectedCompany.value = { id: companyId, ...(data.data ?? data) } })
-      .catch(() => {}),
+      .catch(() => { }),
   ])
 }
 
 const openCreateCompanyModal = () => {
-  selectedCompany.value  = null
-  activeTab.value        = 'company-create'
-  modalMode.value        = 'create-company'
+  selectedCompany.value = null
+  activeTab.value = 'company-create'
+  modalMode.value = 'create-company'
   deptBranchFilter.value = ''
   // ✅ FIX: Do NOT reset subData or companies here — keep the existing list intact
-  showModal.value        = true
+  showModal.value = true
 }
 
 const closeModal = () => {
-  showModal.value        = false
+  showModal.value = false
   deptBranchFilter.value = ''
-  modalNotif.value.show  = false
+  modalNotif.value.show = false
 }
 
 const switchTab = (tab) => {
-  activeTab.value       = tab
+  activeTab.value = tab
   modalNotif.value.show = false
   if (tab !== 'departments') deptBranchFilter.value = ''
 }
 
-const confirmDelete  = (company) => { deleteTarget.value = company; showDeleteConfirm.value = true }
+const confirmDelete = (company) => { deleteTarget.value = company; showDeleteConfirm.value = true }
 
 const executeDelete = async () => {
   subLoading.value = true
@@ -1775,501 +1842,1733 @@ onMounted(() => loadData())
 
 <style scoped>
 /* ══════════════════════════════════════════════════
+   DESIGN TOKENS
+   Same approach as before — CSS custom properties on
+   the root element, inherited by every descendant
+   (including the :deep()-targeted elements rendered by
+   the inline sub-components below).
+══════════════════════════════════════════════════ */
+.company-page {
+  --primary: #4F46E5;
+  --primary-hover: #4338CA;
+  --primary-light: #EEF2FF;
+  --primary-border: #C7D2FE;
+
+  --bg: #F7F8FA;
+  --surface: #FFFFFF;
+  --surface-2: #F3F4F6;
+  --border: #E5E7EB;
+  --border-strong: #D1D5DB;
+
+  --text-1: #111827;
+  --text-2: #4B5563;
+  --text-3: #9CA3AF;
+
+  --green-text: #059669;
+  --green-bg: #ECFDF5;
+  --green-border: #A7F3D0;
+
+  --red-text: #DC2626;
+  --red-bg: #FEF2F2;
+  --red-border: #FECACA;
+
+  --amber-text: #B45309;
+  --amber-bg: #FFFBEB;
+  --amber-border: #FDE68A;
+
+  --blue-text: #2563EB;
+  --blue-bg: #EFF6FF;
+  --blue-border: #BFDBFE;
+
+  --purple-text: #7C3AED;
+  --purple-bg: #F5F3FF;
+  --purple-border: #DDD6FE;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.14);
+}
+
+/* ══════════════════════════════════════════════════
    PAGE LAYOUT
 ══════════════════════════════════════════════════ */
 .company-page {
   padding: 28px 32px;
   min-height: 100vh;
-  color: #F0EAE0;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: var(--text-1);
+  background: var(--bg);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   box-sizing: border-box;
 }
 
 .page-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 28px; flex-wrap: wrap; gap: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
-.header-left  { display: flex; align-items: center; gap: 14px; }
-.header-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.header-icon  {
-  width: 42px; height: 42px;
-  background: rgba(201,169,110,0.12); border: 1px solid rgba(201,169,110,0.30);
-  display: flex; align-items: center; justify-content: center; color: #C9A96E;
-}
-.page-title   { font-size: 20px; font-weight: 600; color: #F0EAE0; margin: 0; line-height: 1.2; }
-.page-subtitle { font-size: 12px; color: rgba(240,234,224,0.40); margin: 3px 0 0; letter-spacing: .04em; }
 
-.header-stats { display: flex; align-items: center; gap: 16px; }
-.hstat        { display: flex; flex-direction: column; align-items: center; }
-.hstat-value  { font-size: 20px; font-weight: 600; color: #F0EAE0; line-height: 1; font-family: 'Cormorant Garamond','Georgia',serif; }
-.hstat-label  { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: rgba(240,234,224,0.35); margin-top: 2px; }
-.active-color   { color: #6ECFA9; }
-.inactive-color { color: rgba(240,234,224,0.40); }
-.hstat-divider  { width: 1px; height: 28px; background: rgba(201,169,110,0.20); }
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--primary-light);
+  border: 1px solid var(--primary-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.page-title {
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin: 0;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: var(--text-3);
+  margin: 3px 0 0;
+}
+
+.header-stats {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+.hstat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hstat-value {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-1);
+  line-height: 1;
+}
+
+.hstat-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-top: 4px;
+}
+
+.active-color {
+  color: var(--green-text);
+}
+
+.inactive-color {
+  color: var(--text-3);
+}
+
+.hstat-divider {
+  width: 1px;
+  height: 26px;
+  background: var(--border);
+}
 
 .btn-add {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 9px 18px; font-size: 12px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
-  background: rgba(201,169,110,0.14); border: 1px solid rgba(201,169,110,0.50);
-  color: #C9A96E; cursor: pointer; transition: all .15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  color: #fff;
+  cursor: pointer;
+  transition: background .15s, box-shadow .15s;
+  box-shadow: var(--shadow-xs);
 }
-.btn-add:hover { background: rgba(201,169,110,0.22); border-color: rgba(201,169,110,0.80); }
+
+.btn-add:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
 
 .filter-bar {
-  display: flex; align-items: center; gap: 12px; margin-bottom: 28px; flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
 }
-.search-wrap {
-  flex: 1 1 220px; min-width: 200px; max-width: 400px; position: relative;
-}
-.search-icon {
-  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-  width: 14px; height: 14px; color: rgba(240,234,224,0.30); pointer-events: none;
-}
-.search-input {
-  width: 100%; box-sizing: border-box; padding: 9px 12px 9px 34px;
-  background: rgba(24,24,30,0.95); border: 1px solid rgba(201,169,110,0.22);
-  color: #F0EAE0; font-size: 13px; outline: none; font-family: inherit; transition: border-color .14s;
-}
-.search-input:focus { border-color: rgba(201,169,110,0.55); }
-.search-input::placeholder { color: rgba(240,234,224,0.28); }
-.filter-select {
-  flex-shrink: 0; min-width: 140px; padding: 9px 30px 9px 12px;
-  appearance: none; -webkit-appearance: none;
-  background: rgba(24,24,30,0.95)
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(201,169,110,0.55)'/%3E%3C/svg%3E")
-    no-repeat right 10px center;
-  border: 1px solid rgba(201,169,110,0.22);
-  color: rgba(240,234,224,0.70); font-size: 12px; outline: none; cursor: pointer;
-  font-family: inherit; transition: border-color .14s; box-sizing: border-box;
-}
-.filter-select:focus { border-color: rgba(201,169,110,0.55); }
-.filter-select option { background: #17171D; color: #F0EAE0; }
 
-.state-loading, .state-error, .state-empty {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 14px; padding: 80px 20px; color: rgba(240,234,224,0.35); text-align: center;
+.search-wrap {
+  flex: 1 1 220px;
+  min-width: 200px;
+  max-width: 400px;
+  position: relative;
 }
-.state-loading svg, .state-error svg, .state-empty svg { width: 36px; height: 36px; }
-.state-error { color: rgba(239,107,107,0.70); }
-.state-empty svg { color: rgba(201,169,110,0.30); }
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  color: var(--text-3);
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px 10px 36px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-1);
+  font-size: 13.5px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+.search-input:focus {
+  border-color: var(--primary-border);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.search-input::placeholder {
+  color: var(--text-3);
+}
+
+.filter-select {
+  flex-shrink: 0;
+  min-width: 150px;
+  padding: 10px 32px 10px 12px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239CA3AF'/%3E%3C/svg%3E") no-repeat right 12px center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color .15s;
+  box-sizing: border-box;
+}
+
+.filter-select:focus {
+  border-color: var(--primary-border);
+}
+
+.filter-select option {
+  background: var(--surface);
+  color: var(--text-1);
+}
+
+.state-loading,
+.state-error,
+.state-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 80px 20px;
+  color: var(--text-3);
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.state-loading svg,
+.state-error svg,
+.state-empty svg {
+  width: 36px;
+  height: 36px;
+}
+
+.state-error {
+  color: var(--red-text);
+  background: var(--red-bg);
+  border-color: var(--red-border);
+}
+
+.state-empty svg {
+  color: var(--text-3);
+  opacity: .6;
+}
+
 .spinner {
-  width: 28px; height: 28px; border: 2px solid rgba(201,169,110,0.20);
-  border-top-color: #C9A96E; border-radius: 50%; animation: spin .7s linear infinite;
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--primary-border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .btn-retry {
-  padding: 7px 18px; background: transparent; border: 1px solid rgba(239,107,107,0.50);
-  color: rgba(239,107,107,0.80); font-size: 12px; cursor: pointer; letter-spacing: .06em;
+  padding: 8px 20px;
+  background: var(--surface);
+  border: 1px solid var(--red-border);
+  border-radius: var(--radius-md);
+  color: var(--red-text);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.btn-retry:hover {
+  background: var(--red-bg);
 }
 
 /* ══════════════════════════════════════════════════
    CARDS GRID
 ══════════════════════════════════════════════════ */
 .cards-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
 }
+
 .company-card {
-  background: rgba(255,255,255,0.03); border: 1px solid rgba(201,169,110,0.18);
-  transition: border-color .15s, box-shadow .15s; display: flex; flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+  transition: border-color .15s, box-shadow .15s, transform .15s;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
-.company-card:hover { border-color: rgba(201,169,110,0.40); box-shadow: 0 4px 24px rgba(0,0,0,0.25); }
-.card-inactive { opacity: .60; }
 
-.card-header { display: flex; align-items: flex-start; gap: 12px; padding: 18px 18px 0; }
-.card-logo-wrap { flex-shrink: 0; }
+.company-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.card-inactive {
+  opacity: .68;
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 18px 18px 0;
+}
+
+.card-logo-wrap {
+  flex-shrink: 0;
+}
+
 .card-logo {
-  width: 44px; height: 44px; object-fit: contain;
-  border: 1px solid rgba(201,169,110,0.20); background: rgba(255,255,255,0.03); padding: 4px;
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  padding: 4px;
 }
+
 .card-logo-placeholder {
-  width: 44px; height: 44px; border: 1px dashed rgba(201,169,110,0.22);
-  display: flex; align-items: center; justify-content: center; color: rgba(201,169,110,0.25);
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-3);
 }
-.card-logo-placeholder svg { width: 20px; height: 20px; }
-.card-title-block { flex: 1; min-width: 0; }
-.card-name { font-size: 15px; font-weight: 600; color: #F0EAE0; margin: 0 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.card-logo-placeholder svg {
+  width: 20px;
+  height: 20px;
+}
+
+.card-title-block {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin: 0 0 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .card-industry {
-  display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: .07em; text-transform: uppercase;
-  background: rgba(201,169,110,0.07); border: 1px solid rgba(201,169,110,0.22); color: #E8D5B0; padding: 2px 8px; white-space: nowrap;
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  border-radius: 999px;
+  background: var(--primary-light);
+  border: 1px solid var(--primary-border);
+  color: var(--primary);
+  padding: 2px 9px;
+  white-space: nowrap;
 }
-.card-status-wrap { flex-shrink: 0; margin-left: auto; }
-.card-status { font-size: 10px; font-weight: 500; letter-spacing: .07em; text-transform: uppercase; padding: 3px 8px; border: 1px solid; }
-.status-active   { color: #6ECFA9; border-color: rgba(110,207,169,0.35); background: rgba(110,207,169,0.08); }
-.status-inactive { color: rgba(240,234,224,0.35); border-color: rgba(240,234,224,0.15); background: transparent; }
 
-.card-meta { padding: 14px 18px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
-.meta-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: rgba(240,234,224,0.55); overflow: hidden; }
-.meta-item svg { width: 13px; height: 13px; flex-shrink: 0; color: rgba(201,169,110,0.45); }
-.meta-item span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-status-wrap {
+  flex-shrink: 0;
+  margin-left: auto;
+}
 
-.card-stats { display: flex; border-top: 1px solid rgba(201,169,110,0.12); border-bottom: 1px solid rgba(201,169,110,0.12); }
+.card-status {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  border-radius: 999px;
+  padding: 3px 10px;
+  border: 1px solid;
+}
+
+.status-active {
+  color: var(--green-text);
+  border-color: var(--green-border);
+  background: var(--green-bg);
+}
+
+.status-inactive {
+  color: var(--text-3);
+  border-color: var(--border);
+  background: var(--surface-2);
+}
+
+.card-meta {
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-2);
+  overflow: hidden;
+}
+
+.meta-item svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--text-3);
+}
+
+.meta-item span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-stats {
+  display: flex;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
 .stat-chip {
-  flex: 1; display: flex; flex-direction: column; align-items: center; padding: 12px 8px;
-  background: transparent; border: none; cursor: pointer; transition: background .13s; gap: 3px;
-  border-right: 1px solid rgba(201,169,110,0.12);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background .13s;
+  gap: 3px;
+  border-right: 1px solid var(--border);
 }
-.stat-chip:last-child { border-right: none; }
-.stat-chip:hover { background: rgba(201,169,110,0.07); }
-.stat-num { font-family: 'Cormorant Garamond','Georgia',serif; font-size: 20px; font-weight: 600; color: #C9A96E; line-height: 1; }
-.stat-lbl { font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: rgba(240,234,224,0.35); }
 
-.card-footer { display: flex; }
-.card-btn {
-  flex: 1; padding: 10px 0; display: flex; align-items: center; justify-content: center; gap: 5px;
-  font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
-  background: transparent; border: none; border-top: 1px solid rgba(201,169,110,0.12);
-  cursor: pointer; transition: background .13s, color .13s;
+.stat-chip:last-child {
+  border-right: none;
 }
-.card-btn svg { width: 13px; height: 13px; }
-.btn-view-c { color: rgba(133,183,235,0.70); border-right: 1px solid rgba(201,169,110,0.12); }
-.btn-view-c:hover { background: rgba(133,183,235,0.08); color: #85B7EB; }
-.btn-edit-c { color: rgba(201,169,110,0.70); border-right: 1px solid rgba(201,169,110,0.12); }
-.btn-edit-c:hover { background: rgba(201,169,110,0.08); color: #C9A96E; }
-.btn-delete-c { color: rgba(239,107,107,0.60); }
-.btn-delete-c:hover { background: rgba(239,107,107,0.08); color: #EF6B6B; }
+
+.stat-chip:hover {
+  background: var(--surface);
+}
+
+.stat-num {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.stat-lbl {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.card-footer {
+  display: flex;
+}
+
+.card-btn {
+  flex: 1;
+  padding: 11px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--surface);
+  border: none;
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .13s, color .13s;
+}
+
+.card-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.btn-view-c {
+  color: var(--blue-text);
+  border-right: 1px solid var(--border);
+}
+
+.btn-view-c:hover {
+  background: var(--blue-bg);
+}
+
+.btn-edit-c {
+  color: var(--text-2);
+  border-right: 1px solid var(--border);
+}
+
+.btn-edit-c:hover {
+  background: var(--surface-2);
+  color: var(--primary);
+}
+
+.btn-delete-c {
+  color: var(--red-text);
+}
+
+.btn-delete-c:hover {
+  background: var(--red-bg);
+}
 
 /* ══════════════════════════════════════════════════
    DEPARTMENT BRANCH FILTER BAR
 ══════════════════════════════════════════════════ */
 .dept-filter-bar {
-  display: flex; align-items: center; gap: 12px;
-  margin-bottom: 16px; padding-bottom: 14px;
-  border-bottom: 1px solid rgba(201,169,110,0.12);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
 }
+
 .dept-filter-label {
-  font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
-  color: rgba(240,234,224,0.40); white-space: nowrap; flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
-.dept-branch-select { min-width: 180px; }
+
+.dept-branch-select {
+  min-width: 180px;
+}
 
 /* ══════════════════════════════════════════════════
    WEEKEND PANEL
 ══════════════════════════════════════════════════ */
 :deep(.weekend-info) {
-  font-size: 12px; color: rgba(240,234,224,0.40); margin-bottom: 18px;
-  padding: 10px 14px; background: rgba(201,169,110,0.05);
-  border: 1px solid rgba(201,169,110,0.12); letter-spacing: .02em;
+  font-size: 12.5px;
+  color: var(--text-2);
+  margin-bottom: 18px;
+  padding: 11px 14px;
+  background: var(--primary-light);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-md);
 }
+
 :deep(.weekend-grid) {
-  display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
 }
+
 @media (max-width: 600px) {
-  :deep(.weekend-grid) { grid-template-columns: repeat(4, 1fr); }
+  :deep(.weekend-grid) {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
+
 :deep(.weekend-day-btn) {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 4px; padding: 14px 8px; min-height: 72px;
-  background: rgba(255,255,255,0.03); border: 1px solid rgba(201,169,110,0.18);
-  cursor: pointer; transition: all .15s; position: relative;
-  color: rgba(240,234,224,0.50);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 14px 8px;
+  min-height: 72px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+  color: var(--text-2);
 }
+
 :deep(.weekend-day-btn:hover:not(:disabled)) {
-  border-color: rgba(201,169,110,0.45); background: rgba(201,169,110,0.08);
-  color: rgba(240,234,224,0.80);
+  border-color: var(--primary-border);
+  background: var(--primary-light);
+  color: var(--primary);
 }
+
 :deep(.weekend-day-btn.weekend-active) {
-  background: rgba(201,169,110,0.14); border-color: rgba(201,169,110,0.60);
-  color: #C9A96E;
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
 }
-:deep(.weekend-day-btn:disabled) { opacity: .5; cursor: not-allowed; }
+
+:deep(.weekend-day-btn:disabled) {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
 :deep(.weekend-day-abbr) {
-  font-size: 13px; font-weight: 700; letter-spacing: .05em;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .03em;
 }
+
 :deep(.weekend-day-full) {
-  font-size: 10px; letter-spacing: .05em;
+  font-size: 10px;
+  color: var(--text-3);
 }
+
 :deep(.weekend-check) {
-  position: absolute; top: 5px; right: 7px; font-size: 11px; color: #6ECFA9; font-weight: 700;
+  position: absolute;
+  top: 5px;
+  right: 7px;
+  font-size: 11px;
+  color: var(--green-text);
+  font-weight: 700;
 }
+
 :deep(.weekend-summary) {
-  display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px;
-  background: rgba(255,255,255,0.02); border: 1px solid rgba(201,169,110,0.12);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   flex-wrap: wrap;
 }
+
 :deep(.weekend-summary-label) {
-  font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
-  color: rgba(240,234,224,0.35); white-space: nowrap; flex-shrink: 0; padding-top: 1px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding-top: 1px;
 }
+
 :deep(.weekend-summary-days) {
-  font-size: 13px; color: rgba(240,234,224,0.70);
+  font-size: 13px;
+  color: var(--text-2);
+  font-weight: 500;
 }
+
 :deep(.saving-indicator) {
-  font-size: 11px; color: rgba(201,169,110,0.70); letter-spacing: .04em; animation: pulse 1s ease infinite;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--primary);
+  letter-spacing: .02em;
+  animation: pulse 1s ease infinite;
 }
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: .4;
+  }
+}
 
 /* ══════════════════════════════════════════════════
    HOLIDAY DATE BADGE
 ══════════════════════════════════════════════════ */
 :deep(.holiday-date-badge) {
-  display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 500;
-  background: rgba(201,169,110,0.10); border: 1px solid rgba(201,169,110,0.25);
-  color: #E8D5B0; letter-spacing: .03em; white-space: nowrap;
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--amber-bg);
+  border: 1px solid var(--amber-border);
+  color: var(--amber-text);
+  white-space: nowrap;
 }
 
 /* ══════════════════════════════════════════════════
    MODAL
 ══════════════════════════════════════════════════ */
 .modal-backdrop {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.72);
-  display: flex; align-items: flex-start; justify-content: center;
-  padding: 40px 16px; z-index: 9999; overflow-y: auto;
+  /* ── Re-declare design tokens here ──────────────────────
+     Both modals use <Teleport to="body">, which moves this
+     entire subtree out from under .company-page in the real
+     DOM. CSS custom properties cascade through the live DOM
+     tree, not the component tree, so once teleported this
+     subtree can no longer see .company-page's variables —
+     every var(--surface), var(--border), etc. below would
+     silently resolve to nothing and the browser drops those
+     declarations, leaving the modal transparent. Redeclaring
+     the full token set here makes the teleported subtree
+     self-sufficient regardless of where it lives in the DOM. */
+  --primary: #4F46E5;
+  --primary-hover: #4338CA;
+  --primary-light: #EEF2FF;
+  --primary-border: #C7D2FE;
+
+  --bg: #F7F8FA;
+  --surface: #FFFFFF;
+  --surface-2: #F3F4F6;
+  --border: #E5E7EB;
+  --border-strong: #D1D5DB;
+
+  --text-1: #111827;
+  --text-2: #4B5563;
+  --text-3: #9CA3AF;
+
+  --green-text: #059669;
+  --green-bg: #ECFDF5;
+  --green-border: #A7F3D0;
+
+  --red-text: #DC2626;
+  --red-bg: #FEF2F2;
+  --red-border: #FECACA;
+
+  --amber-text: #B45309;
+  --amber-bg: #FFFBEB;
+  --amber-border: #FDE68A;
+
+  --blue-text: #2563EB;
+  --blue-bg: #EFF6FF;
+  --blue-border: #BFDBFE;
+
+  --purple-text: #7C3AED;
+  --purple-bg: #F5F3FF;
+  --purple-border: #DDD6FE;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.14);
+
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  z-index: 9999;
+  overflow-y: auto;
 }
+
 .modal-shell {
-  background: #17171D; border: 1px solid rgba(201,169,110,0.25);
-  width: 100%; max-height: calc(100vh - 80px); display: flex; flex-direction: column;
-  overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.60);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
 }
-.modal-sm { max-width: 440px; }
-.modal-lg { max-width: 720px; }
-.modal-xl { max-width: 960px; }
+
+.modal-sm {
+  max-width: 440px;
+}
+
+.modal-lg {
+  max-width: 720px;
+}
+
+.modal-xl {
+  max-width: 960px;
+}
 
 .modal-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 20px 24px 16px; border-bottom: 1px solid rgba(201,169,110,0.15); flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 }
-.modal-head-left { display: flex; align-items: center; gap: 12px; }
+
+.modal-head-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .modal-company-logo {
-  width: 36px; height: 36px; border: 1px solid rgba(201,169,110,0.25);
-  overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--surface-2);
 }
-.modal-company-logo img { width: 100%; height: 100%; object-fit: contain; }
-.modal-company-logo svg { width: 18px; height: 18px; color: rgba(201,169,110,0.40); }
-.modal-title { font-size: 16px; font-weight: 600; color: #F0EAE0; margin: 0; }
-.modal-company-name { font-size: 11px; color: rgba(240,234,224,0.40); margin: 3px 0 0; letter-spacing: .04em; }
-.danger-title { color: #EF6B6B; }
+
+.modal-company-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.modal-company-logo svg {
+  width: 18px;
+  height: 18px;
+  color: var(--text-3);
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin: 0;
+}
+
+.modal-company-name {
+  font-size: 12px;
+  color: var(--text-3);
+  margin: 3px 0 0;
+}
+
+.danger-title {
+  color: var(--red-text);
+}
+
 .modal-close {
-  width: 32px; height: 32px; background: transparent; border: 1px solid rgba(240,234,224,0.12);
-  color: rgba(240,234,224,0.45); cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all .13s; flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s;
+  flex-shrink: 0;
 }
-.modal-close:hover { border-color: rgba(240,234,224,0.30); color: #F0EAE0; }
-.modal-close svg { width: 14px; height: 14px; }
+
+.modal-close:hover {
+  border-color: var(--border-strong);
+  color: var(--text-1);
+}
+
+.modal-close svg {
+  width: 14px;
+  height: 14px;
+}
 
 .modal-tabs {
-  display: flex; border-bottom: 1px solid rgba(201,169,110,0.15); flex-shrink: 0; overflow-x: auto;
-  scrollbar-width: thin; scrollbar-color: rgba(201,169,110,0.20) transparent;
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+  padding: 0 8px;
 }
-.modal-tabs::-webkit-scrollbar { height: 3px; }
-.modal-tabs::-webkit-scrollbar-thumb { background: rgba(201,169,110,0.25); }
+
+.modal-tabs::-webkit-scrollbar {
+  height: 3px;
+}
+
+.modal-tabs::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+}
+
 .tab-btn {
-  display: flex; align-items: center; gap: 6px; padding: 12px 20px;
-  font-size: 12px; font-weight: 500; letter-spacing: .05em; text-transform: uppercase;
-  background: transparent; border: none; color: rgba(240,234,224,0.40); cursor: pointer;
-  border-bottom: 2px solid transparent; margin-bottom: -1px;
-  transition: color .13s, border-color .13s; white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  color: var(--text-3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color .13s, border-color .13s;
+  white-space: nowrap;
 }
-.tab-btn:hover { color: rgba(240,234,224,0.75); }
-.tab-active { color: #C9A96E !important; border-bottom-color: #C9A96E !important; }
 
-.modal-notif { padding: 10px 24px; font-size: 12px; letter-spacing: .03em; flex-shrink: 0; }
-.notif-success { background: rgba(110,207,169,0.12); color: #6ECFA9; border-bottom: 1px solid rgba(110,207,169,0.20); }
-.notif-error   { background: rgba(239,107,107,0.12); color: #EF6B6B; border-bottom: 1px solid rgba(239,107,107,0.20); }
+.tab-btn:hover {
+  color: var(--text-2);
+}
 
-.modal-body { flex: 1; overflow-y: auto; padding: 24px; }
-.tab-pane { animation: fadeIn .18s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.tab-active {
+  color: var(--primary) !important;
+  border-bottom-color: var(--primary) !important;
+}
+
+.modal-notif {
+  padding: 10px 24px;
+  font-size: 12.5px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.notif-success {
+  background: var(--green-bg);
+  color: var(--green-text);
+  border-bottom: 1px solid var(--green-border);
+}
+
+.notif-error {
+  background: var(--red-bg);
+  color: var(--red-text);
+  border-bottom: 1px solid var(--red-border);
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.tab-pane {
+  animation: fadeIn .18s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 
 /* ── Company View Panel ── */
-:deep(.view-panel) { display: flex; flex-direction: column; gap: 16px; }
-:deep(.view-description) {
-  color: rgba(240,234,224,0.60); font-size: 13px; line-height: 1.7;
-  padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(201,169,110,0.12); margin: 0;
+:deep(.view-panel) {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
-:deep(.view-grid) { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
-:deep(.view-field) { display: flex; flex-direction: column; gap: 4px; }
-:deep(.view-label) { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: rgba(240,234,224,0.35); }
-:deep(.view-value) { font-size: 13px; color: rgba(240,234,224,0.80); }
-:deep(.color-swatch-wrap) { display: flex; align-items: center; gap: 10px; }
-:deep(.color-swatch) { width: 22px; height: 22px; border: 1px solid rgba(255,255,255,0.15); flex-shrink: 0; }
+
+:deep(.view-description) {
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.7;
+  padding: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin: 0;
+}
+
+:deep(.view-grid) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+:deep(.view-field) {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+:deep(.view-label) {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+:deep(.view-value) {
+  font-size: 13.5px;
+  color: var(--text-1);
+  font-weight: 500;
+}
+
+:deep(.color-swatch-wrap) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+:deep(.color-swatch) {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
 
 /* ── Company Form ── */
-:deep(.company-form) { display: flex; flex-direction: column; gap: 20px; }
+:deep(.company-form) {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
 :deep(.form-section-title) {
-  font-size: 10px; font-weight: 600; letter-spacing: .10em; text-transform: uppercase;
-  color: rgba(201,169,110,0.70); padding-bottom: 8px; border-bottom: 1px solid rgba(201,169,110,0.15);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--primary);
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--border);
 }
-:deep(.form-grid) { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
-:deep(.form-field) { display: flex; flex-direction: column; gap: 6px; }
-:deep(.form-field--full) { grid-column: 1 / -1; }
-:deep(.form-label) { font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: rgba(240,234,224,0.45); }
-:deep(.form-input), :deep(.form-select), :deep(.form-textarea) {
-  background: rgba(18,18,24,0.98); border: 1px solid rgba(201,169,110,0.22);
-  color: #F0EAE0; font-size: 13px; padding: 9px 12px; outline: none;
-  font-family: inherit; transition: border-color .14s; box-sizing: border-box; width: 100%;
+
+:deep(.form-grid) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
 }
-:deep(.form-input:focus), :deep(.form-select:focus), :deep(.form-textarea:focus) {
-  border-color: rgba(201,169,110,0.55); background: rgba(22,22,28,0.99);
+
+:deep(.form-field) {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
-:deep(.form-input::placeholder), :deep(.form-textarea::placeholder) { color: rgba(240,234,224,0.22); }
+
+:deep(.form-field--full) {
+  grid-column: 1 / -1;
+}
+
+:deep(.form-label) {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+:deep(.form-input),
+:deep(.form-select),
+:deep(.form-textarea) {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-1);
+  font-size: 13.5px;
+  padding: 9px 12px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color .15s, box-shadow .15s;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+:deep(.form-input:focus),
+:deep(.form-select:focus),
+:deep(.form-textarea:focus) {
+  border-color: var(--primary-border);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+:deep(.form-input::placeholder),
+:deep(.form-textarea::placeholder) {
+  color: var(--text-3);
+}
+
 :deep(.form-select) {
-  cursor: pointer; appearance: none; -webkit-appearance: none; padding-right: 30px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(201,169,110,0.55)'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 10px center; background-color: rgba(18,18,24,0.98);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239CA3AF'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-color: var(--surface);
 }
-:deep(.form-select option) { background: #17171D; color: #F0EAE0; }
-:deep(.form-textarea) { resize: vertical; min-height: 70px; }
-:deep(.form-file) { font-size: 12px; color: rgba(240,234,224,0.50); cursor: pointer; padding: 8px 0; }
-:deep(.form-color-input) { width: 60px; height: 36px; border: 1px solid rgba(201,169,110,0.25); padding: 2px; cursor: pointer; background: transparent; }
-:deep(.radio-group) { display: flex; gap: 16px; align-items: center; padding: 9px 0; }
-:deep(.radio-opt) { display: flex; align-items: center; gap: 7px; cursor: pointer; font-size: 13px; color: rgba(240,234,224,0.65); }
-:deep(.radio-opt input) { accent-color: #C9A96E; }
-:deep(.form-actions) { display: flex; justify-content: flex-end; padding-top: 8px; border-top: 1px solid rgba(201,169,110,0.12); }
+
+:deep(.form-select option) {
+  background: var(--surface);
+  color: var(--text-1);
+}
+
+:deep(.form-textarea) {
+  resize: vertical;
+  min-height: 70px;
+}
+
+:deep(.form-file) {
+  font-size: 12.5px;
+  color: var(--text-2);
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+:deep(.form-color-input) {
+  width: 60px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  cursor: pointer;
+  background: var(--surface);
+}
+
+:deep(.radio-group) {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  padding: 9px 0;
+}
+
+:deep(.radio-opt) {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+:deep(.radio-opt input) {
+  accent-color: var(--primary);
+  width: 15px;
+  height: 15px;
+}
+
+:deep(.form-actions) {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
 :deep(.btn-submit) {
-  padding: 10px 28px; background: rgba(201,169,110,0.14); border: 1px solid rgba(201,169,110,0.50);
-  color: #C9A96E; font-size: 12px; font-weight: 500; letter-spacing: .07em; text-transform: uppercase;
-  cursor: pointer; transition: all .15s;
+  padding: 10px 26px;
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
 }
-:deep(.btn-submit:hover:not(:disabled)) { background: rgba(201,169,110,0.22); }
-:deep(.btn-submit:disabled) { opacity: .5; cursor: not-allowed; }
+
+:deep(.btn-submit:hover:not(:disabled)) {
+  background: var(--primary-hover);
+}
+
+:deep(.btn-submit:disabled) {
+  opacity: .5;
+  cursor: not-allowed;
+}
 
 /* ── Sub-entity panel ── */
-:deep(.sub-panel) { display: flex; flex-direction: column; gap: 16px; }
-:deep(.sub-panel-head) { display: flex; align-items: center; justify-content: space-between; }
-:deep(.sub-panel-count) { font-size: 12px; color: rgba(240,234,224,0.45); letter-spacing: .04em; }
+:deep(.sub-panel) {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+:deep(.sub-panel-head) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+:deep(.sub-panel-count) {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
 :deep(.btn-add-sub) {
-  display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px;
-  background: rgba(201,169,110,0.10); border: 1px solid rgba(201,169,110,0.35);
-  color: #C9A96E; font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
-  cursor: pointer; transition: all .14s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: var(--primary-light);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-md);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .14s;
 }
-:deep(.btn-add-sub:hover) { background: rgba(201,169,110,0.18); }
+
+:deep(.btn-add-sub:hover) {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
 :deep(.sub-form) {
-  background: rgba(255,255,255,0.03); border: 1px solid rgba(201,169,110,0.18);
-  padding: 18px; animation: fadeIn .18s ease;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  animation: fadeIn .18s ease;
 }
-:deep(.sub-form-grid) { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 14px; }
-:deep(.sub-form-actions) { display: flex; justify-content: flex-end; gap: 10px; }
+
+:deep(.sub-form-grid) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+:deep(.sub-form-actions) {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 :deep(.btn-cancel-sm) {
-  padding: 7px 16px; background: transparent; border: 1px solid rgba(240,234,224,0.15);
-  color: rgba(240,234,224,0.45); font-size: 11px; cursor: pointer; letter-spacing: .05em; transition: border-color .13s;
+  padding: 8px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .13s;
 }
-:deep(.btn-cancel-sm:hover) { border-color: rgba(240,234,224,0.35); color: rgba(240,234,224,0.70); }
+
+:deep(.btn-cancel-sm:hover) {
+  border-color: var(--border-strong);
+  color: var(--text-1);
+}
+
 :deep(.btn-save) {
-  padding: 7px 20px; background: rgba(201,169,110,0.14); border: 1px solid rgba(201,169,110,0.45);
-  color: #C9A96E; font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
-  cursor: pointer; transition: all .14s;
+  padding: 8px 20px;
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .14s;
 }
-:deep(.btn-save:hover:not(:disabled)) { background: rgba(201,169,110,0.22); }
-:deep(.btn-save:disabled) { opacity: .5; cursor: not-allowed; }
-:deep(.sub-loading) { display: flex; justify-content: center; padding: 30px 0; }
-:deep(.sub-empty) { text-align: center; padding: 40px 0; color: rgba(240,234,224,0.25); font-size: 13px; }
-:deep(.sub-table-wrap) { overflow-x: auto; }
-:deep(.sub-table) { width: 100%; border-collapse: collapse; font-size: 12px; }
+
+:deep(.btn-save:hover:not(:disabled)) {
+  background: var(--primary-hover);
+}
+
+:deep(.btn-save:disabled) {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+:deep(.sub-loading) {
+  display: flex;
+  justify-content: center;
+  padding: 30px 0;
+}
+
+:deep(.sub-empty) {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--text-3);
+  font-size: 13px;
+}
+
+:deep(.sub-table-wrap) {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+:deep(.sub-table) {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
 :deep(.sub-table th) {
-  padding: 9px 12px; text-align: left; font-size: 10px; font-weight: 600;
-  letter-spacing: .08em; text-transform: uppercase; color: rgba(240,234,224,0.35);
-  border-bottom: 1px solid rgba(201,169,110,0.15);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
 }
-:deep(.sub-table td) { padding: 10px 12px; color: rgba(240,234,224,0.70); font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
-:deep(.sub-table tr:last-child td) { border-bottom: none; }
-:deep(.sub-table tr:hover td) { background: rgba(255,255,255,0.025); }
-:deep(.sub-status) { font-size: 10px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border: 1px solid; }
-:deep(.sub-actions-cell) { white-space: nowrap; }
+
+:deep(.sub-table td) {
+  padding: 11px 14px;
+  color: var(--text-2);
+  font-size: 12.5px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+:deep(.sub-table tr:last-child td) {
+  border-bottom: none;
+}
+
+:deep(.sub-table tr:hover td) {
+  background: var(--surface-2);
+}
+
+:deep(.sub-status) {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .03em;
+  border-radius: 999px;
+  padding: 2px 9px;
+  border: 1px solid;
+}
+
+:deep(.sub-actions-cell) {
+  white-space: nowrap;
+}
+
 :deep(.sub-btn) {
-  padding: 4px 10px; font-size: 10px; font-weight: 500; letter-spacing: .05em; text-transform: uppercase;
-  background: transparent; border: 1px solid; cursor: pointer; margin-right: 5px; transition: all .13s;
+  padding: 5px 11px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: all .13s;
 }
-:deep(.sub-btn-edit)   { color: rgba(201,169,110,0.70); border-color: rgba(201,169,110,0.30); }
-:deep(.sub-btn-edit:hover)   { background: rgba(201,169,110,0.10); color: #C9A96E; }
-:deep(.sub-btn-delete) { color: rgba(239,107,107,0.60); border-color: rgba(239,107,107,0.25); }
-:deep(.sub-btn-delete:hover) { background: rgba(239,107,107,0.10); color: #EF6B6B; }
+
+:deep(.sub-btn-edit) {
+  color: var(--text-2);
+  border-color: var(--border);
+}
+
+:deep(.sub-btn-edit:hover) {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--primary-border);
+}
+
+:deep(.sub-btn-delete) {
+  color: var(--red-text);
+  border-color: var(--red-border);
+}
+
+:deep(.sub-btn-delete:hover) {
+  background: var(--red-bg);
+}
 
 :deep(.lp-type-badge) {
-  display: inline-block; padding: 2px 8px; font-size: 10px; font-weight: 500;
-  letter-spacing: .05em; text-transform: uppercase;
-  background: rgba(133,183,235,0.08); border: 1px solid rgba(133,183,235,0.25);
-  color: rgba(133,183,235,0.80); white-space: nowrap;
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .03em;
+  background: var(--blue-bg);
+  border: 1px solid var(--blue-border);
+  color: var(--blue-text);
+  white-space: nowrap;
 }
+
 :deep(.lp-days-badge) {
-  display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 600;
-  font-family: 'Cormorant Garamond','Georgia',serif;
-  background: rgba(201,169,110,0.08); border: 1px solid rgba(201,169,110,0.22);
-  color: #C9A96E; white-space: nowrap;
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  background: var(--primary-light);
+  border: 1px solid var(--primary-border);
+  color: var(--primary);
+  white-space: nowrap;
 }
 
 /* ── Approval Hierarchy panel ── */
 :deep(.hierarchy-expansion-row td) {
-  background: rgba(201,169,110,0.04);
-  border-bottom: 2px solid rgba(201,169,110,0.20) !important;
+  background: var(--surface-2);
+  border-bottom: 2px solid var(--border-strong) !important;
 }
+
 :deep(.hierarchy-panel) {
   padding: 20px 24px;
-  border-top: 1px solid rgba(201,169,110,0.15);
-  display: flex; flex-direction: column; gap: 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
+
 :deep(.hierarchy-panel-head) {
-  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
 }
+
 :deep(.hierarchy-panel-title) {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
-  color: rgba(201,169,110,0.80);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .03em;
+  color: var(--purple-text);
 }
+
 :deep(.lp-row-expanded td) {
-  background: rgba(201,169,110,0.06);
+  background: var(--primary-light);
   border-bottom: none !important;
 }
-:deep(.lp-table) { border-collapse: collapse; }
+
+:deep(.lp-table) {
+  border-collapse: collapse;
+}
+
 :deep(.hierarchy-level-badge) {
-  display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 700;
-  font-family: 'Cormorant Garamond','Georgia',serif;
-  background: rgba(133,183,235,0.10); border: 1px solid rgba(133,183,235,0.30);
-  color: rgba(133,183,235,0.90); white-space: nowrap; letter-spacing: .03em;
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  background: var(--blue-bg);
+  border: 1px solid var(--blue-border);
+  color: var(--blue-text);
+  white-space: nowrap;
+  letter-spacing: .02em;
 }
+
 :deep(.hierarchy-mandatory-yes) {
-  font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
-  color: #6ECFA9; padding: 2px 7px; border: 1px solid rgba(110,207,169,0.35);
-  background: rgba(110,207,169,0.08);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .03em;
+  border-radius: 999px;
+  color: var(--green-text);
+  padding: 2px 8px;
+  border: 1px solid var(--green-border);
+  background: var(--green-bg);
 }
+
 :deep(.hierarchy-mandatory-no) {
-  font-size: 10px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
-  color: rgba(240,234,224,0.35); padding: 2px 7px; border: 1px solid rgba(240,234,224,0.12);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: .03em;
+  border-radius: 999px;
+  color: var(--text-3);
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
 }
+
 :deep(.sub-btn-hierarchy) {
-  color: rgba(167,139,250,0.70); border-color: rgba(167,139,250,0.30);
+  color: var(--purple-text);
+  border-color: var(--purple-border);
 }
+
 :deep(.sub-btn-hierarchy:hover) {
-  background: rgba(167,139,250,0.10); color: rgba(167,139,250,1);
+  background: var(--purple-bg);
 }
+
 :deep(.sub-btn-hierarchy--active) {
-  background: rgba(167,139,250,0.14); color: rgba(167,139,250,1);
-  border-color: rgba(167,139,250,0.55);
+  background: var(--purple-bg);
+  color: var(--purple-text);
+  border-color: var(--purple-text);
 }
+
 /* ── Delete confirm ── */
-.delete-confirm-body { display: flex; flex-direction: column; align-items: center; gap: 20px; text-align: center; }
+.delete-confirm-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
 .delete-icon {
-  width: 52px; height: 52px; border-radius: 50%;
-  background: rgba(239,107,107,0.12); border: 1px solid rgba(239,107,107,0.30);
-  display: flex; align-items: center; justify-content: center; color: #EF6B6B;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--red-bg);
+  border: 1px solid var(--red-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--red-text);
 }
-.delete-icon svg { width: 24px; height: 24px; }
-.delete-msg { color: rgba(240,234,224,0.60); font-size: 13px; line-height: 1.6; max-width: 340px; margin: 0; }
-.delete-msg strong { color: #F0EAE0; }
-.delete-actions { display: flex; gap: 12px; justify-content: center; width: 100%; }
+
+.delete-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.delete-msg {
+  color: var(--text-2);
+  font-size: 13.5px;
+  line-height: 1.6;
+  max-width: 340px;
+  margin: 0;
+}
+
+.delete-msg strong {
+  color: var(--text-1);
+}
+
+.delete-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  width: 100%;
+}
+
 .btn-cancel {
-  padding: 9px 22px; background: transparent; border: 1px solid rgba(240,234,224,0.15);
-  color: rgba(240,234,224,0.50); font-size: 12px; cursor: pointer; letter-spacing: .05em; flex: 1; transition: all .13s;
+  padding: 10px 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  flex: 1;
+  transition: all .13s;
 }
-.btn-cancel:hover { border-color: rgba(240,234,224,0.35); color: rgba(240,234,224,0.75); }
+
+.btn-cancel:hover {
+  border-color: var(--border-strong);
+  color: var(--text-1);
+}
+
 .btn-danger {
-  padding: 9px 22px; background: rgba(239,107,107,0.14); border: 1px solid rgba(239,107,107,0.50);
-  color: #EF6B6B; font-size: 12px; font-weight: 500; letter-spacing: .05em; cursor: pointer; flex: 1;
-  transition: all .13s; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 22px;
+  background: var(--red-text);
+  border: 1px solid var(--red-text);
+  border-radius: var(--radius-md);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  flex: 1;
+  transition: all .13s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
-.btn-danger:hover:not(:disabled) { background: rgba(239,107,107,0.22); }
-.btn-danger:disabled { opacity: .5; cursor: not-allowed; }
+
+.btn-danger:hover:not(:disabled) {
+  background: #B91C1C;
+  border-color: #B91C1C;
+}
+
+.btn-danger:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
 .spinner-sm {
-  width: 14px; height: 14px; border: 2px solid rgba(239,107,107,0.30);
-  border-top-color: #EF6B6B; border-radius: 50%; animation: spin .7s linear infinite;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
 }
 
 .global-notif {
-  position: fixed; bottom: 24px; right: 24px; z-index: 99999;
-  padding: 12px 20px; font-size: 13px; min-width: 260px;
-  animation: slideUp .2s ease; box-shadow: 0 8px 32px rgba(0,0,0,0.40);
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99999;
+  padding: 13px 20px;
+  border-radius: var(--radius-md);
+  font-size: 13.5px;
+  font-weight: 500;
+  min-width: 260px;
+  animation: slideUp .2s ease;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid;
 }
-@keyframes slideUp { from { transform: translateY(12px); opacity: 0; } to { transform: none; opacity: 1; } }
-.gnotif-success { background: rgba(110,207,169,0.18); border: 1px solid rgba(110,207,169,0.40); color: #6ECFA9; }
-.gnotif-error   { background: rgba(239,107,107,0.18); border: 1px solid rgba(239,107,107,0.40); color: #EF6B6B; }
+
+@keyframes slideUp {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.gnotif-success {
+  background: var(--green-bg);
+  border-color: var(--green-border);
+  color: var(--green-text);
+}
+
+.gnotif-error {
+  background: var(--red-bg);
+  border-color: var(--red-border);
+  color: var(--red-text);
+}
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .company-page {
+    padding: 20px;
+  }
+
+  .header-stats {
+    order: 2;
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .btn-add {
+    order: 1;
+  }
+
+  .header-right {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .company-page {
+    padding: 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-wrap {
+    max-width: none;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-backdrop {
+    padding: 0;
+  }
+
+  .modal-shell {
+    max-height: 100vh;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .delete-actions {
+    flex-direction: column;
+  }
+}
 </style>
