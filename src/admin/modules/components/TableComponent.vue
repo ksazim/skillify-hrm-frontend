@@ -21,33 +21,31 @@
       <table v-if="data.length > 0">
         <thead>
           <tr>
-            <th
-              v-for="column in columns"
-              :key="column.key"
-              :class="{
-                'th--sortable':     column.sortable,
-                'th--center':       column.align === 'center',
-                'th--right':        column.align === 'right',
-                'th--sorted':       sortBy === column.key,
-              }"
-              :style="{ minWidth: column.minWidth || 'auto', width: column.width || 'auto' }"
-              @click="column.sortable && handleSort(column.key)"
-            >
+            <th v-for="column in columns" :key="column.key" :class="{
+              'th--sortable': column.sortable,
+              'th--center': column.align === 'center',
+              'th--right': column.align === 'right',
+              'th--sorted': sortBy === column.key,
+            }" :style="{ minWidth: column.minWidth || 'auto', width: column.width || 'auto' }"
+              @click="column.sortable && handleSort(column.key)">
               <div class="th-inner">
                 <span class="th-label">{{ column.label }}</span>
                 <span v-if="column.sortable" class="sort-icon">
-                  <svg
-                    v-if="sortBy === column.key && sortOrder === 'asc'"
-                    viewBox="0 0 20 20" fill="currentColor"
-                  ><path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
-                  <svg
-                    v-else-if="sortBy === column.key && sortOrder === 'desc'"
-                    viewBox="0 0 20 20" fill="currentColor"
-                  ><path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                  <svg
-                    v-else
-                    viewBox="0 0 20 20" fill="currentColor" class="sort-idle"
-                  ><path d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zM3 6a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM7 14a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z"/></svg>
+                  <svg v-if="sortBy === column.key && sortOrder === 'asc'" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z"
+                      clip-rule="evenodd" />
+                  </svg>
+                  <svg v-else-if="sortBy === column.key && sortOrder === 'desc'" viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 012 0v7.586l2.293-2.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd" />
+                  </svg>
+                  <svg v-else viewBox="0 0 20 20" fill="currentColor" class="sort-idle">
+                    <path
+                      d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zM3 6a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM7 14a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z" />
+                  </svg>
                 </span>
               </div>
             </th>
@@ -55,81 +53,57 @@
         </thead>
 
         <tbody>
-          <tr
-            v-for="(row, index) in data"
-            :key="getRowKey(row, index)"
-            :class="{
-              'tr--clickable': rowClickable,
-              'tr--selected':  isRowSelected(row),
-            }"
-            @click="handleRowClick(row)"
-          >
-            <td
-              v-for="column in columns"
-              :key="column.key"
-              :class="{
-                'td--center': column.align === 'center',
-                'td--right':  column.align === 'right',
-              }"
-            >
-              <slot
-                :name="`cell-${column.key}`"
-                :row="row"
-                :value="getNestedValue(row, column.key)"
-                :column="column"
-              >
+          <tr v-for="(row, index) in data" :key="getRowKey(row, index)" :class="{
+            'tr--clickable': rowClickable,
+            'tr--selected': isRowSelected(row),
+          }" @click="handleRowClick(row)">
+            <td v-for="column in columns" :key="column.key" :class="{
+              'td--center': column.align === 'center',
+              'td--right': column.align === 'right',
+            }">
+              <slot :name="`cell-${column.key}`" :row="row" :value="getNestedValue(row, column.key)" :column="column">
                 <!-- Image -->
                 <div v-if="column.type === 'image'" class="cell-image">
-                  <img
-                    v-if="getNestedValue(row, column.key)"
-                    :src="getImageUrl(getNestedValue(row, column.key), column)"
-                    :alt="column.label"
-                    class="img-thumb"
-                    @click.stop="handleImageClick(getNestedValue(row, column.key), column, row)"
-                  />
+                  <img v-if="getNestedValue(row, column.key)"
+                    :src="getImageUrl(getNestedValue(row, column.key), column)" :alt="column.label" class="img-thumb"
+                    @click.stop="handleImageClick(getNestedValue(row, column.key), column, row)" />
                   <span v-else class="cell-empty">—</span>
                 </div>
 
                 <!-- Status badge -->
-                <span
-                  v-else-if="column.type === 'status'"
-                  class="status-badge"
-                  :class="`status--${getNestedValue(row, column.key)}`"
-                >
+                <span v-else-if="column.type === 'status'" class="status-badge"
+                  :class="`status--${getNestedValue(row, column.key)}`">
                   <span class="status-dot" />
                   {{ formatValue(getNestedValue(row, column.key), column) }}
                 </span>
 
                 <!-- Generic badge -->
-                <span
-                  v-else-if="column.type === 'badge'"
-                  class="cell-badge"
-                  :style="{ '--badge-color': column.badgeColor?.(getNestedValue(row, column.key)) }"
-                >
+                <span v-else-if="column.type === 'badge'" class="cell-badge"
+                  :style="{ '--badge-color': column.badgeColor?.(getNestedValue(row, column.key)) }">
                   {{ formatValue(getNestedValue(row, column.key), column) }}
                 </span>
 
                 <!-- Boolean -->
-                <span
-                  v-else-if="column.type === 'boolean'"
-                  class="cell-bool"
-                  :class="getNestedValue(row, column.key) ? 'cell-bool--true' : 'cell-bool--false'"
-                >
-                  <svg v-if="getNestedValue(row, column.key)" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                  <svg v-else viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                <span v-else-if="column.type === 'boolean'" class="cell-bool"
+                  :class="getNestedValue(row, column.key) ? 'cell-bool--true' : 'cell-bool--false'">
+                  <svg v-if="getNestedValue(row, column.key)" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd" />
+                  </svg>
+                  <svg v-else viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clip-rule="evenodd" />
+                  </svg>
                 </span>
 
                 <!-- Actions -->
                 <div v-else-if="column.type === 'actions'" class="cell-actions">
                   <slot name="actions" :row="row">
-                    <button
-                      v-for="action in actions"
-                      :key="action.name"
-                      class="action-btn"
-                      :class="`action-btn--${action.class || action.name}`"
-                      :disabled="action.disabled?.(row)"
-                      @click.stop="handleAction(action.name, row)"
-                    >
+                    <button v-for="action in actions" :key="action.name" class="action-btn"
+                      :class="`action-btn--${action.class || action.name}`" :disabled="action.disabled?.(row)"
+                      @click.stop="handleAction(action.name, row)">
                       {{ action.label }}
                     </button>
                   </slot>
@@ -150,9 +124,9 @@
       <div v-else class="empty-state">
         <slot name="empty">
           <div class="empty-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <path d="M3 9h18M9 21V9"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <path d="M3 9h18M9 21V9" />
             </svg>
           </div>
           <p class="empty-title">{{ emptyTitle }}</p>
@@ -167,7 +141,11 @@
         <div v-if="showImageModal" class="img-modal-overlay" @click="closeImageModal">
           <div class="img-modal-box" @click.stop>
             <button class="img-modal-close" @click="closeImageModal">
-              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                  clip-rule="evenodd" />
+              </svg>
             </button>
             <img :src="currentImageUrl" alt="Preview" class="img-modal-preview" />
           </div>
@@ -179,29 +157,29 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue'
+import { defineEmits, defineProps, ref } from 'vue'
 
 const props = defineProps({
-  data:         { type: Array,   required: true },
-  columns:      { type: Array,   required: true, validator: cols => cols.every(c => c.key && c.label) },
-  actions:      { type: Array,   default: () => [] },
-  rowKey:       { type: String,  default: 'id' },
-  showHeader:   { type: Boolean, default: true },
-  resultLabel:  { type: String,  default: 'records' },
-  emptyTitle:   { type: String,  default: 'No data found' },
-  emptyMessage: { type: String,  default: 'Try adjusting your filters or search criteria.' },
+  data: { type: Array, required: true },
+  columns: { type: Array, required: true, validator: cols => cols.every(c => c.key && c.label) },
+  actions: { type: Array, default: () => [] },
+  rowKey: { type: String, default: 'id' },
+  showHeader: { type: Boolean, default: true },
+  resultLabel: { type: String, default: 'records' },
+  emptyTitle: { type: String, default: 'No data found' },
+  emptyMessage: { type: String, default: 'Try adjusting your filters or search criteria.' },
   rowClickable: { type: Boolean, default: false },
-  selectedRows: { type: Array,   default: () => [] },
-  sortable:     { type: Boolean, default: true },
-  initialSort:  { type: Object,  default: () => ({ by: '', order: 'asc' }) },
-  imageBaseUrl: { type: String,  default: '' },
+  selectedRows: { type: Array, default: () => [] },
+  sortable: { type: Boolean, default: true },
+  initialSort: { type: Object, default: () => ({ by: '', order: 'asc' }) },
+  imageBaseUrl: { type: String, default: '' },
 })
 
 const emit = defineEmits(['action', 'row-click', 'sort', 'image-click'])
 
-const sortBy          = ref(props.initialSort.by)
-const sortOrder       = ref(props.initialSort.order)
-const showImageModal  = ref(false)
+const sortBy = ref(props.initialSort.by)
+const sortOrder = ref(props.initialSort.order)
+const showImageModal = ref(false)
 const currentImageUrl = ref('')
 
 const getNestedValue = (obj, path) =>
@@ -226,12 +204,12 @@ const getImageUrl = (value, column) => {
 
 const handleImageClick = (value, column, row) => {
   currentImageUrl.value = getImageUrl(value, column)
-  showImageModal.value  = true
+  showImageModal.value = true
   emit('image-click', { value, column, row, url: currentImageUrl.value })
 }
 
 const closeImageModal = () => {
-  showImageModal.value  = false
+  showImageModal.value = false
   currentImageUrl.value = ''
 }
 
@@ -239,21 +217,21 @@ const formatValue = (value, column) => {
   if (value === null || value === undefined) return column.defaultValue || '—'
   if (column.formatter) return column.formatter(value)
   switch (column.type) {
-    case 'date':       return new Date(value).toLocaleDateString()
-    case 'datetime':   return new Date(value).toLocaleString()
-    case 'currency':   return new Intl.NumberFormat('en-US', { style:'currency', currency: column.currency||'USD' }).format(value)
-    case 'number':     return new Intl.NumberFormat('en-US').format(value)
+    case 'date': return new Date(value).toLocaleDateString()
+    case 'datetime': return new Date(value).toLocaleString()
+    case 'currency': return new Intl.NumberFormat('en-US', { style: 'currency', currency: column.currency || 'USD' }).format(value)
+    case 'number': return new Intl.NumberFormat('en-US').format(value)
     case 'percentage': return `${value}%`
     case 'status':
-    case 'badge':      return typeof value === 'string' ? value.charAt(0).toUpperCase() + value.slice(1) : value
-    default:           return value
+    case 'badge': return typeof value === 'string' ? value.charAt(0).toUpperCase() + value.slice(1) : value
+    default: return value
   }
 }
 
 const handleSort = (key) => {
   if (!props.sortable) return
   sortOrder.value = sortBy.value === key ? (sortOrder.value === 'asc' ? 'desc' : 'asc') : 'asc'
-  sortBy.value    = key
+  sortBy.value = key
   emit('sort', { by: sortBy.value, order: sortOrder.value })
 }
 
@@ -265,26 +243,50 @@ const handleAction = (name, row) => emit('action', { action: name, row })
 </script>
 
 <style scoped>
-/* ── Design tokens ── */
+/* ── Light Theme Variables ── */
 .data-table {
-  --gold:           #C9A96E;
-  --gold-light:     #E8D5B0;
-  --gold-dim:       #8B6F47;
-  --gold-glow:      rgba(201,169,110,0.08);
-  --gold-glow-str:  rgba(201,169,110,0.16);
-  --onyx:           #0D0D0F;
-  --onyx-2:         #131316;
-  --onyx-3:         #1A1A1F;
-  --onyx-4:         #222228;
-  --onyx-5:         #2C2C33;
-  --smoke:          rgba(255,255,255,0.035);
-  --smoke-hover:    rgba(255,255,255,0.06);
-  --text-primary:   #F0EAE0;
-  --text-secondary: rgba(240,234,224,0.55);
-  --text-muted:     rgba(240,234,224,0.28);
-  --border:         rgba(201,169,110,0.12);
-  --border-strong:  rgba(201,169,110,0.28);
-  font-family: 'Jost', 'Inter', sans-serif;
+  --primary: #4F46E5;
+  --primary-light: #EEF2FF;
+  --primary-hover: #4338CA;
+
+  --bg: #FFFFFF;
+  --bg-secondary: #F8FAFC;
+  --bg-hover: #F1F5F9;
+  --bg-active: #EEF2FF;
+
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --text-light: #64748B;
+
+  --border: #E2E8F0;
+  --border-strong: #CBD5E1;
+  --border-focus: #818CF8;
+
+  --success: #10B981;
+  --success-light: #ECFDF5;
+  --success-border: #A7F3D0;
+
+  --error: #EF4444;
+  --error-light: #FEF2F2;
+  --error-border: #FECACA;
+
+  --warning: #F59E0B;
+  --warning-light: #FFFBEB;
+  --warning-border: #FDE68A;
+
+  --info: #3B82F6;
+  --info-light: #EFF6FF;
+  --info-border: #BFDBFE;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* ── Table header ── */
@@ -301,41 +303,43 @@ const handleAction = (name, row) => emit('action', { action: name, row })
 .results-meta {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .results-count {
   display: flex;
   align-items: baseline;
-  gap: 5px;
+  gap: 6px;
 }
+
 .results-count strong {
-  font-family: 'Cormorant Garamond','Georgia',serif;
   font-size: 22px;
-  font-weight: 500;
-  color: var(--gold-light);
-  letter-spacing: .04em;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.02em;
   line-height: 1;
 }
+
 .results-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: .14em;
-  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
 }
+
 .results-divider {
-  width: 1px; height: 16px;
+  width: 1px;
+  height: 20px;
   background: var(--border-strong);
 }
+
 .results-hint {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--text-muted);
-  letter-spacing: .06em;
 }
 
 .table-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
   align-items: center;
 }
@@ -346,22 +350,33 @@ const handleAction = (name, row) => emit('action', { action: name, row })
   overflow-x: auto;
   overflow-y: visible;
   border: 1px solid var(--border);
-  background: var(--onyx-2);
+  border-radius: var(--radius-md);
+  background: var(--bg);
   position: relative;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease;
 }
 
-.table-wrapper::-webkit-scrollbar { height: 4px; }
-.table-wrapper::-webkit-scrollbar-track { background: var(--onyx-3); }
-.table-wrapper::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+.table-wrapper:hover {
+  box-shadow: var(--shadow-md);
+}
 
-/* top gold accent line */
-.table-wrapper::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--gold-dim), var(--gold), var(--gold-dim), transparent);
-  z-index: 2;
+.table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 3px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
 
 /* ── Table ── */
@@ -379,81 +394,125 @@ thead {
 }
 
 thead tr {
-  background: var(--onyx-3);
-  border-bottom: 1px solid var(--border-strong);
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--border);
 }
 
 th {
-  padding: 8px 14px;
-  font-size: 10px;
+  padding: 12px 16px;
+  font-size: 11px;
   text-align: left;
-  font-weight: 500;
-  letter-spacing: .18em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   white-space: nowrap;
   border-right: 1px solid var(--border);
   position: relative;
+  transition: background 0.15s ease;
 }
-th:last-child { border-right: none; }
 
-th.th--sortable { cursor: pointer; user-select: none; }
-th.th--sortable:hover { background: var(--smoke); color: var(--text-secondary); }
-th.th--sorted { color: var(--gold); }
-th.th--center .th-inner { justify-content: center; }
-th.th--right  .th-inner { justify-content: flex-end; }
+th:last-child {
+  border-right: none;
+}
+
+th.th--sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+th.th--sortable:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+th.th--sorted {
+  color: var(--primary);
+}
+
+th.th--center .th-inner {
+  justify-content: center;
+}
+
+th.th--right .th-inner {
+  justify-content: flex-end;
+}
 
 .th-inner {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
 }
-.th-label { line-height: 1; }
 
-.sort-icon { display:flex; align-items:center; }
-.sort-icon svg { width:12px; height:12px; color:var(--gold); }
-.sort-idle { color: var(--text-muted) !important; opacity:.5; }
+.th-label {
+  line-height: 1;
+}
+
+.sort-icon {
+  display: flex;
+  align-items: center;
+}
+
+.sort-icon svg {
+  width: 14px;
+  height: 14px;
+  color: var(--primary);
+}
+
+.sort-idle {
+  color: var(--text-muted) !important;
+  opacity: 0.4;
+}
 
 /* ── Body rows ── */
 tbody tr {
   border-bottom: 1px solid var(--border);
-  transition: background .14s;
+  transition: all 0.15s ease;
   position: relative;
 }
-tbody tr:last-child { border-bottom: none; }
 
-tbody tr::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 2px;
-  background: var(--gold);
-  transform: scaleY(0);
-  transition: transform .15s;
+tbody tr:last-child {
+  border-bottom: none;
 }
 
-tbody tr:hover { background: var(--smoke); }
-tbody tr:hover::before { transform: scaleY(1); }
-tbody tr.tr--clickable { cursor: pointer; }
-tbody tr.tr--selected { background: var(--gold-glow); }
-tbody tr.tr--selected::before { transform: scaleY(1); }
+tbody tr:hover {
+  background: var(--bg-hover);
+}
+
+tbody tr.tr--clickable {
+  cursor: pointer;
+}
+
+tbody tr.tr--selected {
+  background: var(--primary-light);
+  border-left: 3px solid var(--primary);
+}
 
 /* ── Cells ── */
 td {
-  padding: 8px 14px;
-  font-size: 12px;
+  padding: 12px 16px;
+  font-size: 13px;
   color: var(--text-secondary);
   border-right: 1px solid var(--border);
   vertical-align: middle;
-  line-height: 1.4;
+  line-height: 1.5;
 }
-td:last-child { border-right: none; }
-td.td--center { text-align: center; }
-td.td--right  { text-align: right; }
+
+td:last-child {
+  border-right: none;
+}
+
+td.td--center {
+  text-align: center;
+}
+
+td.td--right {
+  text-align: right;
+}
 
 .cell-text {
   color: var(--text-secondary);
-  letter-spacing: .01em;
+  font-weight: 500;
 }
 
 /* ── Status badge ── */
@@ -461,138 +520,247 @@ td.td--right  { text-align: right; }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px 4px 8px;
-  font-size: 10.5px;
-  font-weight: 500;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  border: 1px solid;
+  padding: 4px 12px 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border-radius: 20px;
+  border: 1.5px solid;
   white-space: nowrap;
 }
+
 .status-dot {
-  width: 5px; height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.status--active  { background:rgba(29,158,117,0.10); border-color:rgba(29,158,117,0.35); color:#5DCAA5; }
-.status--active  .status-dot { background:#5DCAA5; box-shadow:0 0 5px rgba(93,202,165,0.6); }
-
-.status--inactive, .status--disabled {
-  background:rgba(201,60,60,0.08); border-color:rgba(201,60,60,0.3); color:#F09595;
+.status--active {
+  background: var(--success-light);
+  border-color: var(--success-border);
+  color: var(--success);
 }
-.status--inactive .status-dot, .status--disabled .status-dot { background:#F09595; }
 
-.status--pending  { background:rgba(201,169,110,0.10); border-color:rgba(201,169,110,0.3); color:var(--gold-light); }
-.status--pending  .status-dot { background:var(--gold); box-shadow:0 0 5px rgba(201,169,110,0.5); }
-
-.status--draft, .status--archived {
-  background:var(--smoke); border-color:var(--border); color:var(--text-muted);
+.status--active .status-dot {
+  background: var(--success);
+  animation: pulse-dot 2s ease-in-out infinite;
 }
-.status--draft .status-dot, .status--archived .status-dot { background:var(--text-muted); }
+
+@keyframes pulse-dot {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.7;
+    transform: scale(0.85);
+  }
+}
+
+.status--inactive,
+.status--disabled {
+  background: var(--error-light);
+  border-color: var(--error-border);
+  color: var(--error);
+}
+
+.status--inactive .status-dot,
+.status--disabled .status-dot {
+  background: var(--error);
+}
+
+.status--pending {
+  background: var(--warning-light);
+  border-color: var(--warning-border);
+  color: var(--warning);
+}
+
+.status--pending .status-dot {
+  background: var(--warning);
+}
+
+.status--draft,
+.status--archived {
+  background: var(--bg-secondary);
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+.status--draft .status-dot,
+.status--archived .status-dot {
+  background: var(--text-muted);
+}
 
 /* ── Generic badge ── */
 .cell-badge {
   display: inline-block;
-  padding: 3px 10px;
-  font-size: 10.5px;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  background: var(--badge-color, var(--gold-glow));
+  padding: 3px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border-radius: 4px;
+  background: var(--badge-color, var(--primary-light));
   border: 1px solid var(--border-strong);
-  color: var(--gold-light);
+  color: var(--text-primary);
 }
 
 /* ── Boolean ── */
-.cell-bool { display:inline-flex; align-items:center; }
-.cell-bool svg { width:15px; height:15px; }
-.cell-bool--true  svg { color:#5DCAA5; }
-.cell-bool--false svg { color:#F09595; }
+.cell-bool {
+  display: inline-flex;
+  align-items: center;
+}
+
+.cell-bool svg {
+  width: 18px;
+  height: 18px;
+}
+
+.cell-bool--true svg {
+  color: var(--success);
+}
+
+.cell-bool--false svg {
+  color: var(--error);
+}
 
 /* ── Image cell ── */
-.cell-image { display:flex; align-items:center; }
+.cell-image {
+  display: flex;
+  align-items: center;
+}
+
 .img-thumb {
-  width: 44px; height: 44px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
   object-fit: cover;
   cursor: pointer;
-  border: 1px solid var(--border);
-  transition: border-color .15s, transform .15s;
+  border: 2px solid var(--border);
+  transition: all 0.2s ease;
 }
+
 .img-thumb:hover {
-  border-color: var(--gold);
-  transform: scale(1.06);
+  border-color: var(--primary);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-md);
 }
-.cell-empty { font-size:12px; color:var(--text-muted); letter-spacing:.04em; }
+
+.cell-empty {
+  font-size: 13px;
+  color: var(--text-muted);
+}
 
 /* ── Action buttons ── */
 .cell-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .action-btn {
-  padding: 5px 12px;
+  padding: 4px 12px;
   font-family: inherit;
-  font-size: 10.5px;
-  font-weight: 500;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  border: 1px solid;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1.5px solid;
+  border-radius: var(--radius-sm);
   background: transparent;
   cursor: pointer;
-  transition: background .14s, color .14s, border-color .14s, transform .12s;
+  transition: all 0.15s ease;
   white-space: nowrap;
 }
-.action-btn:disabled { opacity:.4; cursor:not-allowed; }
-.action-btn:not(:disabled):active { transform: scale(.97); }
 
-/* view */
-.action-btn--view, .action-btn--btn-view {
-  color: #85B7EB; border-color: rgba(133,183,235,0.35);
-}
-.action-btn--view:hover:not(:disabled), .action-btn--btn-view:hover:not(:disabled) {
-  background: rgba(133,183,235,0.10); border-color: #85B7EB;
+.action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
-/* edit */
-.action-btn--edit, .action-btn--btn-edit {
-  color: var(--gold); border-color: var(--border-strong);
-}
-.action-btn--edit:hover:not(:disabled), .action-btn--btn-edit:hover:not(:disabled) {
-  background: var(--gold-glow); border-color: var(--gold);
+.action-btn:not(:disabled):active {
+  transform: scale(0.95);
 }
 
-/* delete */
-.action-btn--delete, .action-btn--btn-delete {
-  color: #F09595; border-color: rgba(240,149,149,0.3);
-}
-.action-btn--delete:hover:not(:disabled), .action-btn--btn-delete:hover:not(:disabled) {
-  background: rgba(240,149,149,0.08); border-color: #F09595;
-}
-
-/* primary */
-.action-btn--primary, .action-btn--btn-primary {
-  color: #9FE1CB; border-color: rgba(159,225,203,0.3);
-}
-.action-btn--primary:hover:not(:disabled), .action-btn--btn-primary:hover:not(:disabled) {
-  background: rgba(159,225,203,0.08); border-color: #9FE1CB;
+/* View */
+.action-btn--view,
+.action-btn--btn-view {
+  color: var(--info);
+  border-color: var(--info-border);
 }
 
-/* secondary */
-.action-btn--secondary, .action-btn--btn-secondary {
-  color: var(--text-secondary); border-color: var(--border);
-}
-.action-btn--secondary:hover:not(:disabled), .action-btn--btn-secondary:hover:not(:disabled) {
-  background: var(--smoke); border-color: var(--border-strong);
+.action-btn--view:hover:not(:disabled),
+.action-btn--btn-view:hover:not(:disabled) {
+  background: var(--info-light);
+  border-color: var(--info);
 }
 
-/* success */
-.action-btn--success, .action-btn--btn-success {
-  color: #5DCAA5; border-color: rgba(93,202,165,0.3);
+/* Edit */
+.action-btn--edit,
+.action-btn--btn-edit {
+  color: var(--primary);
+  border-color: var(--border-strong);
 }
-.action-btn--success:hover:not(:disabled), .action-btn--btn-success:hover:not(:disabled) {
-  background: rgba(93,202,165,0.08); border-color: #5DCAA5;
+
+.action-btn--edit:hover:not(:disabled),
+.action-btn--btn-edit:hover:not(:disabled) {
+  background: var(--primary-light);
+  border-color: var(--primary);
+}
+
+/* Delete */
+.action-btn--delete,
+.action-btn--btn-delete {
+  color: var(--error);
+  border-color: var(--error-border);
+}
+
+.action-btn--delete:hover:not(:disabled),
+.action-btn--btn-delete:hover:not(:disabled) {
+  background: var(--error-light);
+  border-color: var(--error);
+}
+
+/* Primary */
+.action-btn--primary,
+.action-btn--btn-primary {
+  color: var(--success);
+  border-color: var(--success-border);
+}
+
+.action-btn--primary:hover:not(:disabled),
+.action-btn--btn-primary:hover:not(:disabled) {
+  background: var(--success-light);
+  border-color: var(--success);
+}
+
+/* Secondary */
+.action-btn--secondary,
+.action-btn--btn-secondary {
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+.action-btn--secondary:hover:not(:disabled),
+.action-btn--btn-secondary:hover:not(:disabled) {
+  background: var(--bg-hover);
+  border-color: var(--border-strong);
+}
+
+/* Success */
+.action-btn--success,
+.action-btn--btn-success {
+  color: var(--success);
+  border-color: var(--success-border);
+}
+
+.action-btn--success:hover:not(:disabled),
+.action-btn--btn-success:hover:not(:disabled) {
+  background: var(--success-light);
+  border-color: var(--success);
 }
 
 /* ── Empty state ── */
@@ -601,73 +769,180 @@ td.td--right  { text-align: right; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 24px;
+  padding: 60px 24px;
   text-align: center;
 }
+
 .empty-icon {
-  width: 56px; height: 56px;
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 20px;
-  position: relative;
+  transition: all 0.2s ease;
 }
-.empty-icon::before {
-  content: '';
-  position: absolute; inset: 4px;
-  border: 1px solid var(--border);
-  opacity: .4;
+
+.empty-icon svg {
+  width: 28px;
+  height: 28px;
+  color: var(--text-muted);
 }
-.empty-icon svg { width:24px; height:24px; color:var(--gold-dim); }
-.empty-title   { font-family:'Cormorant Garamond','Georgia',serif; font-size:20px; font-weight:400; color:var(--text-secondary); margin:0 0 8px; letter-spacing:.04em; }
-.empty-message { font-size:12px; color:var(--text-muted); letter-spacing:.06em; margin:0; }
+
+.empty-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+
+.empty-message {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
 
 /* ── Image modal ── */
 .img-modal-overlay {
-  position: fixed; inset: 0;
-  background: rgba(7,7,9,0.92);
-  display: flex; align-items: center; justify-content: center;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 10000;
   padding: 24px;
-  backdrop-filter: blur(4px);
 }
+
 .img-modal-box {
   position: relative;
-  max-width: 88vw; max-height: 88vh;
+  max-width: 88vw;
+  max-height: 88vh;
 }
+
 .img-modal-close {
   position: absolute;
-  top: -44px; right: 0;
-  width: 36px; height: 36px;
-  background: var(--onyx-4);
-  border: 1px solid var(--border-strong);
+  top: -48px;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: 1.5px solid var(--border);
   color: var(--text-secondary);
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  transition: border-color .15s, color .15s;
+  transition: all 0.2s ease;
   padding: 0;
 }
-.img-modal-close:hover { border-color: var(--gold); color: var(--gold); }
-.img-modal-close svg { width:14px; height:14px; }
+
+.img-modal-close:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  transform: rotate(90deg);
+}
+
+.img-modal-close svg {
+  width: 16px;
+  height: 16px;
+}
+
 .img-modal-preview {
-  max-width: 100%; max-height: 85vh;
+  max-width: 100%;
+  max-height: 85vh;
   object-fit: contain;
   display: block;
-  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--border);
+  background: var(--bg);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
 /* ── Modal transition ── */
-.modal-enter-active { transition: opacity .22s ease, transform .22s ease; }
-.modal-leave-active { transition: opacity .15s ease; }
-.modal-enter-from   { opacity:0; transform:scale(.96); }
-.modal-leave-to     { opacity:0; }
+.modal-enter-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.modal-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.modal-enter-from {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+.modal-leave-to {
+  opacity: 0;
+  transform: scale(0.94);
+}
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-  .table-header { flex-direction:column; align-items:flex-start; }
-  table         { min-width:560px; }
-  td, th        { padding:12px 14px; }
-  .cell-actions { flex-direction:column; }
-  .action-btn   { width:100%; text-align:center; }
-  .img-thumb    { width:36px; height:36px; }
+  .table-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  table {
+    min-width: 560px;
+  }
+
+  td,
+  th {
+    padding: 10px 12px;
+  }
+
+  .cell-actions {
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    font-size: 10px;
+    padding: 3px 10px;
+  }
+
+  .img-thumb {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .results-meta {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .results-count strong {
+    font-size: 18px;
+  }
+
+  .results-label {
+    font-size: 12px;
+  }
+
+  td,
+  th {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .status-badge {
+    font-size: 10px;
+    padding: 3px 8px 3px 6px;
+  }
+
+  .cell-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+  }
 }
 </style>
