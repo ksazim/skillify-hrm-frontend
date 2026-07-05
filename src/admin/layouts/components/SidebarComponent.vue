@@ -375,35 +375,34 @@ function handleFlyoutClick(menuId, sub) {
 </script>
 
 <style scoped>
-/* ── Light Theme Tokens ── */
+/* ── Design tokens ── */
 .sidebar {
-  --primary: #4F46E5;
-  --primary-light: #EEF2FF;
-  --primary-hover: #4338CA;
+  --primary: #4338CA;
+  --primary-hover: #3730A3;
+  --primary-soft: #EEF2FF;
 
   --bg: #FFFFFF;
-  --bg-hover: #F8FAFC;
-  --bg-active: #F1F5F9;
-  --bg-secondary: #F8FAFC;
+  --bg-hover: #F9FAFB;
+  --bg-active: #F3F4F6;
+  --bg-secondary: #F9FAFB;
 
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #94A3B8;
-  --text-light: #64748B;
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-muted: #9CA3AF;
 
-  --border: #E2E8F0;
-  --border-strong: #CBD5E1;
-  --border-focus: #818CF8;
+  --border: #EAECEF;
+  --border-strong: #D1D5DB;
+  --border-focus: #A5B4FC;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 6px 16px -4px rgba(15, 23, 42, 0.10);
+  --shadow-lg: 0 20px 40px -12px rgba(15, 23, 42, 0.16);
 
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-sm: 7px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
 
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* ── Shell ── */
@@ -422,11 +421,11 @@ function handleFlyoutClick(menuId, sub) {
 
 /* ── Logo ── */
 .logo-wrap {
-  height: 68px;
-  padding: 0 20px;
+  height: 64px;
+  padding: 0 18px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   z-index: 1;
@@ -434,24 +433,29 @@ function handleFlyoutClick(menuId, sub) {
   background: var(--bg);
 }
 
+.is-collapsed .logo-wrap {
+  padding: 0;
+  justify-content: center;
+}
+
 .logo-mark {
-  width: 38px;
-  height: 38px;
-  border: 1.5px solid var(--primary);
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   flex-shrink: 0;
-  color: var(--primary);
-  background: var(--primary-light);
-  transition: all 0.2s ease;
+  color: #FFFFFF;
+  background: var(--primary);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .logo-mark:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.15);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .logo-mark svg {
@@ -462,22 +466,22 @@ function handleFlyoutClick(menuId, sub) {
 .logo-text-wrap {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
   white-space: nowrap;
 }
 
 .logo-name {
-  font-size: 20px;
+  font-size: 16.5px;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
   color: var(--text-primary);
   line-height: 1;
 }
 
 .logo-sub {
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-muted);
   line-height: 1;
@@ -485,11 +489,11 @@ function handleFlyoutClick(menuId, sub) {
 
 /* ── Role badge ── */
 .role-badge {
-  margin: 12px 16px 8px;
-  padding: 10px 14px;
-  border-left: 3px solid var(--primary);
+  margin: 14px 14px 6px;
+  padding: 10px 12px;
   background: var(--bg-hover);
-  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -499,17 +503,17 @@ function handleFlyoutClick(menuId, sub) {
 }
 
 .role-badge-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);
-  line-height: 1.2;
+  line-height: 1.3;
   white-space: nowrap;
 }
 
 .role-badge-desc {
-  font-size: 11px;
+  font-size: 11.5px;
   color: var(--text-muted);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -520,7 +524,7 @@ function handleFlyoutClick(menuId, sub) {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 8px 0 20px;
+  padding: 6px 0 20px;
   z-index: 1;
 }
 
@@ -538,61 +542,50 @@ function handleFlyoutClick(menuId, sub) {
 }
 
 .nav-section-label {
-  font-size: 9px;
-  letter-spacing: 0.15em;
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--text-muted);
-  padding: 14px 22px 6px;
+  padding: 16px 22px 7px;
   margin: 0;
   white-space: nowrap;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .nav-section-divider {
   height: 1px;
   background: var(--border);
-  margin: 8px 14px;
+  margin: 10px 16px;
 }
 
 /* ── Nav item ── */
 .nav-item {
   position: relative;
+  padding: 0 10px;
+}
+
+.is-collapsed .nav-item {
+  padding: 0;
 }
 
 /* ── Nav link ── */
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 14px 8px 18px;
+  gap: 11px;
+  padding: 9px 12px;
+  margin: 1px 0;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease;
   position: relative;
   user-select: none;
   white-space: nowrap;
   overflow: hidden;
-  border-radius: 0;
-}
-
-.nav-link::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 0;
-  background: var(--primary);
-  transition: height 0.2s ease;
-  border-radius: 0 2px 2px 0;
+  border-radius: var(--radius-md);
 }
 
 .nav-link:hover {
   background: var(--bg-hover);
-}
-
-.nav-link:hover::before {
-  height: 55%;
 }
 
 .nav-link.open,
@@ -601,67 +594,50 @@ function handleFlyoutClick(menuId, sub) {
   background: var(--bg-active);
 }
 
-.nav-link.open::before,
-.nav-link--active::before,
-.nav-link--flyout::before {
-  height: 65%;
-}
-
-/* Collapsed: center icon */
+/* Collapsed: center icon, no rounded pill */
 .is-collapsed .nav-link {
   padding: 10px 0;
+  margin: 1px 6px;
   justify-content: center;
 }
 
 /* Icon */
 .nav-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-sm);
-  border: 1px solid transparent;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background: var(--bg-hover);
-  transition: all 0.15s ease;
   color: var(--text-secondary);
+  transition: color 0.15s ease;
 }
 
 .nav-link:hover .nav-icon,
 .nav-link.open .nav-icon,
 .nav-link--active .nav-icon,
 .nav-link--flyout .nav-icon {
-  border-color: var(--primary-light);
-  background: var(--primary-light);
   color: var(--primary);
 }
 
 /* Label */
 .nav-text {
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.001em;
+  color: var(--text-primary);
   flex: 1;
-  transition: color 0.15s ease;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.nav-link:hover .nav-text,
-.nav-link.open .nav-text,
-.nav-link--active .nav-text {
-  color: var(--text-primary);
-}
-
 /* Chevron */
 .nav-chevron {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   flex-shrink: 0;
   color: var(--text-muted);
-  transition: transform 0.25s ease, color 0.15s ease;
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.15s ease;
 }
 
 .nav-chevron.rotated {
@@ -672,31 +648,37 @@ function handleFlyoutClick(menuId, sub) {
 /* ── Inline submenu ── */
 .submenu {
   overflow: hidden;
+  padding: 2px 0 4px;
 }
 
 .sub-item {
   display: flex;
   align-items: center;
-  padding: 7px 18px 7px 60px;
-  font-size: 12.5px;
-  letter-spacing: 0.01em;
-  color: var(--text-muted);
+  gap: 9px;
+  padding: 7.5px 12px 7.5px 41px;
+  margin: 1px 10px 1px 0;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.002em;
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: color 0.15s ease, background-color 0.15s ease;
   position: relative;
   white-space: nowrap;
+  border-radius: var(--radius-sm);
 }
 
 .sub-item::before {
   content: '';
   position: absolute;
-  left: 46px;
+  left: 22px;
   top: 50%;
   transform: translateY(-50%);
-  width: 5px;
-  height: 2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
   background: var(--border-strong);
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease;
 }
 
 .sub-item:hover {
@@ -705,23 +687,22 @@ function handleFlyoutClick(menuId, sub) {
 }
 
 .sub-item:hover::before {
-  width: 10px;
   background: var(--primary);
 }
 
 .sub-item--active {
   color: var(--primary);
-  font-weight: 500;
+  font-weight: 600;
+  background: var(--primary-soft);
 }
 
 .sub-item--active::before {
-  width: 10px;
   background: var(--primary);
 }
 
 /* ── Footer ── */
 .sidebar-footer {
-  padding: 14px 16px;
+  padding: 12px 14px;
   border-top: 1px solid var(--border);
   flex-shrink: 0;
   z-index: 1;
@@ -737,33 +718,40 @@ function handleFlyoutClick(menuId, sub) {
 .user-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 11px;
   overflow: hidden;
+  padding: 6px;
+  border-radius: var(--radius-md);
+  transition: background-color 0.15s ease;
+}
+
+.user-row:hover {
+  background: var(--bg-hover);
 }
 
 .is-collapsed .user-row {
   justify-content: center;
+  padding: 0;
 }
 
 .avatar {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  background: var(--primary-light);
+  background: var(--primary-soft);
   color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   flex-shrink: 0;
   letter-spacing: 0.02em;
-  transition: all 0.15s ease;
+  transition: transform 0.15s ease;
 }
 
 .avatar:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.15);
+  transform: translateY(-1px);
 }
 
 .user-info {
@@ -783,22 +771,22 @@ function handleFlyoutClick(menuId, sub) {
 }
 
 .user-role-tag {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-muted);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   margin: 0;
   white-space: nowrap;
   font-weight: 500;
 }
 
 .logout-btn {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
-  border: 1px solid transparent;
+  border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
   color: var(--text-muted);
@@ -808,14 +796,13 @@ function handleFlyoutClick(menuId, sub) {
 }
 
 .logout-btn:hover {
-  color: #EF4444;
-  border-color: #FECACA;
+  color: #DC2626;
   background: #FEF2F2;
 }
 
 .logout-btn svg {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
 }
 
 /* ── Transitions ── */
@@ -866,10 +853,20 @@ function handleFlyoutClick(menuId, sub) {
 }
 
 /* ── Responsive ── */
+@media (max-width: 1024px) {
+  .nav-text {
+    font-size: 13px;
+  }
+}
+
 @media (max-width: 768px) {
   .sidebar {
     border-right: none;
     border-bottom: 1px solid var(--border);
+  }
+
+  .logo-wrap {
+    height: 58px;
   }
 }
 </style>
@@ -878,28 +875,27 @@ function handleFlyoutClick(menuId, sub) {
 <style>
 .flyout-panel {
   background: #FFFFFF;
-  border: 1px solid #E2E8F0;
-  border-left: 3px solid #4F46E5;
-  border-radius: 8px;
-  padding: 6px 0 8px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+  border: 1px solid #EAECEF;
+  border-radius: 12px;
+  padding: 8px 0;
+  box-shadow: 0 20px 40px -12px rgba(15, 23, 42, 0.16), 0 4px 10px -4px rgba(15, 23, 42, 0.06);
   pointer-events: auto;
-  margin-left: -1px;
 }
 
 .flyout-heading {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: #0F172A;
-  padding: 6px 16px 5px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #9CA3AF;
+  padding: 4px 16px 8px;
   white-space: nowrap;
 }
 
 .flyout-divider {
   height: 1px;
-  background: #E2E8F0;
-  margin: 4px 12px;
+  background: #EAECEF;
+  margin: 2px 0 4px;
 }
 
 .flyout-item {
@@ -907,39 +903,41 @@ function handleFlyoutClick(menuId, sub) {
   align-items: center;
   gap: 10px;
   padding: 8px 16px;
-  font-size: 13px;
+  font-size: 13.5px;
+  font-weight: 500;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-  letter-spacing: 0.01em;
-  color: #475569;
+  letter-spacing: 0.005em;
+  color: #4B5563;
   cursor: pointer;
-  transition: all 0.12s ease;
+  transition: color 0.12s ease, background-color 0.12s ease;
   white-space: nowrap;
 }
 
 .flyout-item:hover {
-  color: #0F172A;
-  background: #F8FAFC;
+  color: #111827;
+  background: #F9FAFB;
 }
 
 .flyout-item--active {
-  color: #4F46E5;
-  font-weight: 500;
+  color: #4338CA;
+  font-weight: 600;
+  background: #EEF2FF;
 }
 
 .flyout-dot {
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: #CBD5E1;
+  background: #D1D5DB;
   flex-shrink: 0;
-  transition: all 0.12s ease;
+  transition: background-color 0.12s ease;
 }
 
 .flyout-item:hover .flyout-dot {
-  background: #4F46E5;
+  background: #4338CA;
 }
 
 .flyout-item--active .flyout-dot {
-  background: #4F46E5;
+  background: #4338CA;
 }
 </style>
