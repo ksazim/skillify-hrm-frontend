@@ -93,7 +93,7 @@ const currentYear = computed(() => new Date().getFullYear())
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
+  /* height: 2px; */
   background: linear-gradient(90deg,
       transparent 0%,
       var(--primary) 20%,

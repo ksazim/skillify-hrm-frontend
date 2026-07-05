@@ -287,6 +287,7 @@ const handleAction = (name, row) => emit('action', { action: name, row })
   --radius-lg: 12px;
 
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  padding: 16px 32px;
 }
 
 /* ── Table header ── */

@@ -115,100 +115,101 @@
 
       </div>
     </template>
+    <div class="table__layout">
+      <!-- ── Active chips ── -->
+      <div v-if="activeChips.length" class="chip-row">
+        <span class="chip-label">Filters:</span>
+        <span v-for="chip in activeChips" :key="chip.key" class="chip">
+          {{ chip.label }}
+          <button class="chip-remove" @click="removeChip(chip.key)">×</button>
+        </span>
+      </div>
 
-    <!-- ── Active chips ── -->
-    <div v-if="activeChips.length" class="chip-row">
-      <span class="chip-label">Filters:</span>
-      <span v-for="chip in activeChips" :key="chip.key" class="chip">
-        {{ chip.label }}
-        <button class="chip-remove" @click="removeChip(chip.key)">×</button>
-      </span>
-    </div>
+      <!-- ── Result meta ── -->
+      <div class="result-meta">
+        <span class="result-count">{{ meta.total ? meta.total + ' records' : visibleRecords.length + ' records'
+        }}</span>
+        <span v-if="meta.last_page > 1" class="result-pages">Page {{ meta.current_page }} / {{ meta.last_page }}</span>
+      </div>
 
-    <!-- ── Result meta ── -->
-    <div class="result-meta">
-      <span class="result-count">{{ meta.total ? meta.total + ' records' : visibleRecords.length + ' records' }}</span>
-      <span v-if="meta.last_page > 1" class="result-pages">Page {{ meta.current_page }} / {{ meta.last_page }}</span>
-    </div>
+      <!-- ── Table ── -->
+      <div class="summary-table-card">
+        <div class="summary-table-wrapper">
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th style="width:46px">#</th>
+                <th style="width:100px">Date</th>
+                <th style="width:50px; text-align:center">EID</th>
+                <th style="width:190px">Employee</th>
+                <th style="width:130px">Department</th>
+                <th style="width:105px">Check In</th>
+                <th style="width:105px">Check Out</th>
+                <th style="width:78px">Hours</th>
+                <th style="width:100px; text-align:center">Status</th>
+                <th style="width:80px">OT</th>
+              </tr>
+            </thead>
+            <tbody>
 
-    <!-- ── Table ── -->
-    <div class="summary-table-card">
-      <div class="summary-table-wrapper">
-        <table class="summary-table">
-          <thead>
-            <tr>
-              <th style="width:46px">#</th>
-              <th style="width:100px">Date</th>
-              <th style="width:50px; text-align:center">EID</th>
-              <th style="width:190px">Employee</th>
-              <th style="width:130px">Department</th>
-              <th style="width:105px">Check In</th>
-              <th style="width:105px">Check Out</th>
-              <th style="width:78px">Hours</th>
-              <th style="width:100px; text-align:center">Status</th>
-              <th style="width:80px">OT</th>
-            </tr>
-          </thead>
-          <tbody>
-
-            <tr v-if="!visibleRecords.length && !isLoading">
-              <td colspan="10">
-                <div class="empty-state">
-                  <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                      d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
-                  </svg>
-                  <p>No records found. Try adjusting your filters.</p>
-                </div>
-              </td>
-            </tr>
-
-            <template v-for="(group, date) in groupedByDate" :key="date">
-              <tr class="date-group-row">
+              <tr v-if="!visibleRecords.length && !isLoading">
                 <td colspan="10">
-                  <div class="date-group-label">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <div class="empty-state">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
                       <path
-                        d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" />
+                        d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
                     </svg>
-                    {{ formatDateHeading(date) }}
-                    <span class="date-group-count">{{ group.length }} employees</span>
+                    <p>No records found. Try adjusting your filters.</p>
                   </div>
                 </td>
               </tr>
-              <tr v-for="(rec, idx) in group" :key="rec.id" class="summary-row">
-                <td class="cell-dim">{{ idx + 1 }}</td>
-                <td><span class="date-value">{{ formatDateShort(rec.date) }}</span></td>
-                <td class="cell-id">{{ rec.employee_id }}</td>
-                <td>
-                  <div class="emp-cell">
-                    <div class="emp-avatar">{{ initials(rec.employee?.user?.name) }}</div>
-                    <div class="emp-info">
-                      <span class="emp-name">{{ rec.employee?.user?.name || '—' }}</span>
-                    </div>
-                  </div>
-                </td>
-                <td class="cell-muted">{{ rec.employee?.department || '—' }}</td>
-                <td><span class="time-value">{{ formatTime(rec.check_in) }}</span></td>
-                <td><span class="time-value">{{ formatTime(rec.check_out) }}</span></td>
-                <td><span class="hours-value">{{ calcHours(rec.check_in, rec.check_out) }}</span></td>
-                <td style="text-align:center">
-                  <span :class="['status-badge', `status-badge--${rec.status || 'absent'}`]">
-                    {{ rec.status || 'absent' }}
-                  </span>
-                </td>
-                <td>
-                  <span v-if="rec.overtime_minutes" class="ot-value">{{ fmtMinutes(rec.overtime_minutes) }}</span>
-                  <span v-else class="cell-dim">—</span>
-                </td>
-              </tr>
-            </template>
 
-          </tbody>
-        </table>
+              <template v-for="(group, date) in groupedByDate" :key="date">
+                <tr class="date-group-row">
+                  <td colspan="10">
+                    <div class="date-group-label">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                          d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" />
+                      </svg>
+                      {{ formatDateHeading(date) }}
+                      <span class="date-group-count">{{ group.length }} employees</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr v-for="(rec, idx) in group" :key="rec.id" class="summary-row">
+                  <td class="cell-dim">{{ idx + 1 }}</td>
+                  <td><span class="date-value">{{ formatDateShort(rec.date) }}</span></td>
+                  <td class="cell-id">{{ rec.employee_id }}</td>
+                  <td>
+                    <div class="emp-cell">
+                      <div class="emp-avatar">{{ initials(rec.employee?.user?.name) }}</div>
+                      <div class="emp-info">
+                        <span class="emp-name">{{ rec.employee?.user?.name || '—' }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="cell-muted">{{ rec.employee?.department || '—' }}</td>
+                  <td><span class="time-value">{{ formatTime(rec.check_in) }}</span></td>
+                  <td><span class="time-value">{{ formatTime(rec.check_out) }}</span></td>
+                  <td><span class="hours-value">{{ calcHours(rec.check_in, rec.check_out) }}</span></td>
+                  <td style="text-align:center">
+                    <span :class="['status-badge', `status-badge--${rec.status || 'absent'}`]">
+                      {{ rec.status || 'absent' }}
+                    </span>
+                  </td>
+                  <td>
+                    <span v-if="rec.overtime_minutes" class="ot-value">{{ fmtMinutes(rec.overtime_minutes) }}</span>
+                    <span v-else class="cell-dim">—</span>
+                  </td>
+                </tr>
+              </template>
+
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-
     <!-- ── Pagination ── -->
     <template #pagination>
       <div class="sf-pagination">
@@ -239,6 +240,7 @@
         <span class="sf-pg-info">{{ meta.from }}–{{ meta.to }} of {{ meta.total }}</span>
       </div>
     </template>
+
 
   </CrudLayout>
 </template>
@@ -709,6 +711,18 @@ onMounted(() => {
   border-color: #98A2B3;
 }
 
+.table__layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* width: 100%; */
+  /* border: 5px solid red; */
+  /* debug */
+  padding: 16px 32px;
+  background: #FFFFFF;
+
+}
+
 /* ─── Chips ─────────────────────────────────────────────────────────────────── */
 .chip-row {
   display: flex;
@@ -1104,6 +1118,10 @@ onMounted(() => {
     width: 100%;
     text-align: center;
     order: -1;
+  }
+
+  .table__layout {
+    padding: 8px 16px;
   }
 }
 

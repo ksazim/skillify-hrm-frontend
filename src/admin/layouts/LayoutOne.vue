@@ -241,7 +241,7 @@ onUnmounted(() => {
 ───────────────────────────────────── */
 .layout-footer {
   flex-shrink: 0;
-  border-top: 1px solid var(--border);
+  /* border-top: 1px solid var(--border); */
   background: var(--onyx-2);
 }
 

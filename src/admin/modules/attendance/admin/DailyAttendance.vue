@@ -75,135 +75,137 @@
     </template>
 
     <!-- ── Today's date header ── -->
-    <div class="date-header">
-      <div class="date-pill">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-          <path
-            d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" />
-        </svg>
-        {{ todayLabel }}
+    <div class="table__layout">
+      <div class="date-header">
+        <div class="date-pill">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" />
+          </svg>
+          {{ todayLabel }}
+        </div>
+        <span class="record-count">{{ filteredRecords.length }} employees</span>
       </div>
-      <span class="record-count">{{ filteredRecords.length }} employees</span>
-    </div>
 
-    <!-- ── Attendance Table ── -->
-    <div class="attendance-table-card">
-      <div class="attendance-table-wrapper">
-        <table class="attendance-table">
-          <thead>
-            <tr>
-              <th style="width:50px">#</th>
-              <th style="width:200px">Employee</th>
-              <th style="width:130px">Department</th>
-              <th style="width:110px">Check In</th>
-              <th style="width:110px">Check Out</th>
-              <th style="width:90px">Hours</th>
-              <th style="width:100px; text-align:center">Status</th>
-              <th style="width:80px; text-align:center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="!filteredRecords.length && !isLoading">
-              <td colspan="8" class="empty-row">
-                <div class="empty-state">
-                  <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                      d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" />
-                  </svg>
-                  <p>No attendance records found{{ selectedCompany ? '' : ' — select a company to begin' }}</p>
-                </div>
-              </td>
-            </tr>
-            <tr v-for="(rec, idx) in filteredRecords" :key="rec.employee.id" class="attendance-row"
-              :class="{ 'row--editing': editingId === rec.attendance?.id }">
-              <td class="cell-num">{{ idx + 1 }}</td>
-              <td>
-                <div class="employee-cell">
-                  <div class="emp-avatar">{{ initials(rec.employee.user?.name) }}</div>
-                  <div class="emp-info">
-                    <span class="emp-name">{{ rec.employee.user?.name || '—' }}</span>
-                    <span class="emp-id">ID: {{ rec.employee.id }}</span>
-                  </div>
-                </div>
-              </td>
-              <td class="cell-muted">{{ rec.employee.department?.name || '—' }}</td>
-
-              <!-- Check In -->
-              <td>
-                <template v-if="editingId === rec.attendance?.id">
-                  <input v-model="editForm.check_in" type="time" class="time-input" />
-                </template>
-                <span v-else class="time-value">{{ formatTime(rec.attendance?.check_in) }}</span>
-              </td>
-
-              <!-- Check Out -->
-              <td>
-                <template v-if="editingId === rec.attendance?.id">
-                  <input v-model="editForm.check_out" type="time" class="time-input" />
-                </template>
-                <span v-else class="time-value">{{ formatTime(rec.attendance?.check_out) }}</span>
-              </td>
-
-              <!-- Hours -->
-              <td>
-                <span class="hours-badge" v-if="rec.attendance">
-                  {{ calcHours(rec.attendance.check_in, rec.attendance.check_out) }}
-                </span>
-                <span v-else class="cell-dash">—</span>
-              </td>
-
-              <!-- Status -->
-              <td style="text-align:center">
-                <template v-if="editingId === rec.attendance?.id">
-                  <div class="select-wrapper select-wrapper--sm">
-                    <select v-model="editForm.status" class="filter-select filter-select--sm">
-                      <option value="present">Present</option>
-                      <option value="absent">Absent</option>
-                      <option value="late">Late</option>
-                      <option value="leave">Leave</option>
-                      <option value="half_day">Half Day</option>
-                    </select>
-                    <svg class="select-arrow" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M7 10l5 5 5-5z" />
+      <!-- ── Attendance Table ── -->
+      <div class="attendance-table-card">
+        <div class="attendance-table-wrapper">
+          <table class="attendance-table">
+            <thead>
+              <tr>
+                <th style="width:50px">#</th>
+                <th style="width:200px">Employee</th>
+                <th style="width:130px">Department</th>
+                <th style="width:110px">Check In</th>
+                <th style="width:110px">Check Out</th>
+                <th style="width:90px">Hours</th>
+                <th style="width:100px; text-align:center">Status</th>
+                <th style="width:80px; text-align:center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-if="!filteredRecords.length && !isLoading">
+                <td colspan="8" class="empty-row">
+                  <div class="empty-state">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" />
                     </svg>
+                    <p>No attendance records found{{ selectedCompany ? '' : ' — select a company to begin' }}</p>
                   </div>
-                </template>
-                <span v-else :class="['status-badge', `status-badge--${resolveStatus(rec)}`]">
-                  {{ resolveStatus(rec) }}
-                </span>
-              </td>
+                </td>
+              </tr>
+              <tr v-for="(rec, idx) in filteredRecords" :key="rec.employee.id" class="attendance-row"
+                :class="{ 'row--editing': editingId === rec.attendance?.id }">
+                <td class="cell-num">{{ idx + 1 }}</td>
+                <td>
+                  <div class="employee-cell">
+                    <div class="emp-avatar">{{ initials(rec.employee.user?.name) }}</div>
+                    <div class="emp-info">
+                      <span class="emp-name">{{ rec.employee.user?.name || '—' }}</span>
+                      <span class="emp-id">ID: {{ rec.employee.id }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="cell-muted">{{ rec.employee.department?.name || '—' }}</td>
 
-              <!-- Actions -->
-              <td style="text-align:center">
-                <div class="action-btns">
+                <!-- Check In -->
+                <td>
                   <template v-if="editingId === rec.attendance?.id">
-                    <button class="btn-save" @click="saveEdit(rec)" :disabled="isSaving" title="Save">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
-                      </svg>
-                    </button>
-                    <button class="btn-cancel" @click="cancelEdit" title="Cancel">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
-                      </svg>
-                    </button>
+                    <input v-model="editForm.check_in" type="time" class="time-input" />
                   </template>
-                  <template v-else>
-                    <button class="btn-edit-row" @click="startEdit(rec)" :disabled="!rec.attendance"
-                      :title="!rec.attendance ? 'No attendance record to edit' : 'Edit attendance'">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                          d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                      </svg>
-                      Edit
-                    </button>
+                  <span v-else class="time-value">{{ formatTime(rec.attendance?.check_in) }}</span>
+                </td>
+
+                <!-- Check Out -->
+                <td>
+                  <template v-if="editingId === rec.attendance?.id">
+                    <input v-model="editForm.check_out" type="time" class="time-input" />
                   </template>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                  <span v-else class="time-value">{{ formatTime(rec.attendance?.check_out) }}</span>
+                </td>
+
+                <!-- Hours -->
+                <td>
+                  <span class="hours-badge" v-if="rec.attendance">
+                    {{ calcHours(rec.attendance.check_in, rec.attendance.check_out) }}
+                  </span>
+                  <span v-else class="cell-dash">—</span>
+                </td>
+
+                <!-- Status -->
+                <td style="text-align:center">
+                  <template v-if="editingId === rec.attendance?.id">
+                    <div class="select-wrapper select-wrapper--sm">
+                      <select v-model="editForm.status" class="filter-select filter-select--sm">
+                        <option value="present">Present</option>
+                        <option value="absent">Absent</option>
+                        <option value="late">Late</option>
+                        <option value="leave">Leave</option>
+                        <option value="half_day">Half Day</option>
+                      </select>
+                      <svg class="select-arrow" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M7 10l5 5 5-5z" />
+                      </svg>
+                    </div>
+                  </template>
+                  <span v-else :class="['status-badge', `status-badge--${resolveStatus(rec)}`]">
+                    {{ resolveStatus(rec) }}
+                  </span>
+                </td>
+
+                <!-- Actions -->
+                <td style="text-align:center">
+                  <div class="action-btns">
+                    <template v-if="editingId === rec.attendance?.id">
+                      <button class="btn-save" @click="saveEdit(rec)" :disabled="isSaving" title="Save">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                        </svg>
+                      </button>
+                      <button class="btn-cancel" @click="cancelEdit" title="Cancel">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+                        </svg>
+                      </button>
+                    </template>
+                    <template v-else>
+                      <button class="btn-edit-row" @click="startEdit(rec)" :disabled="!rec.attendance"
+                        :title="!rec.attendance ? 'No attendance record to edit' : 'Edit attendance'">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                        </svg>
+                        Edit
+                      </button>
+                    </template>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -637,6 +639,18 @@ onMounted(() => { loadCompanies() })
   font-size: 13px;
   font-weight: 500;
   color: #667085;
+}
+
+.table__layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* width: 100%; */
+  /* border: 5px solid red; */
+  /* debug */
+  padding: 16px 32px;
+  background: #FFFFFF;
+
 }
 
 /* ── Table card ── */
