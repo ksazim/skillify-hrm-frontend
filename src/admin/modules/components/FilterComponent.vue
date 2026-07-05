@@ -1,171 +1,137 @@
 <template>
-  <div class="filter-panel" :class="{ 'filter-panel--collapsed': isCollapsed }">
+  <div class="filter-panel">
+    <form class="fp-form" @submit.prevent="handleSubmit" novalidate>
 
-    <!-- Panel header -->
-    <div class="fp-header" @click="toggleCollapse">
-      <div class="fp-header__left">
-        <div class="fp-icon">
+      <div class="fp-fields">
+        <div v-for="field in fields" :key="field.name" class="fp-group" :class="`fp-group--${field.type}`">
+          <label class="fp-label" :for="field.name">{{ field.label }}</label>
+
+          <!-- Text -->
+          <div v-if="field.type === 'text'" class="fp-input-wrap">
+            <svg class="fp-input-icon" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                clip-rule="evenodd" />
+            </svg>
+            <input type="text" :id="field.name" class="fp-input fp-input--icon" :placeholder="field.placeholder || ''"
+              :value="modelValue[field.name]" @input="updateValue(field.name, $event.target.value)" />
+          </div>
+
+          <!-- Number -->
+          <div v-else-if="field.type === 'number'" class="fp-input-wrap">
+            <input type="number" :id="field.name" class="fp-input" :placeholder="field.placeholder || ''"
+              :min="field.min" :max="field.max" :value="modelValue[field.name]"
+              @input="updateValue(field.name, $event.target.value)" />
+          </div>
+
+          <!-- Date -->
+          <div v-else-if="field.type === 'date'" class="fp-input-wrap">
+            <svg class="fp-input-icon" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                clip-rule="evenodd" />
+            </svg>
+            <input type="date" :id="field.name" class="fp-input fp-input--icon" :value="modelValue[field.name]"
+              @input="updateValue(field.name, $event.target.value)" />
+          </div>
+
+          <!-- DateTime -->
+          <div v-else-if="field.type === 'datetime'" class="fp-input-wrap">
+            <input type="datetime-local" :id="field.name" class="fp-input" :value="modelValue[field.name]"
+              @input="updateValue(field.name, $event.target.value)" />
+          </div>
+
+          <!-- Email -->
+          <div v-else-if="field.type === 'email'" class="fp-input-wrap">
+            <svg class="fp-input-icon" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+            </svg>
+            <input type="email" :id="field.name" class="fp-input fp-input--icon" :placeholder="field.placeholder || ''"
+              :value="modelValue[field.name]" @input="updateValue(field.name, $event.target.value)" />
+          </div>
+
+          <!-- Select -->
+          <div v-else-if="field.type === 'select'" class="fp-select-wrap">
+            <select :id="field.name" class="fp-select" :value="modelValue[field.name]"
+              @change="updateValue(field.name, $event.target.value)">
+              <option value="">{{ field.placeholder || `All ${field.label}` }}</option>
+              <option v-for="option in field.options" :key="option.value" :value="option.value">{{ option.label }}
+              </option>
+            </select>
+            <svg class="fp-select-arrow" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd" />
+            </svg>
+          </div>
+
+          <!-- Multi-select -->
+          <div v-else-if="field.type === 'multiselect'" class="fp-input-wrap">
+            <select :id="field.name" class="fp-multiselect" multiple :value="modelValue[field.name]"
+              @change="updateMultiSelectValue(field.name, $event.target.selectedOptions)">
+              <option v-for="option in field.options" :key="option.value" :value="option.value">{{ option.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Checkbox -->
+          <div v-else-if="field.type === 'checkbox'" class="fp-checkbox-wrap">
+            <label class="fp-checkbox-label" :for="field.name">
+              <input type="checkbox" :id="field.name" class="fp-checkbox-input" :checked="modelValue[field.name]"
+                @change="updateValue(field.name, $event.target.checked)" />
+              <span class="fp-checkbox-box" />
+              <span class="fp-checkbox-text">{{ field.checkboxLabel || field.label }}</span>
+            </label>
+          </div>
+
+          <!-- Radio -->
+          <div v-else-if="field.type === 'radio'" class="fp-radio-group">
+            <label v-for="option in field.options" :key="option.value" class="fp-radio-label">
+              <input type="radio" class="fp-radio-input" :name="field.name" :value="option.value"
+                :checked="modelValue[field.name] === option.value" @change="updateValue(field.name, option.value)" />
+              <span class="fp-radio-dot" />
+              <span class="fp-radio-text">{{ option.label }}</span>
+            </label>
+          </div>
+
+          <!-- Range -->
+          <div v-else-if="field.type === 'range'" class="fp-range-wrap">
+            <input type="range" :id="field.name" class="fp-range" :min="field.min || 0" :max="field.max || 100"
+              :step="field.step || 1" :value="modelValue[field.name]"
+              @input="updateValue(field.name, $event.target.value)" />
+            <span class="fp-range-value">{{ modelValue[field.name] }}</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="fp-actions">
+        <button type="submit" class="fp-btn fp-btn--search">
           <svg viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd"
-              d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
+              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
               clip-rule="evenodd" />
           </svg>
-        </div>
-        <span class="fp-title">{{ title }}</span>
-        <!-- Active filter count badge -->
-        <span v-if="activeFilterCount > 0" class="fp-badge">{{ activeFilterCount }}</span>
+          {{ submitLabel }}
+        </button>
+        <button type="button" class="fp-btn fp-btn--reset" @click="handleReset" :disabled="activeFilterCount === 0">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+              clip-rule="evenodd" />
+          </svg>
+          {{ resetLabel }}
+        </button>
       </div>
-      <div class="fp-header__right">
-        <span class="fp-toggle-hint">{{ isCollapsed ? 'Expand' : 'Collapse' }}</span>
-        <svg class="fp-chevron" :class="{ 'fp-chevron--up': !isCollapsed }" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd"
-            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-            clip-rule="evenodd" />
-        </svg>
-      </div>
-    </div>
 
-    <!-- Panel body -->
-    <Transition name="fp-body">
-      <div v-show="!isCollapsed" class="fp-body">
-        <form class="fp-form" @submit.prevent="handleSubmit" novalidate>
-
-          <div class="fp-fields">
-            <div v-for="field in fields" :key="field.name" class="fp-group" :class="`fp-group--${field.type}`">
-              <label class="fp-label" :for="field.name">{{ field.label }}</label>
-
-              <!-- Text -->
-              <div v-if="field.type === 'text'" class="fp-input-wrap">
-                <svg class="fp-input-icon" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                    clip-rule="evenodd" />
-                </svg>
-                <input type="text" :id="field.name" class="fp-input fp-input--icon"
-                  :placeholder="field.placeholder || ''" :value="modelValue[field.name]"
-                  @input="updateValue(field.name, $event.target.value)" />
-              </div>
-
-              <!-- Number -->
-              <div v-else-if="field.type === 'number'" class="fp-input-wrap">
-                <input type="number" :id="field.name" class="fp-input" :placeholder="field.placeholder || ''"
-                  :min="field.min" :max="field.max" :value="modelValue[field.name]"
-                  @input="updateValue(field.name, $event.target.value)" />
-              </div>
-
-              <!-- Date -->
-              <div v-else-if="field.type === 'date'" class="fp-input-wrap">
-                <svg class="fp-input-icon" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                    clip-rule="evenodd" />
-                </svg>
-                <input type="date" :id="field.name" class="fp-input fp-input--icon" :value="modelValue[field.name]"
-                  @input="updateValue(field.name, $event.target.value)" />
-              </div>
-
-              <!-- DateTime -->
-              <div v-else-if="field.type === 'datetime'" class="fp-input-wrap">
-                <input type="datetime-local" :id="field.name" class="fp-input" :value="modelValue[field.name]"
-                  @input="updateValue(field.name, $event.target.value)" />
-              </div>
-
-              <!-- Email -->
-              <div v-else-if="field.type === 'email'" class="fp-input-wrap">
-                <svg class="fp-input-icon" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                </svg>
-                <input type="email" :id="field.name" class="fp-input fp-input--icon"
-                  :placeholder="field.placeholder || ''" :value="modelValue[field.name]"
-                  @input="updateValue(field.name, $event.target.value)" />
-              </div>
-
-              <!-- Select -->
-              <div v-else-if="field.type === 'select'" class="fp-select-wrap">
-                <select :id="field.name" class="fp-select" :value="modelValue[field.name]"
-                  @change="updateValue(field.name, $event.target.value)">
-                  <option value="">{{ field.placeholder || `All ${field.label}` }}</option>
-                  <option v-for="option in field.options" :key="option.value" :value="option.value">{{ option.label }}
-                  </option>
-                </select>
-                <svg class="fp-select-arrow" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clip-rule="evenodd" />
-                </svg>
-              </div>
-
-              <!-- Multi-select -->
-              <div v-else-if="field.type === 'multiselect'" class="fp-input-wrap">
-                <select :id="field.name" class="fp-multiselect" multiple :value="modelValue[field.name]"
-                  @change="updateMultiSelectValue(field.name, $event.target.selectedOptions)">
-                  <option v-for="option in field.options" :key="option.value" :value="option.value">{{ option.label }}
-                  </option>
-                </select>
-              </div>
-
-              <!-- Checkbox -->
-              <div v-else-if="field.type === 'checkbox'" class="fp-checkbox-wrap">
-                <label class="fp-checkbox-label" :for="field.name">
-                  <input type="checkbox" :id="field.name" class="fp-checkbox-input" :checked="modelValue[field.name]"
-                    @change="updateValue(field.name, $event.target.checked)" />
-                  <span class="fp-checkbox-box" />
-                  <span class="fp-checkbox-text">{{ field.checkboxLabel || field.label }}</span>
-                </label>
-              </div>
-
-              <!-- Radio -->
-              <div v-else-if="field.type === 'radio'" class="fp-radio-group">
-                <label v-for="option in field.options" :key="option.value" class="fp-radio-label">
-                  <input type="radio" class="fp-radio-input" :name="field.name" :value="option.value"
-                    :checked="modelValue[field.name] === option.value"
-                    @change="updateValue(field.name, option.value)" />
-                  <span class="fp-radio-dot" />
-                  <span class="fp-radio-text">{{ option.label }}</span>
-                </label>
-              </div>
-
-              <!-- Range -->
-              <div v-else-if="field.type === 'range'" class="fp-range-wrap">
-                <input type="range" :id="field.name" class="fp-range" :min="field.min || 0" :max="field.max || 100"
-                  :step="field.step || 1" :value="modelValue[field.name]"
-                  @input="updateValue(field.name, $event.target.value)" />
-                <span class="fp-range-value">{{ modelValue[field.name] }}</span>
-              </div>
-
-            </div>
-          </div>
-
-          <!-- Action buttons -->
-          <div class="fp-actions">
-            <button type="submit" class="fp-btn fp-btn--search">
-              <svg viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                  clip-rule="evenodd" />
-              </svg>
-              {{ submitLabel }}
-            </button>
-            <button type="button" class="fp-btn fp-btn--reset" @click="handleReset" :disabled="activeFilterCount === 0">
-              <svg viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                  d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
-                  clip-rule="evenodd" />
-              </svg>
-              {{ resetLabel }}
-            </button>
-          </div>
-
-        </form>
-      </div>
-    </Transition>
-
+    </form>
   </div>
 </template>
 
 <script setup>
-import { computed, defineEmits, defineProps, ref } from 'vue'
+import { computed, defineEmits, defineProps } from 'vue'
 
 const props = defineProps({
   title: { type: String, default: 'Search & Filter' },
@@ -176,15 +142,9 @@ const props = defineProps({
   modelValue: { type: Object, required: true },
   submitLabel: { type: String, default: 'Search' },
   resetLabel: { type: String, default: 'Reset' },
-  collapsible: { type: Boolean, default: true },
-  startOpen: { type: Boolean, default: true },
 })
 
 const emit = defineEmits(['update:modelValue', 'submit', 'reset'])
-
-// Collapse state
-const isCollapsed = ref(!props.startOpen)
-const toggleCollapse = () => { if (props.collapsible) isCollapsed.value = !isCollapsed.value }
 
 // Count active filters (non-empty values)
 const activeFilterCount = computed(() => {
@@ -225,149 +185,46 @@ const handleReset = () => {
   --bg: #FFFFFF;
   --bg-secondary: #F8FAFC;
   --bg-hover: #F1F5F9;
-  --bg-active: #EEF2FF;
 
   --text-primary: #0F172A;
   --text-secondary: #475569;
   --text-muted: #94A3B8;
-  --text-light: #64748B;
 
   --border: #E2E8F0;
   --border-strong: #CBD5E1;
-  --border-focus: #818CF8;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
 
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
 
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  transition: all 0.2s ease;
+  padding: 18px 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.filter-panel:hover {
-  box-shadow: var(--shadow-md);
-}
-
-/* ── Header ── */
-.fp-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 20px;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.2s ease;
-  background: var(--bg-secondary);
-  border-bottom: 1px solid var(--border);
-}
-
-.fp-header:hover {
-  background: var(--bg-hover);
-}
-
-.fp-header__left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.fp-header__right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.fp-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  border: 1.5px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: var(--primary);
-  background: var(--primary-light);
-  transition: all 0.2s ease;
-}
-
-.fp-header:hover .fp-icon {
-  border-color: var(--primary);
-  transform: scale(1.05);
-}
-
-.fp-icon svg {
-  width: 14px;
-  height: 14px;
-}
-
-.fp-title {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--text-primary);
-}
-
-.fp-badge {
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  background: var(--primary);
-  border-radius: 10px;
-  color: #FFFFFF;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.fp-toggle-hint {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text-muted);
-  letter-spacing: 0.04em;
-}
-
-.fp-chevron {
-  width: 16px;
-  height: 16px;
-  color: var(--text-muted);
-  transition: transform 0.25s ease;
-}
-
-.fp-chevron--up {
-  transform: rotate(180deg);
-}
-
-/* ── Body ── */
-.fp-body {
-  padding: 20px;
-  overflow: hidden;
-  background: var(--bg);
-}
-
+/* Single-row horizontal toolbar: fields flow left-to-right, actions pinned to the end */
 .fp-form {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  width: 100%;
 }
 
-/* Fields grid */
 .fp-fields {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px 20px;
-  align-items: end;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: flex-end;
+  gap: 16px;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 /* ── Field group ── */
@@ -375,13 +232,36 @@ const handleReset = () => {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  flex: 1 1 170px;
+  min-width: 150px;
+  max-width: 260px;
+}
+
+/* Search-style text fields get more room since they're usually the primary filter */
+.fp-group--text,
+.fp-group--email {
+  flex: 2.2 1 260px;
+  max-width: none;
+}
+
+.fp-group--checkbox,
+.fp-group--radio {
+  flex: 0 1 auto;
+  min-width: 0;
+  justify-content: flex-end;
+}
+
+.fp-group--range {
+  flex: 1 1 200px;
 }
 
 .fp-label {
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 /* ── Shared input style ── */
@@ -394,10 +274,10 @@ const handleReset = () => {
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-family: inherit;
-  font-size: 13px;
+  font-size: 13.5px;
   letter-spacing: 0.01em;
   outline: none;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   box-sizing: border-box;
   padding: 9px 12px;
   appearance: none;
@@ -419,7 +299,6 @@ const handleReset = () => {
 .fp-multiselect:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 4px var(--primary-light);
-  background: var(--bg);
 }
 
 /* Input with icon */
@@ -430,12 +309,12 @@ const handleReset = () => {
 }
 
 .fp-input--icon {
-  padding-left: 38px;
+  padding-left: 36px;
 }
 
 .fp-input-icon {
   position: absolute;
-  left: 12px;
+  left: 11px;
   width: 14px;
   height: 14px;
   color: var(--text-muted);
@@ -460,34 +339,27 @@ const handleReset = () => {
 }
 
 .fp-select {
-  padding-right: 36px;
+  padding-right: 34px;
   cursor: pointer;
-  background-image: none;
 }
 
 .fp-select option {
   background: var(--bg);
   color: var(--text-primary);
-  padding: 4px 8px;
 }
 
-/* Multi-select */
+/* Multi-select — capped height so it doesn't blow out the row */
 .fp-multiselect {
-  min-height: 90px;
-  padding: 8px 10px;
+  min-height: 40px;
+  max-height: 40px;
+  padding: 6px 10px;
   resize: vertical;
 }
 
 .fp-multiselect option {
-  padding: 6px 8px;
+  padding: 5px 8px;
   background: var(--bg);
   color: var(--text-secondary);
-  border-radius: var(--radius-sm);
-  transition: all 0.15s ease;
-}
-
-.fp-multiselect option:hover {
-  background: var(--bg-hover);
 }
 
 .fp-multiselect option:checked {
@@ -511,7 +383,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 
 /* ── Checkbox ── */
 .fp-checkbox-wrap {
-  padding: 4px 0;
+  padding: 9px 0 8px;
 }
 
 .fp-checkbox-input {
@@ -521,20 +393,21 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 .fp-checkbox-label {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   cursor: pointer;
   user-select: none;
+  white-space: nowrap;
 }
 
 .fp-checkbox-box {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
   flex-shrink: 0;
   border: 2px solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: 5px;
   background: var(--bg);
   position: relative;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .fp-checkbox-label:hover .fp-checkbox-box {
@@ -549,10 +422,10 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 .fp-checkbox-input:checked+.fp-checkbox-box::after {
   content: '';
   position: absolute;
-  left: 5px;
-  top: 1px;
+  left: 4px;
+  top: 0px;
   width: 5px;
-  height: 10px;
+  height: 9px;
   border-right: 2px solid #FFFFFF;
   border-bottom: 2px solid #FFFFFF;
   transform: rotate(45deg);
@@ -567,9 +440,10 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 /* ── Radio ── */
 .fp-radio-group {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-top: 2px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  padding: 9px 0 8px;
 }
 
 .fp-radio-input {
@@ -579,9 +453,10 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 .fp-radio-label {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
   user-select: none;
+  white-space: nowrap;
 }
 
 .fp-radio-dot {
@@ -592,7 +467,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   background: var(--bg);
   flex-shrink: 0;
   position: relative;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .fp-radio-label:hover .fp-radio-dot {
@@ -626,8 +501,8 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
 .fp-range-wrap {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 4px 0;
+  gap: 12px;
+  padding: 9px 0 8px;
 }
 
 .fp-range {
@@ -638,11 +513,6 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   background: var(--border);
   outline: none;
   cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.fp-range:hover {
-  background: var(--border-strong);
 }
 
 .fp-range::-webkit-slider-thumb {
@@ -654,12 +524,6 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   border: 2px solid #FFFFFF;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.fp-range::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
-  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
 }
 
 .fp-range::-moz-range-thumb {
@@ -668,45 +532,43 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   border-radius: 50%;
   background: var(--primary);
   border: 2px solid #FFFFFF;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   cursor: pointer;
 }
 
 .fp-range-value {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
   color: var(--primary);
-  min-width: 40px;
+  min-width: 34px;
   text-align: right;
 }
 
 /* ── Action buttons ── */
 .fp-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
+  flex: 0 0 auto;
+  margin-left: auto;
 }
 
 .fp-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 9px 20px;
+  gap: 7px;
+  padding: 9px 18px;
   font-family: inherit;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.04em;
   border: 1.5px solid transparent;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   white-space: nowrap;
 }
 
 .fp-btn:active:not(:disabled) {
-  transform: scale(0.96);
+  transform: scale(0.97);
 }
 
 .fp-btn svg {
@@ -715,26 +577,20 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   flex-shrink: 0;
 }
 
-/* Search button */
 .fp-btn--search {
   background: var(--primary);
   border-color: var(--primary);
   color: #FFFFFF;
-  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.15);
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
 }
 
 .fp-btn--search:hover {
   background: var(--primary-hover);
   border-color: var(--primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
 }
 
-.fp-btn--search:active {
-  transform: translateY(0px) scale(0.96);
-}
-
-/* Reset button */
 .fp-btn--reset {
   background: transparent;
   border-color: var(--border);
@@ -752,41 +608,68 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   cursor: not-allowed;
 }
 
-/* ── Collapse transition ── */
-.fp-body-enter-active {
-  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
-  max-height: 800px;
-  overflow: hidden;
-}
-
-.fp-body-leave-active {
-  transition: max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
-  overflow: hidden;
-}
-
-.fp-body-enter-from,
-.fp-body-leave-to {
-  max-height: 0;
-  opacity: 0;
-}
-
 /* ── Responsive ── */
-@media (max-width: 768px) {
-  .fp-header {
-    padding: 10px 16px;
+@media (max-width: 1024px) {
+  .fp-actions {
+    margin-left: 0;
+    flex: 1 1 100%;
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+    margin-top: 2px;
   }
+}
 
-  .fp-body {
-    padding: 16px;
+@media (max-width: 768px) {
+  .filter-panel {
+    padding: 14px 16px;
   }
 
   .fp-fields {
-    grid-template-columns: 1fr;
-    gap: 14px;
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .fp-toggle-hint {
-    display: none;
+  .fp-group,
+  .fp-group--text,
+  .fp-group--email,
+  .fp-group--range {
+    flex: 1 1 auto;
+    max-width: none;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .fp-group--checkbox,
+  .fp-group--radio {
+    justify-content: flex-start;
+  }
+
+  .fp-actions {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .fp-btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .filter-panel {
+    padding: 12px;
+    border-radius: var(--radius-sm);
+  }
+
+  .fp-input,
+  .fp-select,
+  .fp-multiselect {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  .fp-input--icon {
+    padding-left: 32px;
   }
 
   .fp-actions {
@@ -794,52 +677,9 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
   }
 
   .fp-btn {
+    font-size: 11.5px;
+    padding: 9px 16px;
     width: 100%;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .filter-panel {
-    border-radius: var(--radius-sm);
-  }
-
-  .fp-header {
-    padding: 8px 12px;
-  }
-
-  .fp-body {
-    padding: 12px;
-  }
-
-  .fp-title {
-    font-size: 12px;
-  }
-
-  .fp-icon {
-    width: 28px;
-    height: 28px;
-  }
-
-  .fp-icon svg {
-    width: 12px;
-    height: 12px;
-  }
-
-  .fp-input,
-  .fp-select,
-  .fp-multiselect {
-    font-size: 12px;
-    padding: 7px 10px;
-  }
-
-  .fp-input--icon {
-    padding-left: 34px;
-  }
-
-  .fp-btn {
-    font-size: 11px;
-    padding: 8px 16px;
   }
 }
 </style>

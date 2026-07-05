@@ -1,24 +1,13 @@
 <template>
-  <CrudLayout
-    ref="layoutRef"
-    title="Project Management"
-    subtitle="Manage projects, timelines and team assignments"
-    add-label="New Project"
-    :breadcrumbs="breadcrumbs"
-    :stats="pageStats"
-    :loading="isLoading"
-    loading-message="Loading projects"
-    :error="hasError ? errorMessage : ''"
-    error-title="Failed to Load Projects"
-    :has-data="!!items.length"
-    :notification="notification"
-    @add="openCreateModal"
-    @retry="loadData"
-  >
+  <CrudLayout ref="layoutRef" title="Project Management" subtitle="Manage projects, timelines and team assignments"
+    add-label="New Project" :breadcrumbs="breadcrumbs" :stats="pageStats" :loading="isLoading"
+    loading-message="Loading projects" :error="hasError ? errorMessage : ''" error-title="Failed to Load Projects"
+    :has-data="!!items.length" :notification="notification" @add="openCreateModal" @retry="loadData">
     <!-- ── Icon slot ── -->
     <template #icon>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M20 6h-2.18c.07-.44.18-.86.18-1a3 3 0 0 0-6 0c0 .14.11.56.18 1H10V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v18h20V8a2 2 0 0 0-2-2zm-7-1a1 1 0 0 1 2 0c0 .63-.45 1.41-1 2.17C13.45 6.41 13 5.63 13 5zM4 4h4v2H4V4zm0 4h4v2H4V8zm4 10H4v-2h4v2zm0-4H4v-2h4v2zm10 4h-8v-2h8v2zm0-4h-8v-2h8v2zm0-4h-8v-2h8v2z"/>
+        <path
+          d="M20 6h-2.18c.07-.44.18-.86.18-1a3 3 0 0 0-6 0c0 .14.11.56.18 1H10V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v18h20V8a2 2 0 0 0-2-2zm-7-1a1 1 0 0 1 2 0c0 .63-.45 1.41-1 2.17C13.45 6.41 13 5.63 13 5zM4 4h4v2H4V4zm0 4h4v2H4V8zm4 10H4v-2h4v2zm0-4H4v-2h4v2zm10 4h-8v-2h8v2zm0-4h-8v-2h8v2zm0-4h-8v-2h8v2z" />
       </svg>
     </template>
 
@@ -27,7 +16,10 @@
       <div class="company-selector-bar">
         <div class="company-selector-inner">
           <span class="company-selector-label">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" />
+            </svg>
             Company
           </span>
           <select class="company-select" v-model="selectedCompanyId" @change="onCompanyChange">
@@ -35,7 +27,10 @@
             <option v-for="c in allCompanies" :key="c.value" :value="c.value">{{ c.label }}</option>
           </select>
           <span v-if="selectedCompanyLabel" class="company-active-badge">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+            </svg>
             {{ selectedCompanyLabel }}
           </span>
         </div>
@@ -44,28 +39,20 @@
 
     <!-- ── Filters ── -->
     <template #filters>
-      <FilterPanel
-        title="Search & Filter"
-        :fields="filterFields"
-        v-model="searchFilters"
-        @submit="handleSearch"
-        @reset="handleReset"
-      />
+      <FilterPanel title="Search & Filter" :fields="filterFields" v-model="searchFilters" @submit="handleSearch"
+        @reset="handleReset" />
     </template>
 
     <!-- ── Table ── -->
-    <DataTable
-      :data="paginatedData"
-      :columns="tableColumns"
-      :actions="tableActions"
-      result-label="projects"
-      @action="handleAction"
-      @sort="handleSort"
-    >
+    <DataTable :data="paginatedData" :columns="tableColumns" :actions="tableActions" result-label="projects"
+      @action="handleAction" @sort="handleSort">
       <template #cell-thumbnail="{ value }">
         <img v-if="value" :src="baseUrl + '/' + value" alt="thumbnail" class="project-thumbnail" />
         <div v-else class="project-thumbnail-placeholder">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z" />
+          </svg>
         </div>
       </template>
 
@@ -76,7 +63,9 @@
 
       <template #cell-progress="{ value }">
         <div class="progress-wrapper">
-          <div class="progress-bar"><div class="progress-fill" :style="{ width: (value ?? 0) + '%' }"></div></div>
+          <div class="progress-bar">
+            <div class="progress-fill" :style="{ width: (value ?? 0) + '%' }"></div>
+          </div>
           <span class="progress-label">{{ value ?? 0 }}%</span>
         </div>
       </template>
@@ -84,49 +73,26 @@
 
     <!-- ── Pagination ── -->
     <template #pagination>
-      <Pagination
-        v-model="currentPage"
-        :total-items="pagination.total"
-        :page-size="itemsPerPage"
-        :page-size-options="[10, 25, 50, 100]"
-        item-label="projects"
-        :show-first-last="true"
-        :show-labels="false"
-        :show-jump-to="false"
-        @update:page-size="handlePageSizeChange"
-        @page-change="handlePageChange"
-      />
+      <Pagination v-model="currentPage" :total-items="pagination.total" :page-size="itemsPerPage"
+        :page-size-options="[10, 25, 50, 100]" item-label="projects" :show-first-last="true" :show-labels="false"
+        :show-jump-to="false" @update:page-size="handlePageSizeChange" @page-change="handlePageChange" />
     </template>
   </CrudLayout>
 
   <!-- ══════════════════════════════════════════════
        PROJECT FORM MODAL (Create / Edit)
   ══════════════════════════════════════════════ -->
-  <BaseModal
-    v-model="showFormModal"
-    :mode="modalMode"
-    entity-name="project"
-    :fields="formFields"
-    :initial-data="selectedItem"
-    :on-submit="handleFormSubmit"
-    size="large"
-    @success="handleModalSuccess"
-    @error="handleModalError"
-  />
+  <BaseModal v-model="showFormModal" :mode="modalMode" entity-name="project" :fields="formFields"
+    :initial-data="selectedItem" :on-submit="handleFormSubmit" size="large" @success="handleModalSuccess"
+    @error="handleModalError" />
 
   <!-- ══════════════════════════════════════════════
        DELETE PROJECT MODAL
   ══════════════════════════════════════════════ -->
-  <BaseModal
-    v-model="showDeleteModal"
-    mode="delete"
-    entity-name="project"
-    :initial-data="selectedItem"
+  <BaseModal v-model="showDeleteModal" mode="delete" entity-name="project" :initial-data="selectedItem"
     :on-submit="handleDeleteSubmit"
     delete-message="This project and all its data will be permanently removed from the system."
-    @success="handleDeleteSuccess"
-    @error="handleModalError"
-  />
+    @success="handleDeleteSuccess" @error="handleModalError" />
 
   <!-- ══════════════════════════════════════════════
        PROJECT DETAIL DRAWER
@@ -138,9 +104,12 @@
           <!-- Drawer Header -->
           <div class="drawer-header">
             <div class="drawer-header-left">
-              <img v-if="detailProject?.thumbnail" :src="baseUrl + '/' + detailProject.thumbnail" class="drawer-thumb" />
+              <img v-if="detailProject?.thumbnail" :src="baseUrl + '/' + detailProject.thumbnail"
+                class="drawer-thumb" />
               <div v-else class="drawer-thumb-placeholder">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
+                </svg>
               </div>
               <div>
                 <h2 class="drawer-title">{{ detailProject?.name }}</h2>
@@ -148,18 +117,17 @@
               </div>
             </div>
             <button class="drawer-close" @click="closeDetailDrawer">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+              </svg>
             </button>
           </div>
 
           <!-- Drawer Tabs -->
           <div class="drawer-tabs">
-            <button
-              v-for="tab in drawerTabs"
-              :key="tab.key"
-              :class="['drawer-tab', { active: activeDrawerTab === tab.key }]"
-              @click="activeDrawerTab = tab.key"
-            >
+            <button v-for="tab in drawerTabs" :key="tab.key"
+              :class="['drawer-tab', { active: activeDrawerTab === tab.key }]" @click="activeDrawerTab = tab.key">
               <span v-html="tab.icon"></span>
               {{ tab.label }}
               <span v-if="tab.count !== undefined" class="tab-count">{{ tab.count }}</span>
@@ -175,7 +143,8 @@
               </div>
               <div class="detail-card">
                 <span class="detail-card-label">Priority</span>
-                <span :class="['priority-badge', `priority-${detailProject?.priority}`]">{{ detailProject?.priority }}</span>
+                <span :class="['priority-badge', `priority-${detailProject?.priority}`]">{{ detailProject?.priority
+                }}</span>
               </div>
               <div class="detail-card">
                 <span class="detail-card-label">Budget</span>
@@ -184,7 +153,9 @@
               <div class="detail-card">
                 <span class="detail-card-label">Progress</span>
                 <div class="progress-wrapper">
-                  <div class="progress-bar"><div class="progress-fill" :style="{ width: (detailProject?.progress ?? 0) + '%' }"></div></div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" :style="{ width: (detailProject?.progress ?? 0) + '%' }"></div>
+                  </div>
                   <span class="progress-label">{{ detailProject?.progress ?? 0 }}%</span>
                 </div>
               </div>
@@ -208,39 +179,55 @@
             <div class="tab-toolbar">
               <h3 class="tab-section-title">Team Contributors</h3>
               <button class="btn-add-inline" @click="openContributorModal()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                </svg>
                 Add Contributor
               </button>
             </div>
 
             <div v-if="contributorsLoading" class="tab-loading">Loading contributors…</div>
             <div v-else-if="!contributors.length" class="tab-empty">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+              </svg>
               <p>No contributors yet. Add team members to get started.</p>
             </div>
             <div v-else class="contributors-list">
               <div v-for="contrib in contributors" :key="contrib.id" class="contributor-card">
                 <div class="contributor-avatar">{{ getInitials(contrib.employee?.name || contrib.employee_id) }}</div>
                 <div class="contributor-info">
-                  <span class="contributor-name">{{ contrib.employee?.name || `Employee #${contrib.employee_id}` }}</span>
+                  <span class="contributor-name">{{ contrib.employee?.name || `Employee #${contrib.employee_id}`
+                  }}</span>
                   <span class="contributor-role">{{ contrib.role }}</span>
                 </div>
                 <div class="contributor-meta">
                   <span :class="['status-pill', `status-${contrib.status}`]">{{ contrib.status }}</span>
                   <div class="progress-wrapper small">
-                    <div class="progress-bar"><div class="progress-fill" :style="{ width: (contrib.progress ?? 0) + '%' }"></div></div>
+                    <div class="progress-bar">
+                      <div class="progress-fill" :style="{ width: (contrib.progress ?? 0) + '%' }"></div>
+                    </div>
                     <span class="progress-label">{{ contrib.progress ?? 0 }}%</span>
                   </div>
                 </div>
                 <div class="contributor-actions">
                   <button class="icon-btn edit" @click="openContributorModal(contrib)" title="Edit">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                    </svg>
                   </button>
                   <button class="icon-btn tasks" @click="openContributorTasks(contrib)" title="Tasks">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                    </svg>
                   </button>
                   <button class="icon-btn delete" @click="deleteContributor(contrib)" title="Remove">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -252,14 +239,19 @@
             <div class="tab-toolbar">
               <h3 class="tab-section-title">Project Tasks</h3>
               <button class="btn-add-inline" @click="openTaskModal()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                </svg>
                 Add Task
               </button>
             </div>
 
             <div v-if="tasksLoading" class="tab-loading">Loading tasks…</div>
             <div v-else-if="!tasks.length" class="tab-empty">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+              </svg>
               <p>No tasks yet. Create the first task for this project.</p>
             </div>
             <div v-else class="tasks-list">
@@ -271,10 +263,15 @@
                 </div>
                 <div class="task-actions">
                   <button class="icon-btn edit" @click="openTaskModal(task)" title="Edit">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                    </svg>
                   </button>
                   <button class="icon-btn delete" @click="deleteTask(task)" title="Delete">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -295,7 +292,10 @@
           <div class="mini-modal-header">
             <h3>{{ editingContributor ? 'Edit Contributor' : 'Add Contributor' }}</h3>
             <button class="drawer-close" @click="showContributorModal = false">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+              </svg>
             </button>
           </div>
           <div class="mini-modal-body">
@@ -321,7 +321,8 @@
               </div>
               <div class="form-group">
                 <label>Progress (%)</label>
-                <input v-model="contributorForm.progress" type="number" min="0" max="100" class="form-control" placeholder="0" />
+                <input v-model="contributorForm.progress" type="number" min="0" max="100" class="form-control"
+                  placeholder="0" />
               </div>
             </div>
             <div class="form-row">
@@ -336,7 +337,8 @@
             </div>
             <div class="form-group">
               <label>Note</label>
-              <textarea v-model="contributorForm.note" class="form-control" rows="2" placeholder="Optional notes…"></textarea>
+              <textarea v-model="contributorForm.note" class="form-control" rows="2"
+                placeholder="Optional notes…"></textarea>
             </div>
           </div>
           <div class="mini-modal-footer">
@@ -360,7 +362,10 @@
           <div class="mini-modal-header">
             <h3>{{ editingTask ? 'Edit Task' : 'Add Task' }}</h3>
             <button class="drawer-close" @click="showTaskModal = false">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+              </svg>
             </button>
           </div>
           <div class="mini-modal-body">
@@ -408,17 +413,23 @@
           <div class="mini-modal-header">
             <div>
               <h3>Assigned Tasks</h3>
-              <p class="mini-modal-sub">{{ activeContributor?.employee?.name || `Employee #${activeContributor?.employee_id}` }} · {{ activeContributor?.role }}</p>
+              <p class="mini-modal-sub">{{ activeContributor?.employee?.name || `Employee
+                #${activeContributor?.employee_id}` }} · {{ activeContributor?.role }}</p>
             </div>
             <button class="drawer-close" @click="showContribTasksModal = false">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+              </svg>
             </button>
           </div>
           <div class="mini-modal-body">
             <div class="tab-toolbar" style="margin-bottom:12px">
               <span class="tab-section-title" style="font-size:12px">Contributor Tasks</span>
               <button class="btn-add-inline" @click="openContribTaskForm()">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                </svg>
                 Assign Task
               </button>
             </div>
@@ -433,10 +444,15 @@
                 </div>
                 <div class="task-actions">
                   <button class="icon-btn edit" @click="openContribTaskForm(ct)" title="Edit">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path
+                        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                    </svg>
                   </button>
                   <button class="icon-btn delete" @click="deleteContribTask(ct)" title="Delete">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -469,13 +485,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useCrudStore } from '@/store/crud'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import BaseModal from '../components/ActionModalComponent.vue'
 import CrudLayout from '../components/CrudLayout.vue'
 import FilterPanel from '../components/FilterComponent.vue'
-import DataTable from '../components/TableComponent.vue'
 import Pagination from '../components/PaginationComponent.vue'
-import BaseModal from '../components/ActionModalComponent.vue'
+import DataTable from '../components/TableComponent.vue'
 
 const crudStore = useCrudStore()
 const baseUrl = process.env.VUE_APP_BASE_URL
@@ -597,10 +613,10 @@ const errorMessage = computed(() => crudStore.getError?.message || 'An error occ
 const pagination = ref({ current_page: 1, total_pages: 1, total: 0, per_page: 10 })
 
 const pageStats = computed(() => [
-  { label: 'Total',     value: pagination.value.total },
-  { label: 'Active',    value: items.value.filter(i => i.status === 'active').length },
+  { label: 'Total', value: pagination.value.total },
+  { label: 'Active', value: items.value.filter(i => i.status === 'active').length },
   { label: 'Completed', value: items.value.filter(i => i.status === 'completed').length },
-  { label: 'On Hold',   value: items.value.filter(i => i.status === 'on_hold').length },
+  { label: 'On Hold', value: items.value.filter(i => i.status === 'on_hold').length },
 ])
 
 const breadcrumbs = [
@@ -648,14 +664,14 @@ const formFields = computed(() => [
     name: 'priority', label: 'Priority', type: 'select', required: true,
     placeholder: 'Select priority…',
     options: [
-      { value: 'low',      label: 'Low' },
-      { value: 'medium',   label: 'Medium' },
-      { value: 'high',     label: 'High' },
+      { value: 'low', label: 'Low' },
+      { value: 'medium', label: 'Medium' },
+      { value: 'high', label: 'High' },
       { value: 'critical', label: 'Critical' },
     ],
   },
   { name: 'start_date', label: 'Start Date', type: 'date', required: true },
-  { name: 'end_date',   label: 'End Date',   type: 'date', required: true },
+  { name: 'end_date', label: 'End Date', type: 'date', required: true },
   {
     name: 'budget', label: 'Budget', type: 'number', required: false,
     placeholder: 'Enter budget amount…',
@@ -668,8 +684,8 @@ const formFields = computed(() => [
   {
     name: 'status', label: 'Status', type: 'radio', required: true, default: 'active',
     options: [
-      { value: 'active',    label: 'Active' },
-      { value: 'on_hold',   label: 'On Hold' },
+      { value: 'active', label: 'Active' },
+      { value: 'on_hold', label: 'On Hold' },
       { value: 'completed', label: 'Completed' },
       { value: 'cancelled', label: 'Cancelled' },
     ],
@@ -684,8 +700,8 @@ const filterFields = [
   {
     name: 'status', label: 'Status', type: 'select', placeholder: 'All Statuses',
     options: [
-      { value: 'active',    label: 'Active' },
-      { value: 'on_hold',   label: 'On Hold' },
+      { value: 'active', label: 'Active' },
+      { value: 'on_hold', label: 'On Hold' },
       { value: 'completed', label: 'Completed' },
       { value: 'cancelled', label: 'Cancelled' },
     ],
@@ -693,9 +709,9 @@ const filterFields = [
   {
     name: 'priority', label: 'Priority', type: 'select', placeholder: 'All Priorities',
     options: [
-      { value: 'low',      label: 'Low' },
-      { value: 'medium',   label: 'Medium' },
-      { value: 'high',     label: 'High' },
+      { value: 'low', label: 'Low' },
+      { value: 'medium', label: 'Medium' },
+      { value: 'high', label: 'High' },
       { value: 'critical', label: 'Critical' },
     ],
   },
@@ -704,20 +720,20 @@ const filterFields = [
 
 // Category column removed
 const tableColumns = [
-  { key: 'id',         label: 'ID',         sortable: true,  width: '60px',  minWidth: '60px' },
-  { key: 'thumbnail',  label: 'Thumb',      type: 'custom',  sortable: false, width: '70px',  minWidth: '70px',  align: 'center' },
-  { key: 'name',       label: 'Name',       sortable: true,  width: '200px', minWidth: '130px' },
-  { key: 'priority',   label: 'Priority',   type: 'custom',  sortable: true,  width: '110px', minWidth: '90px',  align: 'center' },
-  { key: 'progress',   label: 'Progress',   type: 'custom',  sortable: false, width: '140px', minWidth: '120px' },
-  { key: 'start_date', label: 'Start Date', sortable: true,  width: '120px', minWidth: '100px' },
-  { key: 'end_date',   label: 'End Date',   sortable: true,  width: '120px', minWidth: '100px' },
-  { key: 'status',     label: 'Status',     type: 'status',  sortable: true,  width: '110px', minWidth: '90px',  align: 'center' },
-  { key: 'actions',    label: 'Actions',    type: 'actions', sortable: false, width: '160px', minWidth: '160px', align: 'center' },
+  { key: 'id', label: 'ID', sortable: true, width: '60px', minWidth: '60px' },
+  { key: 'thumbnail', label: 'Thumb', type: 'custom', sortable: false, width: '70px', minWidth: '70px', align: 'center' },
+  { key: 'name', label: 'Name', sortable: true, width: '200px', minWidth: '130px' },
+  { key: 'priority', label: 'Priority', type: 'custom', sortable: true, width: '110px', minWidth: '90px', align: 'center' },
+  { key: 'progress', label: 'Progress', type: 'custom', sortable: false, width: '140px', minWidth: '120px' },
+  { key: 'start_date', label: 'Start Date', sortable: true, width: '120px', minWidth: '100px' },
+  { key: 'end_date', label: 'End Date', sortable: true, width: '120px', minWidth: '100px' },
+  { key: 'status', label: 'Status', type: 'status', sortable: true, width: '110px', minWidth: '90px', align: 'center' },
+  { key: 'actions', label: 'Actions', type: 'actions', sortable: false, width: '160px', minWidth: '160px', align: 'center' },
 ]
 
 const tableActions = [
-  { name: 'view',   label: 'View',   class: 'btn-view' },
-  { name: 'edit',   label: 'Edit',   class: 'btn-edit' },
+  { name: 'view', label: 'View', class: 'btn-view' },
+  { name: 'edit', label: 'Edit', class: 'btn-edit' },
   { name: 'delete', label: 'Delete', class: 'btn-delete' },
 ]
 
@@ -754,13 +770,13 @@ const loadData = async () => {
   if (!selectedCompanyId.value) return
   crudStore.clearError()
   const params = {
-    page:  currentPage.value,
+    page: currentPage.value,
     limit: itemsPerPage.value,
-    ...(searchFilters.value.search   && { search:     searchFilters.value.search }),
-    ...(searchFilters.value.status   && { status:     searchFilters.value.status }),
-    ...(searchFilters.value.priority && { priority:   searchFilters.value.priority }),
-    ...(searchFilters.value.date     && { date:       searchFilters.value.date }),
-    ...(sortConfig.value.by          && { sort_by:    sortConfig.value.by, sort_order: sortConfig.value.order }),
+    ...(searchFilters.value.search && { search: searchFilters.value.search }),
+    ...(searchFilters.value.status && { status: searchFilters.value.status }),
+    ...(searchFilters.value.priority && { priority: searchFilters.value.priority }),
+    ...(searchFilters.value.date && { date: searchFilters.value.date }),
+    ...(sortConfig.value.by && { sort_by: sortConfig.value.by, sort_order: sortConfig.value.order }),
   }
   const result = await crudStore.fetchAll(`/projects/${selectedCompanyId.value}`, params)
   if (!result.success) {
@@ -796,12 +812,12 @@ const openContributorModal = (contrib = null) => {
   editingContributor.value = contrib
   if (contrib) {
     contributorForm.value = {
-      employee_id:  contrib.employee_id,
-      role:         contrib.role,
-      status:       contrib.status,
-      progress:     contrib.progress,
-      note:         contrib.note,
-      started_at:   contrib.started_at,
+      employee_id: contrib.employee_id,
+      role: contrib.role,
+      status: contrib.status,
+      progress: contrib.progress,
+      note: contrib.note,
+      started_at: contrib.started_at,
       completed_at: contrib.completed_at,
     }
   } else {
@@ -957,9 +973,9 @@ const saveContribTask = async () => {
   try {
     const payload = {
       ...contribTaskForm.value,
-      company_id:     selectedCompanyId.value,
-      project_id:     detailProject.value.id,
-      employee_id:    activeContributor.value.employee_id,
+      company_id: selectedCompanyId.value,
+      project_id: detailProject.value.id,
+      employee_id: activeContributor.value.employee_id,
       contributor_id: activeContributor.value.id,
     }
     if (editingContribTask.value) {
@@ -1085,12 +1101,12 @@ const handleModalError = ({ error }) => {
 }
 
 // ── Sort / search / pagination ────────────────────────────────────────────────
-const handleSearch     = () => { currentPage.value = 1; loadData() }
-const handleReset      = () => { searchFilters.value = { search: '', status: '', priority: '', date: '' }; currentPage.value = 1; loadData() }
-const handleSort       = (s) => { sortConfig.value = s; currentPage.value = 1; loadData() }
+const handleSearch = () => { currentPage.value = 1; loadData() }
+const handleReset = () => { searchFilters.value = { search: '', status: '', priority: '', date: '' }; currentPage.value = 1; loadData() }
+const handleSort = (s) => { sortConfig.value = s; currentPage.value = 1; loadData() }
 const handlePageChange = (page) => { currentPage.value = page; loadData() }
 const handlePageSizeChange = (pageSize) => { itemsPerPage.value = pageSize; currentPage.value = 1; loadData() }
-const handleAction     = ({ action, row }) => ({ view: openDetailDrawer, edit: openEditModal, delete: openDeleteModal }[action]?.(row))
+const handleAction = ({ action, row }) => ({ view: openDetailDrawer, edit: openEditModal, delete: openDeleteModal }[action]?.(row))
 
 onMounted(async () => {
   await loadCompanies()
@@ -1109,381 +1125,968 @@ onBeforeUnmount(() => crudStore.clearCurrentItem())
    COMPANY SELECTOR BAR
 ══════════════════════════════════════════ */
 .company-selector-bar {
-  padding: 10px 16px;
-  background: rgba(201, 169, 110, 0.04);
-  border-bottom: 1px solid rgba(201, 169, 110, 0.12);
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
 }
+
 .company-selector-inner {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
+
 .company-selector-label {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  color: rgba(240, 234, 224, 0.45);
+  color: #6b7280;
 }
+
 .company-select {
-  background: rgba(240, 234, 224, 0.05);
-  border: 1px solid rgba(201, 169, 110, 0.25);
-  border-radius: 5px;
-  color: rgba(240, 234, 224, 0.85);
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  color: #111827;
   font-size: 13px;
-  padding: 6px 28px 6px 10px;
+  padding: 7px 28px 7px 12px;
   outline: none;
   min-width: 200px;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
-.company-select:focus { border-color: rgba(201, 169, 110, 0.6); }
+
+.company-select:focus {
+  border-color: #4338ca;
+  box-shadow: 0 0 0 3px #eef2ff;
+}
+
 .company-active-badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 4px 10px;
-  background: rgba(201, 169, 110, 0.1);
-  border: 1px solid rgba(201, 169, 110, 0.3);
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 500;
-  color: #c9a96e;
+  padding: 5px 12px;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #4338ca;
 }
 
 /* ══════════════════════════════════════════
    THUMBNAIL
 ══════════════════════════════════════════ */
 .project-thumbnail {
-  width: 38px; height: 38px;
-  border-radius: 6px; object-fit: cover;
-  border: 1px solid rgba(201, 169, 110, 0.25);
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
 }
+
 .project-thumbnail-placeholder {
-  width: 38px; height: 38px;
-  border-radius: 6px; display: flex;
-  align-items: center; justify-content: center;
-  background: rgba(201, 169, 110, 0.08);
-  border: 1px solid rgba(201, 169, 110, 0.2);
-  color: rgba(240, 234, 224, 0.35);
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: #9ca3af;
 }
 
 /* ══════════════════════════════════════════
    PRIORITY BADGE
 ══════════════════════════════════════════ */
 .priority-badge {
-  display: inline-block; padding: 3px 10px;
-  font-size: 10.5px; font-weight: 500; letter-spacing: 0.06em;
-  text-transform: uppercase; white-space: nowrap; border-radius: 3px;
+  display: inline-block;
+  padding: 4px 11px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+  white-space: nowrap;
+  border-radius: 999px;
 }
-.priority-low     { background: rgba(34,197,94,.1);  border: 1px solid rgba(34,197,94,.3);  color: #86efac; }
-.priority-medium  { background: rgba(234,179,8,.1);  border: 1px solid rgba(234,179,8,.3);  color: #fde047; }
-.priority-high    { background: rgba(249,115,22,.1); border: 1px solid rgba(249,115,22,.3); color: #fdba74; }
-.priority-critical{ background: rgba(239,68,68,.1);  border: 1px solid rgba(239,68,68,.3);  color: #fca5a5; }
+
+.priority-low {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.priority-medium {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.priority-high {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.priority-critical {
+  background: #fef2f2;
+  color: #dc2626;
+}
 
 /* ══════════════════════════════════════════
    STATUS PILL
 ══════════════════════════════════════════ */
 .status-pill {
-  display: inline-flex; align-items: center;
-  padding: 3px 9px; border-radius: 20px;
-  font-size: 10.5px; font-weight: 500;
-  letter-spacing: 0.05em; text-transform: capitalize;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: capitalize;
 }
-.status-pill.small { font-size: 10px; padding: 2px 7px; }
-.status-active     { background: rgba(34,197,94,.1);   border: 1px solid rgba(34,197,94,.3);   color: #86efac; }
-.status-inactive   { background: rgba(156,163,175,.1); border: 1px solid rgba(156,163,175,.3); color: #d1d5db; }
-.status-on_hold    { background: rgba(234,179,8,.1);   border: 1px solid rgba(234,179,8,.3);   color: #fde047; }
-.status-completed  { background: rgba(99,102,241,.1);  border: 1px solid rgba(99,102,241,.3);  color: #a5b4fc; }
-.status-cancelled  { background: rgba(239,68,68,.1);   border: 1px solid rgba(239,68,68,.3);   color: #fca5a5; }
-.status-pending    { background: rgba(234,179,8,.08);  border: 1px solid rgba(234,179,8,.25);  color: #fde047; }
-.status-in_progress{ background: rgba(59,130,246,.1);  border: 1px solid rgba(59,130,246,.3);  color: #93c5fd; }
-.status-blocked    { background: rgba(239,68,68,.1);   border: 1px solid rgba(239,68,68,.3);   color: #fca5a5; }
+
+.status-pill.small {
+  font-size: 10.5px;
+  padding: 3px 8px;
+}
+
+.status-active {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.status-inactive {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.status-on_hold {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.status-completed {
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+.status-cancelled {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.status-pending {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.status-in_progress {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.status-blocked {
+  background: #fef2f2;
+  color: #dc2626;
+}
 
 /* ══════════════════════════════════════════
    PROGRESS
 ══════════════════════════════════════════ */
-.progress-wrapper { display: flex; align-items: center; gap: 8px; }
-.progress-wrapper.small { gap: 5px; }
-.progress-bar {
-  flex: 1; height: 6px;
-  background: rgba(240,234,224,.1); border-radius: 99px; overflow: hidden; min-width: 50px;
+.progress-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.progress-wrapper.small .progress-bar { height: 4px; min-width: 36px; }
+
+.progress-wrapper.small {
+  gap: 6px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 99px;
+  overflow: hidden;
+  min-width: 50px;
+}
+
+.progress-wrapper.small .progress-bar {
+  height: 5px;
+  min-width: 36px;
+}
+
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, rgba(201,169,110,.7), rgba(201,169,110,1));
-  border-radius: 99px; transition: width .3s ease;
+  background: #4338ca;
+  border-radius: 99px;
+  transition: width .3s ease;
 }
-.progress-label { font-size: 11px; color: rgba(240,234,224,.55); min-width: 28px; text-align: right; }
-.cell-dash { color: rgba(240,234,224,.25); font-size: 14px; }
+
+.progress-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #6b7280;
+  min-width: 30px;
+  text-align: right;
+}
+
+.cell-dash {
+  color: #d1d5db;
+  font-size: 14px;
+}
 
 /* ══════════════════════════════════════════
    DETAIL DRAWER
 ══════════════════════════════════════════ */
 .drawer-overlay {
-  position: fixed; inset: 0; z-index: 1000;
-  background: rgba(0,0,0,.5); backdrop-filter: blur(3px);
-  display: flex; justify-content: flex-end;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(17, 24, 39, .45);
+  display: flex;
+  justify-content: flex-end;
 }
+
 .detail-drawer {
-  width: 520px; max-width: 100vw; height: 100%;
-  background: #1a1610;
-  border-left: 1px solid rgba(201,169,110,.18);
-  display: flex; flex-direction: column;
+  width: 520px;
+  max-width: 100vw;
+  height: 100%;
+  background: #ffffff;
+  border-left: 1px solid #e5e7eb;
+  box-shadow: -12px 0 32px -8px rgba(15, 23, 42, 0.15);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
+
 .drawer-header {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 20px 24px;
-  border-bottom: 1px solid rgba(201,169,110,.12);
-  background: rgba(201,169,110,.03);
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
   flex-shrink: 0;
 }
-.drawer-header-left { display: flex; align-items: center; gap: 14px; }
+
+.drawer-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
 .drawer-thumb {
-  width: 48px; height: 48px; border-radius: 8px;
-  object-fit: cover; border: 1px solid rgba(201,169,110,.3);
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
 }
+
 .drawer-thumb-placeholder {
-  width: 48px; height: 48px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(201,169,110,.08); border: 1px solid rgba(201,169,110,.2);
-  color: rgba(240,234,224,.3);
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef2ff;
+  border: 1px solid #e0e7ff;
+  color: #4338ca;
 }
-.drawer-title   { font-size: 16px; font-weight: 600; color: rgba(240,234,224,.92); margin: 0 0 2px; }
-.drawer-subtitle{ font-size: 12px; color: rgba(240,234,224,.4); margin: 0; text-transform: capitalize; }
+
+.drawer-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 2px;
+  letter-spacing: -0.01em;
+}
+
+.drawer-subtitle {
+  font-size: 12.5px;
+  color: #9ca3af;
+  margin: 0;
+  text-transform: capitalize;
+}
+
 .drawer-close {
-  background: none; border: none; cursor: pointer; padding: 6px;
-  color: rgba(240,234,224,.4); border-radius: 4px; transition: color .2s, background .2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 7px;
+  color: #9ca3af;
+  border-radius: 8px;
+  transition: color .15s, background .15s;
 }
-.drawer-close:hover { color: rgba(240,234,224,.8); background: rgba(240,234,224,.08); }
+
+.drawer-close:hover {
+  color: #111827;
+  background: #f3f4f6;
+}
 
 /* ── Drawer Tabs ── */
 .drawer-tabs {
-  display: flex; border-bottom: 1px solid rgba(201,169,110,.1);
-  flex-shrink: 0; background: rgba(0,0,0,.15);
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
+  background: #ffffff;
+  padding: 0 12px;
 }
+
 .drawer-tab {
-  display: flex; align-items: center; gap: 6px;
-  padding: 12px 18px; background: none; border: none;
-  font-size: 12.5px; font-weight: 500; cursor: pointer;
-  color: rgba(240,234,224,.4); border-bottom: 2px solid transparent;
-  transition: color .2s, border-color .2s; white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 13px 14px;
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #9ca3af;
+  border-bottom: 2px solid transparent;
+  transition: color .15s, border-color .15s;
+  white-space: nowrap;
 }
-.drawer-tab.active { color: #c9a96e; border-bottom-color: #c9a96e; }
-.drawer-tab:hover:not(.active) { color: rgba(240,234,224,.7); }
+
+.drawer-tab.active {
+  color: #4338ca;
+  border-bottom-color: #4338ca;
+}
+
+.drawer-tab:hover:not(.active) {
+  color: #4b5563;
+}
+
 .tab-count {
-  background: rgba(201,169,110,.15); border: 1px solid rgba(201,169,110,.2);
-  border-radius: 10px; padding: 1px 6px; font-size: 10px; color: #c9a96e;
+  background: #eef2ff;
+  border-radius: 999px;
+  padding: 1px 7px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #4338ca;
 }
-.drawer-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 22px 24px;
+}
 
 /* ── Detail Grid ── */
 .detail-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
 }
+
 .detail-card {
-  display: flex; flex-direction: column; gap: 6px;
-  padding: 12px 14px;
-  background: rgba(240,234,224,.03);
-  border: 1px solid rgba(201,169,110,.1);
-  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 14px 15px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
 }
+
 .detail-card-label {
-  font-size: 10.5px; font-weight: 600;
-  letter-spacing: 0.07em; text-transform: uppercase;
-  color: rgba(240,234,224,.35);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #9ca3af;
 }
-.detail-card-value { font-size: 13.5px; color: rgba(240,234,224,.8); font-weight: 500; }
+
+.detail-card-value {
+  font-size: 14px;
+  color: #111827;
+  font-weight: 600;
+}
+
 .detail-description {
-  padding: 14px; background: rgba(240,234,224,.02);
-  border: 1px solid rgba(201,169,110,.1); border-radius: 6px;
-  display: flex; flex-direction: column; gap: 8px;
+  padding: 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
-.detail-description p { margin: 0; font-size: 13px; color: rgba(240,234,224,.65); line-height: 1.6; }
+
+.detail-description p {
+  margin: 0;
+  font-size: 13.5px;
+  color: #4b5563;
+  line-height: 1.65;
+}
 
 /* ══════════════════════════════════════════
    TAB TOOLBAR
 ══════════════════════════════════════════ */
 .tab-toolbar {
-  display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
 }
-.tab-section-title { font-size: 13px; font-weight: 600; color: rgba(240,234,224,.7); }
-.tab-loading { padding: 24px; text-align: center; color: rgba(240,234,224,.4); font-size: 13px; }
+
+.tab-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.tab-loading {
+  padding: 28px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
 .tab-empty {
-  padding: 32px 16px; text-align: center;
-  color: rgba(240,234,224,.35); font-size: 13px;
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 36px 16px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
-.tab-empty.small { padding: 16px; }
-.tab-empty svg { color: rgba(240,234,224,.2); }
+
+.tab-empty.small {
+  padding: 16px;
+}
+
+.tab-empty svg {
+  color: #d1d5db;
+}
+
 .btn-add-inline {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 6px 12px; border-radius: 4px;
-  background: rgba(201,169,110,.1); border: 1px solid rgba(201,169,110,.3);
-  color: #c9a96e; font-size: 12px; font-weight: 500;
-  cursor: pointer; transition: background .2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: 8px;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  color: #4338ca;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
 }
-.btn-add-inline:hover { background: rgba(201,169,110,.18); }
+
+.btn-add-inline:hover {
+  background: #e0e7ff;
+  border-color: #a5b4fc;
+}
 
 /* ══════════════════════════════════════════
    CONTRIBUTORS LIST
 ══════════════════════════════════════════ */
-.contributors-list { display: flex; flex-direction: column; gap: 8px; }
+.contributors-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
 .contributor-card {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 14px;
-  background: rgba(240,234,224,.03);
-  border: 1px solid rgba(201,169,110,.1);
-  border-radius: 7px; transition: border-color .2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  transition: border-color .15s, box-shadow .15s;
 }
-.contributor-card:hover { border-color: rgba(201,169,110,.2); }
+
+.contributor-card:hover {
+  border-color: #c7d2fe;
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.06);
+}
+
 .contributor-avatar {
-  width: 34px; height: 34px; border-radius: 50%;
-  background: rgba(201,169,110,.15); border: 1px solid rgba(201,169,110,.25);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 700; color: #c9a96e; flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #eef2ff;
+  border: 1px solid #e0e7ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #4338ca;
+  flex-shrink: 0;
 }
-.contributor-info { flex: 1; min-width: 0; }
-.contributor-name { display: block; font-size: 13px; font-weight: 500; color: rgba(240,234,224,.85); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.contributor-role { display: block; font-size: 11px; color: rgba(240,234,224,.4); margin-top: 1px; }
-.contributor-meta { display: flex; flex-direction: column; gap: 5px; align-items: flex-end; }
-.contributor-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+.contributor-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.contributor-name {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contributor-role {
+  display: block;
+  font-size: 11.5px;
+  color: #9ca3af;
+  margin-top: 1px;
+}
+
+.contributor-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.contributor-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
 
 /* ══════════════════════════════════════════
    TASKS LIST
 ══════════════════════════════════════════ */
-.tasks-list { display: flex; flex-direction: column; gap: 6px; }
-.task-card {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 14px;
-  background: rgba(240,234,224,.03);
-  border: 1px solid rgba(201,169,110,.1); border-radius: 6px;
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
 }
-.task-status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.dot-pending     { background: #fde047; }
-.dot-in_progress { background: #93c5fd; }
-.dot-completed   { background: #86efac; }
-.dot-blocked     { background: #fca5a5; }
-.task-info { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; }
-.task-name { font-size: 13px; color: rgba(240,234,224,.8); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.task-deadline { font-size: 11px; color: rgba(240,234,224,.35); white-space: nowrap; }
-.task-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+.task-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 15px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+}
+
+.task-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-pending {
+  background: #d97706;
+}
+
+.dot-in_progress {
+  background: #2563eb;
+}
+
+.dot-completed {
+  background: #059669;
+}
+
+.dot-blocked {
+  background: #dc2626;
+}
+
+.task-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.task-name {
+  font-size: 13.5px;
+  color: #111827;
+  font-weight: 500;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.task-deadline {
+  font-size: 11.5px;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.task-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
 
 /* ══════════════════════════════════════════
    ICON BUTTONS
 ══════════════════════════════════════════ */
 .icon-btn {
-  width: 28px; height: 28px; border-radius: 4px;
-  display: flex; align-items: center; justify-content: center;
-  background: none; border: 1px solid transparent;
-  cursor: pointer; transition: all .2s;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all .15s;
 }
-.icon-btn.edit   { color: rgba(201,169,110,.6); }
-.icon-btn.edit:hover   { background: rgba(201,169,110,.1); border-color: rgba(201,169,110,.25); color: #c9a96e; }
-.icon-btn.delete { color: rgba(239,68,68,.5); }
-.icon-btn.delete:hover { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.25); color: #fca5a5; }
-.icon-btn.tasks  { color: rgba(99,102,241,.6); }
-.icon-btn.tasks:hover  { background: rgba(99,102,241,.1); border-color: rgba(99,102,241,.25); color: #a5b4fc; }
+
+.icon-btn.edit {
+  color: #6366f1;
+}
+
+.icon-btn.edit:hover {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #4338ca;
+}
+
+.icon-btn.delete {
+  color: #f87171;
+}
+
+.icon-btn.delete:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.icon-btn.tasks {
+  color: #38bdf8;
+}
+
+.icon-btn.tasks:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #2563eb;
+}
 
 /* ══════════════════════════════════════════
    MINI MODALS
 ══════════════════════════════════════════ */
 .modal-overlay {
-  position: fixed; inset: 0; z-index: 1100;
-  background: rgba(0,0,0,.6); backdrop-filter: blur(4px);
-  display: flex; align-items: center; justify-content: center;
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(17, 24, 39, .55);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 20px;
 }
+
 .mini-modal {
-  background: #1a1610; border: 1px solid rgba(201,169,110,.2);
-  border-radius: 10px; width: 420px; max-width: 100%;
-  max-height: 90vh; display: flex; flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 24px 48px -14px rgba(15, 23, 42, 0.22);
+  width: 420px;
+  max-width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
-.mini-modal.wide { width: 560px; }
+
+.mini-modal.wide {
+  width: 560px;
+}
+
 .mini-modal-header {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  padding: 18px 20px;
-  border-bottom: 1px solid rgba(201,169,110,.12);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
   flex-shrink: 0;
 }
-.mini-modal-header h3 { margin: 0; font-size: 15px; font-weight: 600; color: rgba(240,234,224,.9); }
-.mini-modal-sub { margin: 3px 0 0; font-size: 11.5px; color: rgba(240,234,224,.4); }
-.mini-modal-body { flex: 1; overflow-y: auto; padding: 18px 20px; }
+
+.mini-modal-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.mini-modal-sub {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.mini-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 22px;
+}
+
 .mini-modal-footer {
-  padding: 14px 20px;
-  border-top: 1px solid rgba(201,169,110,.1);
-  display: flex; justify-content: flex-end; gap: 8px;
+  padding: 15px 22px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
   flex-shrink: 0;
+  background: #f9fafb;
 }
 
 /* ── Form controls ── */
-.form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
-.form-group:last-child { margin-bottom: 0; }
-.form-group label { font-size: 11.5px; font-weight: 600; color: rgba(240,234,224,.45); letter-spacing: 0.06em; text-transform: uppercase; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.form-control {
-  background: rgba(240,234,224,.05);
-  border: 1px solid rgba(201,169,110,.2);
-  border-radius: 5px; color: rgba(240,234,224,.85);
-  font-size: 13px; padding: 8px 10px; outline: none;
-  transition: border-color .2s; width: 100%; box-sizing: border-box;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
 }
-.form-control:focus { border-color: rgba(201,169,110,.5); }
-.form-control::placeholder { color: rgba(240,234,224,.25); }
-textarea.form-control { resize: vertical; min-height: 60px; }
-.required { color: #fca5a5; }
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-control {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: #111827;
+  font-size: 13.5px;
+  padding: 9px 11px;
+  outline: none;
+  transition: border-color .15s, background .15s, box-shadow .15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-control:focus {
+  border-color: #4338ca;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px #eef2ff;
+}
+
+.form-control::placeholder {
+  color: #9ca3af;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.required {
+  color: #dc2626;
+}
 
 .btn-save {
-  padding: 8px 18px; border-radius: 5px;
-  background: rgba(201,169,110,.15); border: 1px solid rgba(201,169,110,.4);
-  color: #c9a96e; font-size: 13px; font-weight: 600;
-  cursor: pointer; transition: background .2s;
+  padding: 9px 20px;
+  border-radius: 8px;
+  background: #4338ca;
+  border: 1px solid #4338ca;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, box-shadow .15s, transform .12s;
 }
-.btn-save:hover:not(:disabled) { background: rgba(201,169,110,.25); }
-.btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-save.small { padding: 6px 14px; font-size: 12px; }
+
+.btn-save:hover:not(:disabled) {
+  background: #3730a3;
+  box-shadow: 0 6px 16px -4px rgba(67, 56, 202, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-save:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-save.small {
+  padding: 7px 15px;
+  font-size: 12px;
+}
+
 .btn-cancel {
-  padding: 8px 16px; border-radius: 5px;
-  background: transparent; border: 1px solid rgba(240,234,224,.15);
-  color: rgba(240,234,224,.5); font-size: 13px;
-  cursor: pointer; transition: all .2s;
+  padding: 9px 18px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
 }
-.btn-cancel:hover { border-color: rgba(240,234,224,.3); color: rgba(240,234,224,.75); }
-.btn-cancel.small { padding: 6px 12px; font-size: 12px; }
+
+.btn-cancel:hover {
+  border-color: #9ca3af;
+  color: #111827;
+  background: #f3f4f6;
+}
+
+.btn-cancel.small {
+  padding: 7px 13px;
+  font-size: 12px;
+}
 
 /* ── Inline form ── */
 .inline-form {
-  margin-top: 14px; padding: 14px;
-  background: rgba(201,169,110,.04);
-  border: 1px solid rgba(201,169,110,.15);
-  border-radius: 6px;
+  margin-top: 16px;
+  padding: 15px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
 }
-.inline-form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+
+.inline-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}
 
 /* ══════════════════════════════════════════
    TRANSITIONS
 ══════════════════════════════════════════ */
-.drawer-fade-enter-active, .drawer-fade-leave-active { transition: opacity .25s ease; }
-.drawer-fade-enter-active .detail-drawer, .drawer-fade-leave-active .detail-drawer { transition: transform .3s ease; }
-.drawer-fade-enter-from, .drawer-fade-leave-to { opacity: 0; }
-.drawer-fade-enter-from .detail-drawer, .drawer-fade-leave-to .detail-drawer { transform: translateX(100%); }
+.drawer-fade-enter-active,
+.drawer-fade-leave-active {
+  transition: opacity .25s ease;
+}
 
-.modal-pop-enter-active, .modal-pop-leave-active { transition: opacity .2s ease; }
-.modal-pop-enter-active .mini-modal, .modal-pop-leave-active .mini-modal { transition: transform .2s ease, opacity .2s ease; }
-.modal-pop-enter-from, .modal-pop-leave-to { opacity: 0; }
-.modal-pop-enter-from .mini-modal, .modal-pop-leave-to .mini-modal { transform: scale(.95); opacity: 0; }
+.drawer-fade-enter-active .detail-drawer,
+.drawer-fade-leave-active .detail-drawer {
+  transition: transform .3s ease;
+}
+
+.drawer-fade-enter-from,
+.drawer-fade-leave-to {
+  opacity: 0;
+}
+
+.drawer-fade-enter-from .detail-drawer,
+.drawer-fade-leave-to .detail-drawer {
+  transform: translateX(100%);
+}
+
+.modal-pop-enter-active,
+.modal-pop-leave-active {
+  transition: opacity .2s ease;
+}
+
+.modal-pop-enter-active .mini-modal,
+.modal-pop-leave-active .mini-modal {
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+.modal-pop-enter-from,
+.modal-pop-leave-to {
+  opacity: 0;
+}
+
+.modal-pop-enter-from .mini-modal,
+.modal-pop-leave-to .mini-modal {
+  transform: scale(.95);
+  opacity: 0;
+}
 
 /* ══════════════════════════════════════════
    TABLE LAYOUT
 ══════════════════════════════════════════ */
-:deep(table) { table-layout: auto; width: 100%; }
-:deep(td .cell-text) { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
-:deep(td .cell-actions) { white-space: nowrap; overflow: visible; }
+:deep(table) {
+  table-layout: auto;
+  width: 100%;
+}
+
+:deep(td .cell-text) {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+}
+
+:deep(td .cell-actions) {
+  white-space: nowrap;
+  overflow: visible;
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .detail-drawer {
+    width: 100%;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .mini-modal {
+    width: 100%;
+  }
+
+  .mini-modal.wide {
+    width: 100%;
+  }
+
+  .contributor-card {
+    flex-wrap: wrap;
+  }
+
+  .contributor-meta {
+    align-items: flex-start;
+    width: 100%;
+    order: 3;
+  }
+
+  .company-selector-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .company-select {
+    min-width: 0;
+    width: 100%;
+  }
+}
 </style>
