@@ -1556,7 +1556,7 @@ onBeforeUnmount(() => crudStore.clearCurrentItem())
 }
 
 .step-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: #94A3B8;
   white-space: nowrap;
@@ -1572,7 +1572,7 @@ onBeforeUnmount(() => crudStore.clearCurrentItem())
 }
 
 .step-desc {
-  font-size: 10px;
+  font-size: 12px;
   color: #94A3B8;
   white-space: nowrap;
 }

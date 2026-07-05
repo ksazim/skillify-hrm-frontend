@@ -1,49 +1,25 @@
 <template>
-  <CrudLayout
-    ref="layoutRef"
-    title="Notice Management"
-    subtitle="Manage and publish notices and announcements"
-    add-label="New Notice"
-    :breadcrumbs="breadcrumbs"
-    :stats="pageStats"
-    :loading="isLoading"
-    loading-message="Loading notices"
-    :error="hasError ? errorMessage : ''"
-    error-title="Failed to Load Notices"
-    :has-data="!!items.length"
-    :notification="notification"
-    @add="openCreateModal"
-    @retry="loadData"
-  >
+  <CrudLayout ref="layoutRef" title="Notice Management" subtitle="Manage and publish notices and announcements"
+    add-label="New Notice" :breadcrumbs="breadcrumbs" :stats="pageStats" :loading="isLoading"
+    loading-message="Loading notices" :error="hasError ? errorMessage : ''" error-title="Failed to Load Notices"
+    :has-data="!!items.length" :notification="notification" @add="openCreateModal" @retry="loadData">
     <!-- ── Icon slot ── -->
     <template #icon>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
         <path
-          d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"
-        />
+          d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
       </svg>
     </template>
 
     <!-- ── Filters ── -->
     <template #filters>
-      <FilterPanel
-        title="Search & Filter"
-        :fields="filterFields"
-        v-model="searchFilters"
-        @submit="handleSearch"
-        @reset="handleReset"
-      />
+      <FilterPanel title="Search & Filter" :fields="filterFields" v-model="searchFilters" @submit="handleSearch"
+        @reset="handleReset" />
     </template>
 
     <!-- ── Table ── -->
-    <DataTable
-      :data="paginatedData"
-      :columns="tableColumns"
-      :actions="tableActions"
-      result-label="notices"
-      @action="handleAction"
-      @sort="handleSort"
-    >
+    <DataTable :data="paginatedData" :columns="tableColumns" :actions="tableActions" result-label="notices"
+      @action="handleAction" @sort="handleSort">
       <!-- Type cell -->
       <template #cell-type="{ value }">
         <span v-if="value" :class="['type-badge', `type-${value}`]">
@@ -62,9 +38,7 @@
 
       <!-- Published At cell -->
       <template #cell-published_at="{ value }">
-        <span
-          :class="['publish-date', { 'publish-scheduled': isScheduled(value) }]"
-        >
+        <span :class="['publish-date', { 'publish-scheduled': isScheduled(value) }]">
           {{ value ?? "—" }}
         </span>
       </template>
@@ -72,63 +46,33 @@
 
     <!-- ── Pagination ── -->
     <template #pagination>
-      <Pagination
-        v-model="currentPage"
-        :total-items="pagination.total"
-        :page-size="itemsPerPage"
-        :page-size-options="[10, 25, 50, 100]"
-        item-label="notices"
-        :show-first-last="true"
-        :show-labels="false"
-        :show-jump-to="false"
-        @update:page-size="handlePageSizeChange"
-        @page-change="handlePageChange"
-      />
+      <Pagination v-model="currentPage" :total-items="pagination.total" :page-size="itemsPerPage"
+        :page-size-options="[10, 25, 50, 100]" item-label="notices" :show-first-last="true" :show-labels="false"
+        :show-jump-to="false" @update:page-size="handlePageSizeChange" @page-change="handlePageChange" />
     </template>
   </CrudLayout>
 
   <!-- ── Modals ── -->
-  <BaseModal
-    v-model="showFormModal"
-    :mode="modalMode"
-    entity-name="notice"
-    :fields="formFields"
-    :initial-data="selectedItem"
-    :on-submit="handleFormSubmit"
-    size="large"
-    @success="handleModalSuccess"
-    @error="handleModalError"
-  />
+  <BaseModal v-model="showFormModal" :mode="modalMode" entity-name="notice" :fields="formFields"
+    :initial-data="selectedItem" :on-submit="handleFormSubmit" size="large" @success="handleModalSuccess"
+    @error="handleModalError" />
 
-  <BaseModal
-    v-model="showDeleteModal"
-    mode="delete"
-    entity-name="notice"
-    :initial-data="selectedItem"
-    :on-submit="handleDeleteSubmit"
-    delete-message="This notice will be permanently removed from the system."
-    @success="handleDeleteSuccess"
-    @error="handleModalError"
-  />
+  <BaseModal v-model="showDeleteModal" mode="delete" entity-name="notice" :initial-data="selectedItem"
+    :on-submit="handleDeleteSubmit" delete-message="This notice will be permanently removed from the system."
+    @success="handleDeleteSuccess" @error="handleModalError" />
 
-  <BaseModal
-    v-model="showViewModal"
-    mode="view"
-    entity-name="notice"
-    :fields="formFields"
-    :initial-data="selectedItem"
-    size="large"
-  />
+  <BaseModal v-model="showViewModal" mode="view" entity-name="notice" :fields="formFields" :initial-data="selectedItem"
+    size="large" />
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, defineOptions } from "vue";
 import { useCrudStore } from "@/store/crud";
+import { computed, defineOptions, onBeforeUnmount, onMounted, ref } from "vue";
+import BaseModal from "../components/ActionModalComponent.vue";
 import CrudLayout from "../components/CrudLayout.vue";
 import FilterPanel from "../components/FilterComponent.vue";
-import DataTable from "../components/TableComponent.vue";
 import Pagination from "../components/PaginationComponent.vue";
-import BaseModal from "../components/ActionModalComponent.vue";
+import DataTable from "../components/TableComponent.vue";
 
 // Multi-word component name for eslint compliance
 defineOptions({
@@ -489,9 +433,9 @@ const handlePageSizeChange = (pageSize) => {
 };
 
 const handleAction = ({ action, row }) =>
-  ({ view: openViewModal, edit: openEditModal, delete: openDeleteModal }[
-    action
-  ]?.(row));
+({ view: openViewModal, edit: openEditModal, delete: openDeleteModal }[
+  action
+]?.(row));
 
 onMounted(() => loadData());
 onBeforeUnmount(() => crudStore.clearCurrentItem());

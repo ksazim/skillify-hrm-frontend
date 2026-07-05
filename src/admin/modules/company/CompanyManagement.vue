@@ -1942,12 +1942,12 @@ onMounted(() => loadData())
 }
 
 .page-title {
-  font-size: 21px;
+  font-size: 28px;
   font-weight: 700;
-  color: var(--text-1);
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
   margin: 0;
-  line-height: 1.25;
-  letter-spacing: -.01em;
+  line-height: 1.2;
 }
 
 .page-subtitle {
