@@ -13,8 +13,8 @@
                 </svg>
               </div>
               <div>
-                <h2 class="modal-panel__title">Generate Payroll</h2>
-                <p class="modal-panel__subtitle">Process salary disbursements for the selected period</p>
+                <h2 class="text-card-title">Generate Payroll</h2>
+                <p class="text-subtitle">Process salary disbursements for the selected period</p>
               </div>
             </div>
             <button class="modal-panel__close" @click="$emit('update:modelValue', false)" aria-label="Close modal">
@@ -54,7 +54,7 @@
               </div>
 
               <div class="form-field">
-                <label class="form-field__label">
+                <label class="text-label">
                   Choose a company to process payroll
                   <span class="form-field__required">*</span>
                 </label>
@@ -101,7 +101,7 @@
 
               <div class="form-grid">
                 <div class="form-field">
-                  <label class="form-field__label">
+                  <label class="text-label">
                     Month <span class="form-field__required">*</span>
                   </label>
                   <div class="select-container">
@@ -118,7 +118,7 @@
                   </div>
                 </div>
                 <div class="form-field">
-                  <label class="form-field__label">
+                  <label class="text-label">
                     Year <span class="form-field__required">*</span>
                   </label>
                   <div class="select-container">
@@ -320,14 +320,6 @@ const selectedCompanyName = computed(() => {
 .modal-panel__icon--primary {
   background: #EEF2FF;
   color: #4F46E5;
-}
-
-.modal-panel__title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #111827;
-  margin: 0;
-  letter-spacing: -0.02em;
 }
 
 .modal-panel__subtitle {
@@ -919,10 +911,6 @@ const selectedCompanyName = computed(() => {
   .form-section__header {
     flex-wrap: wrap;
     gap: 8px;
-  }
-
-  .modal-panel__title {
-    font-size: 16px;
   }
 
   .modal-panel__subtitle {

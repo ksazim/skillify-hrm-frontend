@@ -290,7 +290,7 @@
       <div v-if="showContributorModal" class="modal-overlay" @click.self="showContributorModal = false">
         <div class="mini-modal">
           <div class="mini-modal-header">
-            <h3>{{ editingContributor ? 'Edit Contributor' : 'Add Contributor' }}</h3>
+            <h3 class="text-card-title">{{ editingContributor ? 'Edit Contributor' : 'Add Contributor' }}</h3>
             <button class="drawer-close" @click="showContributorModal = false">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <path
@@ -300,19 +300,19 @@
           </div>
           <div class="mini-modal-body">
             <div class="form-group">
-              <label>Employee</label>
+              <label class="text-label">Employee</label>
               <select v-model="contributorForm.employee_id" class="form-control">
                 <option value="">Select employee…</option>
                 <option v-for="e in allEmployees" :key="e.value" :value="e.value">{{ e.label }}</option>
               </select>
             </div>
             <div class="form-group">
-              <label>Role</label>
+              <label class="text-label">Role</label>
               <input v-model="contributorForm.role" class="form-control" placeholder="e.g. Lead Developer" />
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>Status</label>
+                <label class="text-label">Status</label>
                 <select v-model="contributorForm.status" class="form-control">
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
@@ -320,23 +320,23 @@
                 </select>
               </div>
               <div class="form-group">
-                <label>Progress (%)</label>
+                <label class="text-label">Progress (%)</label>
                 <input v-model="contributorForm.progress" type="number" min="0" max="100" class="form-control"
                   placeholder="0" />
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>Started At</label>
+                <label class="text-label">Started At</label>
                 <input v-model="contributorForm.started_at" type="date" class="form-control" />
               </div>
               <div class="form-group">
-                <label>Completed At</label>
+                <label class="text-label">Completed At</label>
                 <input v-model="contributorForm.completed_at" type="date" class="form-control" />
               </div>
             </div>
             <div class="form-group">
-              <label>Note</label>
+              <label class="text-label">Note</label>
               <textarea v-model="contributorForm.note" class="form-control" rows="2"
                 placeholder="Optional notes…"></textarea>
             </div>
@@ -360,7 +360,7 @@
       <div v-if="showTaskModal" class="modal-overlay" @click.self="showTaskModal = false">
         <div class="mini-modal">
           <div class="mini-modal-header">
-            <h3>{{ editingTask ? 'Edit Task' : 'Add Task' }}</h3>
+            <h3 class="text-card-title">{{ editingTask ? 'Edit Task' : 'Add Task' }}</h3>
             <button class="drawer-close" @click="showTaskModal = false">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <path
@@ -370,11 +370,11 @@
           </div>
           <div class="mini-modal-body">
             <div class="form-group">
-              <label>Task Description <span class="required">*</span></label>
+              <label class="text-label">Task Description <span class="required">*</span></label>
               <input v-model="taskForm.task" class="form-control" placeholder="Describe the task…" />
             </div>
             <div class="form-group">
-              <label>Status <span class="required">*</span></label>
+              <label class="text-label">Status <span class="required">*</span></label>
               <select v-model="taskForm.status" class="form-control">
                 <option value="pending">Pending</option>
                 <option value="in_progress">In Progress</option>
@@ -383,7 +383,7 @@
               </select>
             </div>
             <div class="form-group">
-              <label>Assign to Contributor</label>
+              <label class="text-label">Assign to Contributor</label>
               <select v-model="taskForm.employee_id" class="form-control">
                 <option value="">Unassigned</option>
                 <option v-for="c in contributors" :key="c.id" :value="c.employee_id">

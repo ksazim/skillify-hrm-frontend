@@ -74,8 +74,8 @@
 
                 <div v-if="entityData && Object.keys(entityData).length" class="entity-detail-grid">
                   <div v-for="(value, key) in entityData" :key="key" class="entity-detail-row">
-                    <span class="entity-detail-key">{{ formatLabel(key) }}</span>
-                    <span class="entity-detail-val">{{ value }}</span>
+                    <span class="text-label">{{ formatLabel(key) }}</span>
+                    <span class="text-body">{{ value }}</span>
                   </div>
                 </div>
               </div>
@@ -936,7 +936,7 @@ if (props.modelValue) initializeForm()
   border-bottom: none;
 }
 
-.entity-detail-key {
+/* .entity-detail-key {
   font-size: 11.5px;
   text-transform: uppercase;
   letter-spacing: .06em;
@@ -945,7 +945,7 @@ if (props.modelValue) initializeForm()
   min-width: 110px;
   flex-shrink: 0;
   padding-top: 1px;
-}
+} */
 
 .entity-detail-val {
   font-size: 13.5px;

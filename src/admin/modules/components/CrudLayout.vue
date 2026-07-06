@@ -19,8 +19,8 @@
             <slot name="icon" />
           </div>
           <div class="page-title-text">
-            <h1 class="page-title">{{ title }}</h1>
-            <p v-if="subtitle" class="page-subtitle">{{ subtitle }}</p>
+            <h1 class="text-page-title">{{ title }}</h1>
+            <p v-if="subtitle" class="text-subtitle">{{ subtitle }}</p>
           </div>
         </div>
       </div>

@@ -88,10 +88,10 @@
               </svg>
             </div>
             <div>
-              <h2 class="emp-modal-title">
+              <h2 class="text-card-title">
                 {{ isEditMode ? 'Edit Employee' : 'New Employee' }}
               </h2>
-              <p class="emp-modal-subtitle">
+              <p class="text-subtitle">
                 {{ isEditMode ? 'Update employee information' :
                   'Fill in the steps below. You can save and resume anytime.' }}
               </p>
@@ -123,7 +123,7 @@
             </div>
             <div class="emp-step-label">
               <span class="step-name">{{ step.label }}</span>
-              <span class="step-desc">{{ step.desc }}</span>
+              <span class="text-small">{{ step.desc }}</span>
             </div>
             <div v-if="idx < steps.length - 1" class="emp-step-connector"></div>
           </div>
@@ -142,47 +142,47 @@
             <div class="step-section-title">Personal & Account Information</div>
             <div class="form-grid">
               <div class="form-field">
-                <label class="form-label">Full Name <span class="req">*</span></label>
+                <label class="text-label">Full Name <span class="req">*</span></label>
                 <input v-model="form.name" class="form-input" type="text" placeholder="John Doe" />
               </div>
               <div class="form-field">
-                <label class="form-label">Email Address <span class="req">*</span></label>
+                <label class="text-label">Email Address <span class="req">*</span></label>
                 <input v-model="form.email" class="form-input" type="email" placeholder="john@company.com" />
               </div>
               <div class="form-field">
-                <label class="form-label">Phone Number <span class="req">*</span></label>
+                <label class="text-label">Phone Number <span class="req">*</span></label>
                 <input v-model="form.phone" class="form-input" type="text" placeholder="+880 1700 000000" />
               </div>
               <div class="form-field">
-                <label class="form-label">Password {{ isEditMode ? '' : '*' }}</label>
+                <label class="text-label">Password {{ isEditMode ? '' : '*' }}</label>
                 <input v-model="form.password" class="form-input" type="password"
                   :placeholder="isEditMode ? 'Leave blank to keep current…' : 'Enter password…'" />
               </div>
               <div class="form-field">
-                <label class="form-label">Employee Code</label>
+                <label class="text-label">Employee Code</label>
                 <input v-model="form.employee_code" class="form-input" type="text" placeholder="EMP-0001" />
               </div>
               <div class="form-field">
-                <label class="form-label">Joining Date</label>
+                <label class="text-label">Joining Date</label>
                 <input v-model="form.joining_date" class="form-input" type="date" />
               </div>
               <div class="form-field">
-                <label class="form-label">Role</label>
+                <label class="text-label">Role</label>
                 <select v-model="form.role" class="form-select">
                   <option value="">Select role…</option>
                   <option v-for="r in systemData.roles" :key="r.value" :value="r.value">{{ r.label }}</option>
                 </select>
               </div>
               <div class="form-field">
-                <label class="form-label">Status <span class="req">*</span></label>
+                <label class="text-label">Status <span class="req">*</span></label>
                 <div class="radio-group">
                   <label class="radio-opt">
                     <input type="radio" v-model="form.status" value="active" />
-                    <span>Active</span>
+                    <span class="text-checkbox-label">Active</span>
                   </label>
                   <label class="radio-opt">
                     <input type="radio" v-model="form.status" value="inactive" />
-                    <span>Inactive</span>
+                    <span class="text-checkbox-label">Inactive</span>
                   </label>
                 </div>
               </div>
@@ -194,14 +194,14 @@
             <div class="step-section-title">Job & Assignment Details</div>
             <div class="form-grid">
               <div class="form-field">
-                <label class="form-label">Company <span class="req">*</span></label>
+                <label class="text-label">Company <span class="req">*</span></label>
                 <select v-model="form.company_id" class="form-select" @change="onCompanyChange">
                   <option value="">Select company…</option>
                   <option v-for="c in systemData.companies" :key="c.value" :value="c.value">{{ c.label }}</option>
                 </select>
               </div>
               <div class="form-field">
-                <label class="form-label">Branch</label>
+                <label class="text-label">Branch</label>
                 <select v-model="form.branch_id" class="form-select" @change="onBranchChange"
                   :disabled="!form.company_id">
                   <option value="">Select branch…</option>
@@ -209,28 +209,28 @@
                 </select>
               </div>
               <div class="form-field">
-                <label class="form-label">Department</label>
+                <label class="text-label">Department</label>
                 <select v-model="form.department_id" class="form-select" :disabled="!form.branch_id">
                   <option value="">Select department…</option>
                   <option v-for="d in systemData.departments" :key="d.value" :value="d.value">{{ d.label }}</option>
                 </select>
               </div>
               <div class="form-field">
-                <label class="form-label">Designation / Position</label>
+                <label class="text-label">Designation / Position</label>
                 <select v-model="form.designation_id" class="form-select" :disabled="!form.company_id">
                   <option value="">Select designation…</option>
                   <option v-for="p in systemData.positions" :key="p.value" :value="p.value">{{ p.label }}</option>
                 </select>
               </div>
               <div class="form-field">
-                <label class="form-label">Reporting Manager</label>
+                <label class="text-label">Reporting Manager</label>
                 <select v-model="form.reporting_manager_id" class="form-select">
                   <option value="">None</option>
                   <option v-for="m in systemData.managers" :key="m.value" :value="m.value">{{ m.label }}</option>
                 </select>
               </div>
               <div class="form-field">
-                <label class="form-label">Work Type</label>
+                <label class="text-label">Work Type</label>
                 <select v-model="form.work_type" class="form-select">
                   <option value="">Select type…</option>
                   <option value="on-site">On-Site</option>
@@ -246,7 +246,7 @@
             <div class="step-section-title">Salary & Allowances</div>
             <div class="form-grid">
               <div class="form-field">
-                <label class="form-label">Basic Salary <span class="req">*</span></label>
+                <label class="text-label">Basic Salary <span class="req">*</span></label>
                 <div class="input-prefix-wrap">
                   <span class="input-prefix">৳</span>
                   <input v-model="form.basic_salary" class="form-input with-prefix" type="number" placeholder="0.00"
@@ -254,7 +254,7 @@
                 </div>
               </div>
               <div class="form-field">
-                <label class="form-label">House Rent Allowance</label>
+                <label class="text-label">House Rent Allowance</label>
                 <div class="input-prefix-wrap">
                   <span class="input-prefix">৳</span>
                   <input v-model="form.house_rent" class="form-input with-prefix" type="number" placeholder="0.00"
@@ -262,7 +262,7 @@
                 </div>
               </div>
               <div class="form-field">
-                <label class="form-label">Medical Allowance</label>
+                <label class="text-label">Medical Allowance</label>
                 <div class="input-prefix-wrap">
                   <span class="input-prefix">৳</span>
                   <input v-model="form.medical_allowance" class="form-input with-prefix" type="number"
@@ -283,12 +283,12 @@
             <div class="step-section-title">Address Information</div>
             <div class="form-grid">
               <div class="form-field form-field--full">
-                <label class="form-label">Present Address</label>
+                <label class="text-label">Present Address</label>
                 <textarea v-model="form.present_address" class="form-textarea" rows="3"
                   placeholder="Current residential address…"></textarea>
               </div>
               <div class="form-field form-field--full">
-                <label class="form-label">Permanent Address</label>
+                <label class="text-label">Permanent Address</label>
                 <textarea v-model="form.permanent_address" class="form-textarea" rows="3"
                   placeholder="Permanent / hometown address…"></textarea>
               </div>
@@ -305,16 +305,16 @@
             <div v-for="(contact, idx) in form.emergency_contacts" :key="idx" class="emergency-contact-row">
               <div class="form-grid contact-grid">
                 <div class="form-field">
-                  <label class="form-label">Name</label>
+                  <label class="text-label">Name</label>
                   <input v-model="contact.name" class="form-input" type="text" placeholder="Contact name" />
                 </div>
                 <div class="form-field">
-                  <label class="form-label">Relationship</label>
+                  <label class="text-label">Relationship</label>
                   <input v-model="contact.relationship" class="form-input" type="text"
                     placeholder="e.g. Spouse, Parent" />
                 </div>
                 <div class="form-field">
-                  <label class="form-label">Phone</label>
+                  <label class="text-label">Phone</label>
                   <input v-model="contact.phone" class="form-input" type="text" placeholder="+880…" />
                 </div>
                 <div class="form-field form-field--action">
@@ -343,11 +343,11 @@
             <div class="step-section-title">Documents & Photo</div>
             <div class="form-grid">
               <div class="form-field">
-                <label class="form-label">Profile Photo</label>
+                <label class="text-label">Profile Photo</label>
                 <input type="file" class="form-file" accept="image/*" @change="e => form.photo = e.target.files[0]" />
               </div>
               <div class="form-field form-field--full">
-                <label class="form-label">Upload Documents</label>
+                <label class="text-label">Upload Documents</label>
                 <div class="doc-upload-area" @dragover.prevent @drop.prevent="handleDocDrop">
                   <input type="file" class="doc-file-input" multiple @change="handleDocSelect" ref="docInput" />
                   <div class="doc-upload-placeholder" @click="$refs.docInput.click()">
@@ -396,7 +396,7 @@
           </div>
 
           <div class="foot-center">
-            <span class="step-counter">Step {{ currentStep }} of {{ steps.length }}</span>
+            <span class="text-small">Step {{ currentStep }} of {{ steps.length }}</span>
           </div>
 
           <div class="foot-right">
@@ -442,8 +442,8 @@
               </svg>
             </div>
             <div>
-              <h2 class="emp-modal-title">Employee Profile</h2>
-              <p class="emp-modal-subtitle">{{ viewItem?.user?.name }}</p>
+              <h2 class="text-card-title">Employee Profile</h2>
+              <p class="text-subtitle">{{ viewItem?.user?.name }}</p>
             </div>
           </div>
           <button class="emp-modal-close" @click="showViewModal = false">
@@ -488,51 +488,51 @@
               <div class="view-section">
                 <div class="view-section-title">Contact</div>
                 <div class="view-grid">
-                  <div class="view-field"><span class="view-label">Email</span><span class="view-value">{{
+                  <div class="view-field"><span class="text-label">Email</span><span class="text-small">{{
                     viewItem.user?.email ?? '—' }}</span></div>
-                  <div class="view-field"><span class="view-label">Phone</span><span class="view-value">{{
+                  <div class="view-field"><span class="text-label">Phone</span><span class="text-small">{{
                     viewItem.user?.phone ?? '—' }}</span></div>
-                  <div class="view-field"><span class="view-label">Joining Date</span><span class="view-value">{{
+                  <div class="view-field"><span class="text-label">Joining Date</span><span class="text-small">{{
                     viewItem.joining_date ?? '—' }}</span></div>
                 </div>
               </div>
               <div class="view-section">
                 <div class="view-section-title">Job Details</div>
                 <div class="view-grid">
-                  <div class="view-field"><span class="view-label">Department</span><span class="view-value">{{
+                  <div class="view-field"><span class="text-label">Department</span><span class="text-small">{{
                     viewItem.job_detail?.department?.name ?? '—' }}</span></div>
-                  <div class="view-field"><span class="view-label">Designation</span><span class="view-value">{{
+                  <div class="view-field"><span class="text-label">Designation</span><span class="text-small">{{
                     viewItem.job_detail?.designation?.name ?? '—' }}</span></div>
-                  <div class="view-field"><span class="view-label">Work Type</span><span class="view-value">{{
+                  <div class="view-field"><span class="text-label">Work Type</span><span class="text-small">{{
                     viewItem.job_detail?.work_type ?? '—' }}</span></div>
                 </div>
               </div>
               <div class="view-section">
                 <div class="view-section-title">Salary</div>
                 <div class="view-grid">
-                  <div class="view-field"><span class="view-label">Basic</span><span class="view-value">৳ {{
+                  <div class="view-field"><span class="text-label">Basic</span><span class="text-small">৳ {{
                     viewItem.salary?.basic_salary ?? '—' }}</span></div>
-                  <div class="view-field"><span class="view-label">House Rent</span><span class="view-value">৳ {{
+                  <div class="view-field"><span class="text-label">House Rent</span><span class="text-small">৳ {{
                     viewItem.salary?.house_rent ?? '—' }}</span></div>
-                  <div class="view-field"><span class="view-label">Medical</span><span class="view-value">৳ {{
+                  <div class="view-field"><span class="text-label">Medical</span><span class="text-small">৳ {{
                     viewItem.salary?.medical_allowance ?? '—' }}</span></div>
                 </div>
               </div>
               <div class="view-section" v-if="viewItem.address">
                 <div class="view-section-title">Address</div>
                 <div class="view-grid">
-                  <div class="view-field form-field--full"><span class="view-label">Present</span><span
-                      class="view-value">{{ viewItem.address?.present_address ?? '—' }}</span></div>
-                  <div class="view-field form-field--full"><span class="view-label">Permanent</span><span
-                      class="view-value">{{ viewItem.address?.permanent_address ?? '—' }}</span></div>
+                  <div class="view-field form-field--full"><span class="text-label">Present</span><span
+                      class="text-small">{{ viewItem.address?.present_address ?? '—' }}</span></div>
+                  <div class="view-field form-field--full"><span class="text-label">Permanent</span><span
+                      class="text-small">{{ viewItem.address?.permanent_address ?? '—' }}</span></div>
                 </div>
               </div>
               <div class="view-section" v-if="viewItem.emergency_contacts?.length">
                 <div class="view-section-title">Emergency Contacts</div>
                 <div v-for="ec in viewItem.emergency_contacts" :key="ec.id" class="view-contact-row">
-                  <span class="view-value">{{ ec.name }}</span>
-                  <span class="view-label">{{ ec.relationship }}</span>
-                  <span class="view-value">{{ ec.phone }}</span>
+                  <span class="text-small">{{ ec.name }}</span>
+                  <span class="text-label">{{ ec.relationship }}</span>
+                  <span class="text-small">{{ ec.phone }}</span>
                 </div>
               </div>
             </div>
@@ -564,7 +564,7 @@
             <div v-if="lpaFormOpen" class="lpa-form">
               <div class="lpa-form-grid">
                 <div class="form-field" style="grid-column: 1 / -1">
-                  <label class="form-label">Leave Policy <span class="req">*</span></label>
+                  <label class="text-label">Leave Policy <span class="req">*</span></label>
                   <select v-model="lpaForm.leave_policy_id" class="form-select">
                     <option value="">Select policy…</option>
                     <option v-for="p in systemData.leavePolicies" :key="p.value" :value="p.value">
@@ -1453,14 +1453,6 @@ onBeforeUnmount(() => crudStore.clearCurrentItem())
   flex-shrink: 0;
 }
 
-.emp-modal-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #0F172A;
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
 .emp-modal-subtitle {
   font-size: 13px;
   color: #64748B;
@@ -1637,9 +1629,9 @@ onBeforeUnmount(() => crudStore.clearCurrentItem())
 }
 
 .step-section-title {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: #4F46E5;
   padding-bottom: 10px;
@@ -1670,12 +1662,12 @@ onBeforeUnmount(() => crudStore.clearCurrentItem())
   padding-bottom: 2px;
 }
 
-.form-label {
+/* .text-label {
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.04em;
   color: #475569;
-}
+} */
 
 .req {
   color: #DC2626;
@@ -2009,13 +2001,6 @@ onBeforeUnmount(() => crudStore.clearCurrentItem())
   text-align: center;
 }
 
-.step-counter {
-  font-size: 12px;
-  font-weight: 500;
-  color: #94A3B8;
-  letter-spacing: 0.04em;
-}
-
 .btn-prev,
 .btn-next,
 .btn-save-step,
@@ -2218,14 +2203,6 @@ onBeforeUnmount(() => crudStore.clearCurrentItem())
   display: flex;
   flex-direction: column;
   gap: 4px;
-}
-
-.view-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: #94A3B8;
 }
 
 .view-value {
@@ -2616,10 +2593,6 @@ onBeforeUnmount(() => crudStore.clearCurrentItem())
   .emp-modal-icon {
     width: 36px;
     height: 36px;
-  }
-
-  .emp-modal-title {
-    font-size: 16px;
   }
 
   .emp-modal-subtitle {

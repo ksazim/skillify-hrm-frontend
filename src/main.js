@@ -6,6 +6,8 @@ import canDirective from '@/directives/can'
 import { createPinia } from 'pinia'
 import Router from './routes/'
 
+import "./assets/styles/index.css"
+
 /* Import the FontAwesome core */
 import { library } from '@fortawesome/fontawesome-svg-core'
 
