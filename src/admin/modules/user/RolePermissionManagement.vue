@@ -19,8 +19,8 @@
               </svg>
             </div>
             <div>
-              <h1 class="rp-title">Roles & Permissions</h1>
-              <p class="rp-subtitle">Define roles and control module-level access across the system</p>
+              <h1 class="text-page-title">Roles & Permissions</h1>
+              <p class="text-subtitle">Define roles and control module-level access across the system</p>
             </div>
           </div>
         </div>
@@ -287,27 +287,27 @@
               </div>
 
               <div class="form-group" :class="{ 'form-group--error': formErrors.name }">
-                <label class="form-label">Role name <span class="req">*</span></label>
+                <label class="text-label">Role name <span class="req">*</span></label>
                 <input v-model="form.name" class="form-input" placeholder="e.g. HR Manager" @blur="validateForm" />
                 <span v-if="formErrors.name" class="form-error">{{ formErrors.name }}</span>
               </div>
 
               <div class="form-group">
-                <label class="form-label">Description</label>
+                <label class="text-label">Description</label>
                 <textarea v-model="form.description" class="form-textarea"
                   placeholder="Brief description of this role's responsibilities…" rows="3" />
               </div>
 
               <div class="form-row">
                 <div class="form-group" :class="{ 'form-group--error': formErrors.initials }">
-                  <label class="form-label">Initials <span class="req">*</span></label>
+                  <label class="text-label">Initials <span class="req">*</span></label>
                   <input v-model="form.initials" class="form-input" placeholder="SA" maxlength="2"
                     style="text-transform:uppercase" @input="form.initials = form.initials.toUpperCase()"
                     @blur="validateForm" />
                   <span v-if="formErrors.initials" class="form-error">{{ formErrors.initials }}</span>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Accent colour</label>
+                  <label class="text-label">Accent colour</label>
                   <div class="color-swatches">
                     <button v-for="c in ROLE_COLORS" :key="c" class="swatch"
                       :class="{ 'swatch--active': form.color === c }" :style="{ background: c }"
@@ -364,8 +364,8 @@
                   </svg>
                 </div>
                 <div>
-                  <p class="modal-mode-label modal-mode-label--danger">Confirm removal</p>
-                  <h3 class="modal-title">Delete Role</h3>
+                  <p class="text-subtitle">Confirm removal</p>
+                  <h3 class="text-card-title">Delete Role</h3>
                 </div>
               </div>
               <button class="modal-close" @click="showDeleteModal = false">
@@ -377,7 +377,7 @@
               </button>
             </div>
             <div class="modal-body">
-              <p class="delete-msg">Are you sure you want to delete the role <strong>{{ roleToDelete?.name }}</strong>?
+              <p class="text-body">Are you sure you want to delete the role <strong>{{ roleToDelete?.name }}</strong>?
                 This
                 cannot be undone.</p>
             </div>
@@ -869,21 +869,6 @@ async function confirmDelete() {
 .rp-icon-mark svg {
   width: 20px;
   height: 20px;
-}
-
-.rp-title {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
-  margin: 0;
-  line-height: 1.2;
-}
-
-.rp-subtitle {
-  font-size: 14px;
-  color: var(--text-muted);
-  margin: 4px 0 0;
 }
 
 .stat-pill {
@@ -1947,13 +1932,6 @@ async function confirmDelete() {
   gap: 16px;
 }
 
-.form-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #475569;
-  letter-spacing: 0.02em;
-}
-
 .req {
   color: #DC2626;
 }
@@ -2216,10 +2194,6 @@ async function confirmDelete() {
     padding: 16px 20px 18px;
   }
 
-  .rp-title {
-    font-size: 22px;
-  }
-
   .rp-icon-mark {
     width: 38px;
     height: 38px;
@@ -2295,14 +2269,6 @@ async function confirmDelete() {
 @media (max-width: 480px) {
   .rp-header__inner {
     padding: 12px 16px 14px;
-  }
-
-  .rp-title {
-    font-size: 18px;
-  }
-
-  .rp-subtitle {
-    font-size: 12px;
   }
 
   .rp-icon-mark {

@@ -39,7 +39,7 @@
       <template #cell-status="{ row }">
         <div class="lr-pipeline-cell">
           <!-- Overall badge -->
-          <span class="lr-status-badge" :class="overallBadgeClass(row)">
+          <span class="text-body" :class="overallBadgeClass(row)">
             {{ overallBadgeLabel(row) }}
           </span>
           <!-- Mini stage dots (only when there are approval_steps) -->
@@ -86,8 +86,8 @@
               </svg>
             </div>
             <div>
-              <h2 class="lr-modal-title">{{ isEditMode ? 'Edit Leave Request' : 'New Leave Request' }}</h2>
-              <p class="lr-modal-subtitle">
+              <h2 class=" text-card-title">{{ isEditMode ? 'Edit Leave Request' : 'New Leave Request' }}</h2>
+              <p class="text-subtitle">
                 {{ isEditMode ? 'Update the details below' :
                   'Fill in your leave details and attach the application document' }}
               </p>
@@ -111,46 +111,46 @@
           <div class="lr-form-grid">
 
             <div class="lr-form-field lr-field-full">
-              <label class="lr-form-label">Leave Policy <span class="lr-req">*</span></label>
+              <label class="text-label">Leave Policy <span class="lr-req">*</span></label>
               <div v-if="policiesLoading" class="lr-policies-loading">
-                <span class="lr-spinner-sm" style="border-top-color:#C9A96E"></span>
-                <span style="font-size:12px;color:rgba(240,234,224,0.35)">Loading policies…</span>
+                <span class="lr-spinner-sm" style="border-top-color:#4F46E5"></span>
+                <span style="font-size:12px;color:#94A3B8">Loading policies…</span>
               </div>
               <template v-else>
                 <select v-model="form.leave_policy_id" class="lr-form-select" :disabled="isEditMode">
                   <option value="">Select leave policy…</option>
                   <option v-for="p in leavePolicies" :key="p.value" :value="p.value">{{ p.label }}</option>
                 </select>
-                <span v-if="isEditMode" class="lr-field-hint">
+                <span v-if="isEditMode" class="text-small">
                   Policy cannot be changed after submission
-                  <template v-if="selectedPolicyLabel"> · <strong style="color:rgba(240,234,224,0.55)">{{
+                  <template v-if="selectedPolicyLabel"> · <strong style="color:#475569">{{
                     selectedPolicyLabel }}</strong></template>
                 </span>
-                <span v-else-if="leavePolicies.length === 0" class="lr-field-hint lr-hint-warn">
+                <span v-else-if="leavePolicies.length === 0" class="text-small">
                   No policies assigned to you. Contact HR to assign a leave policy.
                 </span>
               </template>
             </div>
 
             <div class="lr-form-field">
-              <label class="lr-form-label">Start Date <span class="lr-req">*</span></label>
+              <label class="text-label">Start Date <span class="lr-req">*</span></label>
               <input v-model="form.start_date" class="lr-form-input" type="date" @change="recalcDays" />
             </div>
 
             <div class="lr-form-field">
-              <label class="lr-form-label">End Date <span class="lr-req">*</span></label>
+              <label class="text-label">End Date <span class="lr-req">*</span></label>
               <input v-model="form.end_date" class="lr-form-input" type="date" @change="recalcDays" />
             </div>
 
             <div class="lr-form-field">
-              <label class="lr-form-label">Total Days <span class="lr-req">*</span></label>
+              <label class="text-label">Total Days <span class="lr-req">*</span></label>
               <input v-model="form.total_days" class="lr-form-input" type="number" min="0.5" step="0.5"
                 placeholder="e.g. 2" />
-              <span class="lr-field-hint">Auto-calculated · adjust for half-days</span>
+              <span class="text-small">Auto-calculated · adjust for half-days</span>
             </div>
 
             <div class="lr-form-field lr-field-full">
-              <label class="lr-form-label">Reason</label>
+              <label class="text-label">Reason</label>
               <textarea v-model="form.reason" class="lr-form-textarea" rows="3"
                 placeholder="Briefly describe the reason for your leave…"></textarea>
             </div>
@@ -159,17 +159,17 @@
 
           <div v-if="form.start_date && form.end_date && form.total_days" class="lr-duration-strip">
             <div class="lr-dur-item">
-              <span class="lr-dur-label">From</span>
+              <span class="text-label">From</span>
               <span class="lr-dur-value">{{ formatDate(form.start_date) }}</span>
             </div>
             <span class="lr-dur-arrow">→</span>
             <div class="lr-dur-item">
-              <span class="lr-dur-label">To</span>
+              <span class="text-label">To</span>
               <span class="lr-dur-value">{{ formatDate(form.end_date) }}</span>
             </div>
             <div class="lr-dur-divider"></div>
             <div class="lr-dur-item">
-              <span class="lr-dur-label">Duration</span>
+              <span class="text-label">Duration</span>
               <span class="lr-dur-value lr-dur-highlight">
                 {{ form.total_days }} day{{ form.total_days != 1 ? 's' : '' }}
               </span>
@@ -179,9 +179,9 @@
           <div class="lr-form-section-title" style="margin-top: 28px">Official Application Document</div>
           <div class="lr-form-grid">
             <div class="lr-form-field lr-field-full">
-              <label class="lr-form-label">
+              <label class="text-label">
                 Application File
-                <span class="lr-field-hint" style="margin-left:8px;text-transform:none;letter-spacing:0;font-size:10px">
+                <span class="text-small" style="margin-left:8px;text-transform:none;letter-spacing:0;font-size:10px">
                   Attach your signed leave application — PDF, Word or image
                 </span>
               </label>
@@ -235,7 +235,7 @@
                   </svg>
                   Download
                 </button>
-                <span class="lr-field-hint" style="margin-left:4px">(upload new to replace)</span>
+                <span class="text-small" style="margin-left:4px">(upload new to replace)</span>
               </div>
             </div>
           </div>
@@ -272,10 +272,10 @@
               </svg>
             </div>
             <div>
-              <h2 class="lr-modal-title">
+              <h2 class="text-card-title">
                 {{ actionModalMode === 'approve' ? 'Approve Leave Request' : 'Reject Leave Request' }}
               </h2>
-              <p class="lr-modal-subtitle">
+              <p class="text-subtitle">
                 <!-- Show which stage this approver is acting on -->
                 Stage {{ (actionItem?.current_stage ?? 0) + 1 }} ·
                 {{ APPROVAL_STAGES[(actionItem?.current_stage ?? 0)]?.label ?? 'Approver' }} action
@@ -343,7 +343,7 @@
               <span class="lr-action-summary-val">
                 {{ formatDate(actionItem?.start_date) }} → {{ formatDate(actionItem?.end_date) }}
                 <em class="lr-action-days">{{ actionItem?.total_days }} day{{ actionItem?.total_days != 1 ? 's' : ''
-                }}</em>
+                  }}</em>
               </span>
             </div>
             <div v-if="actionItem?.reason" class="lr-action-summary-row">
@@ -374,10 +374,10 @@
 
           <!-- Notes / reason field -->
           <div class="lr-form-field" style="margin-top: 20px">
-            <label class="lr-form-label">
+            <label class="text-label">
               {{ actionModalMode === 'approve' ? 'Approval Note' : 'Rejection Reason' }}
               <span v-if="actionModalMode === 'reject'" class="lr-req">*</span>
-              <span v-else class="lr-field-hint" style="margin-left: 6px">(optional)</span>
+              <span v-else class="text-small" style="margin-left: 6px">(optional)</span>
             </label>
             <textarea v-model="actionNotes" class="lr-form-textarea" rows="3" :placeholder="actionModalMode === 'approve'
               ? 'e.g. Approved — enjoy your leave!'
@@ -436,8 +436,8 @@
               </svg>
             </div>
             <div>
-              <h2 class="lr-modal-title">Leave Request Details</h2>
-              <p class="lr-modal-subtitle">Request #{{ selectedItem?.id }}</p>
+              <h2 class="text-card-title">Leave Request Details</h2>
+              <p class="text-subtitle">Request #{{ selectedItem?.id }}</p>
             </div>
           </div>
           <button class="lr-modal-close" @click="showViewModal = false">
@@ -455,51 +455,51 @@
           <div class="lr-form-section-title">Request Information</div>
           <div class="lr-view-grid">
             <div class="lr-view-row">
-              <span class="lr-view-label">Request ID</span>
-              <span class="lr-view-val">#{{ selectedItem?.id ?? '—' }}</span>
+              <span class="text-label">Request ID</span>
+              <span class="text-body">#{{ selectedItem?.id ?? '—' }}</span>
             </div>
             <div class="lr-view-row">
-              <span class="lr-view-label">Overall Status</span>
+              <span class="text-label">Overall Status</span>
               <span>
-                <span class="lr-status-badge" :class="overallBadgeClass(selectedItem)">
+                <span class="text-body" :class="overallBadgeClass(selectedItem)">
                   {{ overallBadgeLabel(selectedItem) }}
                 </span>
               </span>
             </div>
             <div class="lr-view-row">
-              <span class="lr-view-label">Leave Policy</span>
-              <span class="lr-view-val">
+              <span class="text-label">Leave Policy</span>
+              <span class="text-body">
                 {{ selectedItem?.policy?.name ?? (selectedItem?.leave_policy_id ? `Policy
                 #${selectedItem.leave_policy_id}` : '—') }}
                 <em v-if="selectedItem?.policy?.type" class="lr-view-sub">{{ selectedItem.policy.type }}</em>
               </span>
             </div>
             <div class="lr-view-row">
-              <span class="lr-view-label">Employee</span>
-              <span class="lr-view-val">
+              <span class="text-label">Employee</span>
+              <span class="text-body">
                 {{ selectedItem?.user?.name ?? selectedItem?.employee?.name ?? (selectedItem?.user_id ? `Employee
                 #${selectedItem.user_id}` : '—') }}
               </span>
             </div>
             <div class="lr-view-row">
-              <span class="lr-view-label">Start Date</span>
-              <span class="lr-view-val">{{ formatDate(selectedItem?.start_date) }}</span>
+              <span class="text-label">Start Date</span>
+              <span class="text-body">{{ formatDate(selectedItem?.start_date) }}</span>
             </div>
             <div class="lr-view-row">
-              <span class="lr-view-label">End Date</span>
-              <span class="lr-view-val">{{ formatDate(selectedItem?.end_date) }}</span>
+              <span class="text-label">End Date</span>
+              <span class="text-body">{{ formatDate(selectedItem?.end_date) }}</span>
             </div>
             <div class="lr-view-row lr-view-row--full">
-              <span class="lr-view-label">Duration</span>
-              <span class="lr-view-val">
+              <span class="text-label">Duration</span>
+              <span class="text-body">
                 <span class="duration-days" style="font-size:13px">
                   {{ selectedItem?.total_days }} day{{ selectedItem?.total_days != 1 ? 's' : '' }}
                 </span>
               </span>
             </div>
             <div v-if="selectedItem?.reason" class="lr-view-row lr-view-row--full">
-              <span class="lr-view-label">Reason</span>
-              <span class="lr-view-val lr-view-reason">{{ selectedItem.reason }}</span>
+              <span class="text-label">Reason</span>
+              <span class="text-body lr-view-reason">{{ selectedItem.reason }}</span>
             </div>
           </div>
 
@@ -538,9 +538,9 @@
               <!-- Right: content -->
               <div class="lr-tl-content">
                 <div class="lr-tl-header">
-                  <span class="lr-tl-role">{{ stage.label }}</span>
+                  <span class="text-label">{{ stage.label }}</span>
                   <!-- Status pill -->
-                  <span class="lr-tl-pill" :class="timelinePillClass(selectedItem, idx)">
+                  <span class="text-small" :class="timelinePillClass(selectedItem, idx)">
                     {{ timelinePillLabel(selectedItem, idx) }}
                   </span>
                 </div>
@@ -550,14 +550,14 @@
                   <div v-if="getStep(selectedItem, idx).approved_by || getStep(selectedItem, idx).approved_at"
                     class="lr-tl-meta">
                     <span v-if="getStep(selectedItem, idx).approved_by" class="lr-tl-who">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="opacity:.45">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="opacity:.55">
                         <path
                           d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
                       </svg>
                       {{ getStep(selectedItem, idx).approved_by }}
                     </span>
                     <span v-if="getStep(selectedItem, idx).approved_at" class="lr-tl-when">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="opacity:.45">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="opacity:.55">
                         <path
                           d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z" />
                       </svg>
@@ -565,7 +565,7 @@
                     </span>
                   </div>
                   <div v-if="getStep(selectedItem, idx).notes" class="lr-tl-note">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="opacity:.4">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="opacity:.5">
                       <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
                     </svg>
                     {{ getStep(selectedItem, idx).notes }}
@@ -576,7 +576,7 @@
                 <div
                   v-else-if="(selectedItem?.current_stage ?? 0) === idx && selectedItem?.overall_status !== 'rejected'"
                   class="lr-tl-awaiting">
-                  <span class="lr-tl-awaiting-dot"></span>
+                  <span class="text-small"></span>
                   Awaiting {{ stage.label }} review
                 </div>
                 <!-- Future stage message -->
@@ -1397,22 +1397,23 @@ onBeforeUnmount(() => {
 
 .policy-name {
   font-size: 12px;
-  color: #E8D5B0;
-  font-weight: 500;
+  color: #0F172A;
+  font-weight: 600;
 }
 
 .policy-type {
   display: inline-block;
   padding: 1px 7px;
   font-size: 9px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: .05em;
   text-transform: uppercase;
-  background: rgba(133, 183, 235, 0.08);
-  border: 1px solid rgba(133, 183, 235, 0.22);
-  color: rgba(133, 183, 235, 0.75);
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  color: #1E40AF;
   white-space: nowrap;
   width: fit-content;
+  border-radius: 4px;
 }
 
 /* ── Duration cell ── */
@@ -1424,54 +1425,45 @@ onBeforeUnmount(() => {
 
 .duration-dates {
   font-size: 11px;
-  color: rgba(240, 234, 224, 0.50);
+  color: #64748B;
 }
 
 .duration-days {
   display: inline-block;
-  padding: 1px 7px;
+  padding: 2px 8px;
   font-size: 11px;
-  font-weight: 600;
-  font-family: 'Georgia', serif;
-  background: rgba(167, 139, 250, 0.08);
-  border: 1px solid rgba(167, 139, 250, 0.25);
-  color: rgba(167, 139, 250, 0.90);
+  font-weight: 700;
+  background: #F5F3FF;
+  border: 1px solid #DDD6FE;
+  color: #6D28D9;
   width: fit-content;
+  border-radius: 4px;
 }
 
 /* ── Status badges ── */
-.lr-status-badge {
-  display: inline-block;
-  padding: 3px 9px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .07em;
-  text-transform: uppercase;
-  border: 1px solid;
-}
 
 .lr-status-pending {
-  color: #E8B84B;
-  border-color: rgba(232, 184, 75, 0.35);
-  background: rgba(232, 184, 75, 0.08);
+  color: #92400E;
+  border-color: #FDE68A;
+  background: #FFFBEB;
 }
 
 .lr-status-inreview {
-  color: #85B7EB;
-  border-color: rgba(133, 183, 235, 0.35);
-  background: rgba(133, 183, 235, 0.08);
+  color: #1E40AF;
+  border-color: #BFDBFE;
+  background: #EFF6FF;
 }
 
 .lr-status-approved {
-  color: #6ECFA9;
-  border-color: rgba(110, 207, 169, 0.35);
-  background: rgba(110, 207, 169, 0.08);
+  color: #065F46;
+  border-color: #A7F3D0;
+  background: #ECFDF5;
 }
 
 .lr-status-rejected {
-  color: #EF6B6B;
-  border-color: rgba(239, 107, 107, 0.35);
-  background: rgba(239, 107, 107, 0.08);
+  color: #991B1B;
+  border-color: #FECACA;
+  background: #FEF2F2;
 }
 
 /* ── Pipeline cell (table) ── */
@@ -1495,101 +1487,109 @@ onBeforeUnmount(() => {
 }
 
 .lr-dot-approved {
-  background: rgba(110, 207, 169, 0.40);
-  border-color: rgba(110, 207, 169, 0.70);
+  background: #6EE7B7;
+  border-color: #059669;
 }
 
 .lr-dot-rejected {
-  background: rgba(239, 107, 107, 0.40);
-  border-color: rgba(239, 107, 107, 0.70);
+  background: #FCA5A5;
+  border-color: #DC2626;
 }
 
 .lr-dot-pending {
-  background: rgba(232, 184, 75, 0.30);
-  border-color: rgba(232, 184, 75, 0.60);
+  background: #FDE68A;
+  border-color: #D97706;
 }
 
 .lr-dot-future {
-  background: rgba(240, 234, 224, 0.06);
-  border-color: rgba(240, 234, 224, 0.18);
+  background: #F1F5F9;
+  border-color: #E2E8F0;
 }
 
-/* ── Table layout ── */
+/* ── Table action buttons ── */
 :deep(.action-btn.btn-approve),
 :deep(.action-btn.action-btn--btn-approve) {
-  background: rgba(110, 207, 169, 0.15) !important;
-  border-color: rgba(110, 207, 169, 0.55) !important;
-  color: #6ECFA9 !important;
+  background: #ECFDF5 !important;
+  border-color: #A7F3D0 !important;
+  color: #059669 !important;
 }
 
 :deep(.action-btn.btn-approve:hover:not(:disabled)),
 :deep(.action-btn.action-btn--btn-approve:hover:not(:disabled)) {
-  background: rgba(110, 207, 169, 0.28) !important;
-  border-color: #6ECFA9 !important;
+  background: #059669 !important;
+  border-color: #059669 !important;
+  color: #FFFFFF !important;
 }
 
 :deep(.action-btn.btn-reject),
 :deep(.action-btn.action-btn--btn-reject) {
-  background: rgba(239, 107, 107, 0.15) !important;
-  border-color: rgba(239, 107, 107, 0.55) !important;
-  color: #EF6B6B !important;
+  background: #FEF2F2 !important;
+  border-color: #FECACA !important;
+  color: #DC2626 !important;
 }
 
 :deep(.action-btn.btn-reject:hover:not(:disabled)),
 :deep(.action-btn.action-btn--btn-reject:hover:not(:disabled)) {
-  background: rgba(239, 107, 107, 0.28) !important;
-  border-color: #EF6B6B !important;
+  background: #DC2626 !important;
+  border-color: #DC2626 !important;
+  color: #FFFFFF !important;
 }
 
 /* ── Download button ── */
 .lr-dl-btn {
   width: 30px;
   height: 30px;
-  background: rgba(201, 169, 110, 0.10);
-  border: 1px solid rgba(201, 169, 110, 0.35);
-  color: #C9A96E;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  color: #475569;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  border-radius: 6px;
   transition: all .14s;
 }
 
 .lr-dl-btn:hover {
-  background: rgba(201, 169, 110, 0.22);
-  border-color: rgba(201, 169, 110, 0.60);
+  background: #4F46E5;
+  border-color: #4F46E5;
+  color: #FFFFFF;
 }
 
 .lr-no-file {
   font-size: 12px;
-  color: rgba(240, 234, 224, 0.20);
+  color: #CBD5E1;
 }
 
 .lr-inline-dl-btn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 8px;
+  padding: 3px 9px;
   font-size: 10px;
-  background: rgba(201, 169, 110, 0.10);
-  border: 1px solid rgba(201, 169, 110, 0.30);
-  color: #C9A96E;
+  font-weight: 600;
+  background: #EEF2FF;
+  border: 1px solid #C7D2FE;
+  color: #4F46E5;
   cursor: pointer;
+  border-radius: 5px;
   transition: all .13s;
   margin-left: 6px;
 }
 
 .lr-inline-dl-btn:hover {
-  background: rgba(201, 169, 110, 0.20);
+  background: #4F46E5;
+  color: #FFFFFF;
 }
 
 .lr-policies-loading {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 13px;
-  border: 1px solid rgba(201, 169, 110, 0.14);
-  background: rgba(18, 18, 24, 0.98);
+  padding: 11px 14px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  background: #F8FAFC;
 }
 
 /* ══════════════════════════════════════════════════
@@ -1599,7 +1599,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 26px;
   position: relative;
 }
 
@@ -1607,102 +1607,107 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   flex: 1;
   position: relative;
 }
 
 .lr-pip-circle {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   border: 2px solid;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   z-index: 1;
-  background: #17171D;
+  background: #FFFFFF;
   transition: all .2s;
 }
 
 .lr-pip-dot {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
 }
 
 .lr-pip-num {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .lr-pip-label {
-  font-size: 10px;
-  letter-spacing: .04em;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .02em;
   text-align: center;
   white-space: nowrap;
+  color: #475569;
 }
 
 .lr-pip-line {
   position: absolute;
-  top: 16px;
-  left: calc(50% + 16px);
-  width: calc(100% - 32px);
+  top: 17px;
+  left: calc(50% + 17px);
+  width: calc(100% - 34px);
   height: 2px;
-  background: rgba(240, 234, 224, 0.10);
+  background: #E2E8F0;
   z-index: 0;
   transition: background .2s;
 }
 
 .lr-pip-line--done {
-  background: rgba(110, 207, 169, 0.50);
+  background: #6EE7B7;
 }
 
 .lr-pip-done .lr-pip-circle {
-  border-color: rgba(110, 207, 169, 0.70);
-  color: #6ECFA9;
+  border-color: #059669;
+  color: #FFFFFF;
+  background: #059669;
 }
 
 .lr-pip-done .lr-pip-dot {
-  background: #6ECFA9;
+  background: #FFFFFF;
 }
 
 .lr-pip-done .lr-pip-label {
-  color: rgba(110, 207, 169, 0.80);
+  color: #059669;
 }
 
 .lr-pip-rejected .lr-pip-circle {
-  border-color: rgba(239, 107, 107, 0.70);
-  color: #EF6B6B;
+  border-color: #DC2626;
+  color: #FFFFFF;
+  background: #DC2626;
 }
 
 .lr-pip-rejected .lr-pip-label {
-  color: rgba(239, 107, 107, 0.80);
+  color: #DC2626;
 }
 
 .lr-pip-active .lr-pip-circle {
-  border-color: rgba(201, 169, 110, 0.80);
-  color: #C9A96E;
-  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.12);
+  border-color: #4F46E5;
+  color: #4F46E5;
+  box-shadow: 0 0 0 4px #EEF2FF;
 }
 
 .lr-pip-active .lr-pip-dot {
-  background: #C9A96E;
+  background: #4F46E5;
   animation: lr-pulse 1.4s ease-in-out infinite;
 }
 
 .lr-pip-active .lr-pip-label {
-  color: #C9A96E;
+  color: #4F46E5;
+  font-weight: 700;
 }
 
 .lr-pip-future .lr-pip-circle {
-  border-color: rgba(240, 234, 224, 0.15);
-  color: rgba(240, 234, 224, 0.25);
+  border-color: #E2E8F0;
+  color: #94A3B8;
 }
 
 .lr-pip-future .lr-pip-label {
-  color: rgba(240, 234, 224, 0.25);
+  color: #94A3B8;
 }
 
 @keyframes lr-pulse {
@@ -1715,48 +1720,50 @@ onBeforeUnmount(() => {
 
   50% {
     opacity: .6;
-    transform: scale(0.8);
+    transform: scale(0.85);
   }
 }
 
 /* Previous approvals in action modal */
 .lr-prev-approvals {
-  margin-top: 16px;
+  margin-top: 18px;
 }
 
 .lr-prev-approval-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 7px 12px;
-  background: rgba(110, 207, 169, 0.05);
-  border: 1px solid rgba(110, 207, 169, 0.12);
-  margin-bottom: 4px;
+  padding: 8px 12px;
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  border-radius: 6px;
+  margin-bottom: 5px;
 }
 
 .lr-prev-role {
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .07em;
+  font-weight: 700;
+  letter-spacing: .06em;
   text-transform: uppercase;
-  color: rgba(240, 234, 224, 0.35);
+  color: #64748B;
   min-width: 70px;
 }
 
 .lr-prev-check {
-  color: #6ECFA9;
+  color: #059669;
   font-size: 13px;
+  font-weight: 700;
 }
 
 .lr-prev-name {
   font-size: 12px;
-  color: rgba(240, 234, 224, 0.70);
+  color: #334155;
   flex: 1;
 }
 
 .lr-prev-date {
   font-size: 10px;
-  color: rgba(240, 234, 224, 0.28);
+  color: #94A3B8;
   white-space: nowrap;
 }
 
@@ -1765,13 +1772,14 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  margin-top: 14px;
-  padding: 10px 14px;
-  background: rgba(133, 183, 235, 0.06);
-  border: 1px solid rgba(133, 183, 235, 0.18);
-  color: rgba(133, 183, 235, 0.75);
-  font-size: 11px;
-  line-height: 1.5;
+  margin-top: 16px;
+  padding: 12px 15px;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  color: #1E40AF;
+  font-size: 12px;
+  line-height: 1.55;
 }
 
 .lr-next-stage-hint svg {
@@ -1780,17 +1788,17 @@ onBeforeUnmount(() => {
 }
 
 .lr-next-stage-hint strong {
-  color: rgba(133, 183, 235, 0.95);
+  color: #1E3A8A;
 }
 
 .lr-next-stage-hint--final {
-  background: rgba(110, 207, 169, 0.06) !important;
-  border-color: rgba(110, 207, 169, 0.18) !important;
-  color: rgba(110, 207, 169, 0.75) !important;
+  background: #ECFDF5 !important;
+  border-color: #A7F3D0 !important;
+  color: #065F46 !important;
 }
 
 .lr-next-stage-hint--final strong {
-  color: rgba(110, 207, 169, 0.95) !important;
+  color: #064E3B !important;
 }
 
 /* ══════════════════════════════════════════════════
@@ -1816,18 +1824,18 @@ onBeforeUnmount(() => {
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
-  width: 32px;
+  width: 34px;
 }
 
 .lr-tl-circle {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   border: 2px solid;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #17171D;
+  background: #FFFFFF;
   flex-shrink: 0;
   transition: all .2s;
 }
@@ -1836,154 +1844,144 @@ onBeforeUnmount(() => {
   width: 2px;
   flex: 1;
   min-height: 24px;
-  background: rgba(240, 234, 224, 0.08);
+  background: #E2E8F0;
   margin: 4px 0;
 }
 
 .lr-tl-line--done {
-  background: rgba(110, 207, 169, 0.35);
+  background: #6EE7B7;
 }
 
 .lr-tl-active-dot {
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: #C9A96E;
+  background: #4F46E5;
   animation: lr-pulse 1.4s ease-in-out infinite;
 }
 
 .lr-tl-future-num {
   font-size: 11px;
-  color: rgba(240, 234, 224, 0.25);
+  font-weight: 600;
+  color: #94A3B8;
 }
 
 .lr-tl-done .lr-tl-circle {
-  border-color: rgba(110, 207, 169, 0.70);
-  color: #6ECFA9;
+  border-color: #059669;
+  color: #FFFFFF;
+  background: #059669;
 }
 
 .lr-tl-rejected .lr-tl-circle {
-  border-color: rgba(239, 107, 107, 0.70);
-  color: #EF6B6B;
+  border-color: #DC2626;
+  color: #FFFFFF;
+  background: #DC2626;
 }
 
 .lr-tl-active .lr-tl-circle {
-  border-color: rgba(201, 169, 110, 0.80);
-  color: #C9A96E;
-  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.10);
+  border-color: #4F46E5;
+  color: #4F46E5;
+  box-shadow: 0 0 0 4px #EEF2FF;
 }
 
 .lr-tl-future .lr-tl-circle {
-  border-color: rgba(240, 234, 224, 0.12);
-  color: rgba(240, 234, 224, 0.20);
+  border-color: #E2E8F0;
+  color: #CBD5E1;
 }
 
 .lr-tl-done .lr-tl-line {
-  background: rgba(110, 207, 169, 0.35);
+  background: #6EE7B7;
 }
 
 .lr-tl-content {
   flex: 1;
-  padding-bottom: 20px;
+  padding-bottom: 22px;
 }
 
 .lr-tl-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 6px;
+  margin-bottom: 7px;
   padding-top: 6px;
+  flex-wrap: wrap;
 }
 
-.lr-tl-role {
-  font-size: 13px;
-  font-weight: 600;
-  color: rgba(240, 234, 224, 0.78);
-}
-
-/* Timeline pills */
-.lr-tl-pill {
-  display: inline-block;
-  padding: 2px 8px;
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  border: 1px solid;
-}
 
 .lr-pill-approved {
-  color: #6ECFA9;
-  border-color: rgba(110, 207, 169, 0.35);
-  background: rgba(110, 207, 169, 0.08);
+  color: #065F46;
+  border-color: #A7F3D0;
+  background: #ECFDF5;
 }
 
 .lr-pill-rejected {
-  color: #EF6B6B;
-  border-color: rgba(239, 107, 107, 0.35);
-  background: rgba(239, 107, 107, 0.08);
+  color: #991B1B;
+  border-color: #FECACA;
+  background: #FEF2F2;
 }
 
 .lr-pill-active {
-  color: #E8B84B;
-  border-color: rgba(232, 184, 75, 0.35);
-  background: rgba(232, 184, 75, 0.08);
+  color: #92400E;
+  border-color: #FDE68A;
+  background: #FFFBEB;
 }
 
 .lr-pill-future {
-  color: rgba(240, 234, 224, 0.25);
-  border-color: rgba(240, 234, 224, 0.10);
-  background: transparent;
+  color: #94A3B8;
+  border-color: #E2E8F0;
+  background: #F8FAFC;
 }
 
 .lr-tl-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 6px;
+  gap: 14px;
+  margin-bottom: 7px;
 }
 
 .lr-tl-who,
 .lr-tl-when {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  color: rgba(240, 234, 224, 0.45);
+  gap: 5px;
+  font-size: 11.5px;
+  color: #64748B;
 }
 
 .lr-tl-note {
   display: flex;
   align-items: flex-start;
   gap: 6px;
-  font-size: 11px;
-  color: rgba(240, 234, 224, 0.50);
-  line-height: 1.5;
-  padding: 6px 10px;
-  border-left: 2px solid rgba(201, 169, 110, 0.22);
-  background: rgba(201, 169, 110, 0.04);
-  margin-top: 4px;
+  font-size: 11.5px;
+  color: #475569;
+  line-height: 1.55;
+  padding: 8px 12px;
+  border-left: 3px solid #C7D2FE;
+  background: #F8FAFC;
+  border-radius: 0 6px 6px 0;
+  margin-top: 5px;
 }
 
 .lr-tl-awaiting {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 11px;
-  color: rgba(232, 184, 75, 0.60);
+  font-size: 11.5px;
+  color: #B45309;
+  font-weight: 500;
 }
 
 .lr-tl-awaiting-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: rgba(232, 184, 75, 0.60);
+  background: #D97706;
   animation: lr-pulse 1.4s ease-in-out infinite;
 }
 
 .lr-tl-future {
-  font-size: 11px;
-  color: rgba(240, 234, 224, 0.22);
+  font-size: 11.5px;
+  color: #94A3B8;
   font-style: italic;
 }
 
@@ -1999,35 +1997,37 @@ onBeforeUnmount(() => {
 .lr-view-action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 10px 20px;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: .05em;
-  text-transform: uppercase;
+  gap: 8px;
+  padding: 11px 22px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: .03em;
   cursor: pointer;
+  border-radius: 8px;
   transition: all .14s;
   border: 1px solid;
 }
 
 .lr-view-action-approve {
-  background: rgba(110, 207, 169, 0.10);
-  border-color: rgba(110, 207, 169, 0.40);
-  color: #6ECFA9;
+  background: #059669;
+  border-color: #059669;
+  color: #FFFFFF;
 }
 
 .lr-view-action-approve:hover {
-  background: rgba(110, 207, 169, 0.20);
+  background: #047857;
+  border-color: #047857;
 }
 
 .lr-view-action-reject {
-  background: rgba(239, 107, 107, 0.10);
-  border-color: rgba(239, 107, 107, 0.40);
-  color: #EF6B6B;
+  background: #FFFFFF;
+  border-color: #FCA5A5;
+  color: #DC2626;
 }
 
 .lr-view-action-reject:hover {
-  background: rgba(239, 107, 107, 0.20);
+  background: #FEF2F2;
+  border-color: #DC2626;
 }
 
 /* ══════════════════════════════════════════════════
@@ -2036,7 +2036,7 @@ onBeforeUnmount(() => {
 .lr-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(15, 23, 42, 0.6);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -2046,13 +2046,14 @@ onBeforeUnmount(() => {
 }
 
 .lr-modal-shell {
-  background: #17171D;
-  border: 1px solid rgba(201, 169, 110, 0.25);
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
   width: 100%;
   max-width: 680px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 25px 65px rgba(15, 23, 42, 0.28), 0 4px 14px rgba(15, 23, 42, 0.10);
 }
 
 .lr-action-shell {
@@ -2067,66 +2068,55 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 26px 16px;
-  border-bottom: 1px solid rgba(201, 169, 110, 0.15);
+  padding: 22px 28px 18px;
+  border-bottom: 1px solid #E2E8F0;
   flex-shrink: 0;
 }
 
 .lr-modal-head-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .lr-modal-icon {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
-  background: rgba(201, 169, 110, 0.10);
-  border: 1px solid rgba(201, 169, 110, 0.28);
+  background: #EEF2FF;
+  border: 1px solid #C7D2FE;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #C9A96E;
+  color: #4F46E5;
 }
 
 .lr-icon-approve {
-  background: rgba(110, 207, 169, 0.10) !important;
-  border-color: rgba(110, 207, 169, 0.35) !important;
-  color: #6ECFA9 !important;
+  background: #ECFDF5 !important;
+  border-color: #A7F3D0 !important;
+  color: #059669 !important;
 }
 
 .lr-icon-reject {
-  background: rgba(239, 107, 107, 0.10) !important;
-  border-color: rgba(239, 107, 107, 0.35) !important;
-  color: #EF6B6B !important;
+  background: #FEF2F2 !important;
+  border-color: #FECACA !important;
+  color: #DC2626 !important;
 }
 
 .lr-icon-view {
-  background: rgba(133, 183, 235, 0.10) !important;
-  border-color: rgba(133, 183, 235, 0.28) !important;
-  color: rgba(133, 183, 235, 0.85) !important;
-}
-
-.lr-modal-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: #F0EAE0;
-  margin: 0;
-}
-
-.lr-modal-subtitle {
-  font-size: 11px;
-  color: rgba(240, 234, 224, 0.38);
-  margin: 3px 0 0;
+  background: #EFF6FF !important;
+  border-color: #BFDBFE !important;
+  color: #2563EB !important;
 }
 
 .lr-modal-close {
-  width: 30px;
-  height: 30px;
-  background: transparent;
-  border: 1px solid rgba(240, 234, 224, 0.12);
-  color: rgba(240, 234, 224, 0.40);
+  width: 32px;
+  height: 32px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  color: #64748B;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -2136,8 +2126,9 @@ onBeforeUnmount(() => {
 }
 
 .lr-modal-close:hover {
-  border-color: rgba(240, 234, 224, 0.28);
-  color: #F0EAE0;
+  border-color: #CBD5E1;
+  background: #F1F5F9;
+  color: #0F172A;
 }
 
 .lr-modal-close svg {
@@ -2146,33 +2137,35 @@ onBeforeUnmount(() => {
 }
 
 .lr-modal-notif {
-  padding: 10px 26px;
-  font-size: 12px;
+  padding: 12px 28px;
+  font-size: 12.5px;
+  font-weight: 500;
   flex-shrink: 0;
 }
 
 .lr-notif-success {
-  background: rgba(110, 207, 169, 0.12);
-  color: #6ECFA9;
-  border-bottom: 1px solid rgba(110, 207, 169, 0.20);
+  background: #ECFDF5;
+  color: #065F46;
+  border-bottom: 1px solid #A7F3D0;
 }
 
 .lr-notif-error {
-  background: rgba(239, 107, 107, 0.12);
-  color: #EF6B6B;
-  border-bottom: 1px solid rgba(239, 107, 107, 0.20);
+  background: #FEF2F2;
+  color: #991B1B;
+  border-bottom: 1px solid #FECACA;
 }
 
 .lr-modal-body {
-  padding: 24px 26px;
+  padding: 26px 28px;
   overflow-y: auto;
   max-height: calc(100vh - 240px);
 }
 
 /* Action summary card */
 .lr-action-summary {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(201, 169, 110, 0.15);
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -2180,8 +2173,8 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  padding: 11px 16px;
-  border-bottom: 1px solid rgba(201, 169, 110, 0.08);
+  padding: 12px 18px;
+  border-bottom: 1px solid #E2E8F0;
 }
 
 .lr-action-summary-row:last-child {
@@ -2190,19 +2183,19 @@ onBeforeUnmount(() => {
 
 .lr-action-summary-label {
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .07em;
+  font-weight: 700;
+  letter-spacing: .06em;
   text-transform: uppercase;
-  color: rgba(240, 234, 224, 0.32);
+  color: #94A3B8;
   min-width: 78px;
   flex-shrink: 0;
   padding-top: 1px;
 }
 
 .lr-action-summary-val {
-  font-size: 12px;
-  color: rgba(240, 234, 224, 0.72);
-  line-height: 1.5;
+  font-size: 13px;
+  color: #0F172A;
+  line-height: 1.55;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -2212,24 +2205,26 @@ onBeforeUnmount(() => {
 .lr-action-days {
   font-size: 11px;
   font-style: normal;
-  font-weight: 600;
-  font-family: 'Georgia', serif;
-  color: rgba(167, 139, 250, 0.85);
-  padding: 1px 7px;
-  border: 1px solid rgba(167, 139, 250, 0.25);
-  background: rgba(167, 139, 250, 0.08);
+  font-weight: 700;
+  color: #6D28D9;
+  padding: 2px 8px;
+  border: 1px solid #DDD6FE;
+  background: #F5F3FF;
+  border-radius: 4px;
 }
 
 .lr-action-dl-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
-  font-size: 11px;
-  background: rgba(201, 169, 110, 0.10);
-  border: 1px solid rgba(201, 169, 110, 0.35);
-  color: #C9A96E;
+  padding: 5px 11px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: #EEF2FF;
+  border: 1px solid #C7D2FE;
+  color: #4F46E5;
   cursor: pointer;
+  border-radius: 6px;
   transition: all .14s;
   max-width: 100%;
   overflow: hidden;
@@ -2238,7 +2233,8 @@ onBeforeUnmount(() => {
 }
 
 .lr-action-dl-btn:hover {
-  background: rgba(201, 169, 110, 0.20);
+  background: #4F46E5;
+  color: #FFFFFF;
 }
 
 /* ── View detail grid ── */
@@ -2246,7 +2242,8 @@ onBeforeUnmount(() => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0;
-  border: 1px solid rgba(201, 169, 110, 0.15);
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -2254,9 +2251,10 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  padding: 13px 16px;
-  border-bottom: 1px solid rgba(201, 169, 110, 0.08);
-  border-right: 1px solid rgba(201, 169, 110, 0.08);
+  padding: 14px 18px;
+  border-bottom: 1px solid #E2E8F0;
+  border-right: 1px solid #E2E8F0;
+  background: #FFFFFF;
 }
 
 .lr-view-row:nth-child(even) {
@@ -2268,38 +2266,25 @@ onBeforeUnmount(() => {
   border-right: none;
 }
 
-.lr-view-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .07em;
-  text-transform: uppercase;
-  color: rgba(240, 234, 224, 0.30);
-}
-
-.lr-view-val {
-  font-size: 13px;
-  color: rgba(240, 234, 224, 0.78);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
 .lr-view-sub {
   font-style: normal;
-  font-size: 10px;
-  color: rgba(133, 183, 235, 0.70);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #2563EB;
 }
 
 .lr-view-reason {
-  line-height: 1.55;
-  font-size: 12px;
+  line-height: 1.6;
+  font-size: 12.5px;
+  font-weight: 400;
+  color: #334155;
 }
 
 /* Attachment card */
 .lr-attachment-card {
-  border: 1px solid rgba(201, 169, 110, 0.20);
-  background: rgba(201, 169, 110, 0.03);
+  border: 1px solid #E2E8F0;
+  background: #FFFFFF;
+  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -2307,43 +2292,45 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 18px;
-  border-bottom: 1px solid rgba(201, 169, 110, 0.10);
+  padding: 16px 18px;
+  border-bottom: 1px solid #E2E8F0;
+  background: #F8FAFC;
 }
 
 .lr-attachment-file-icon {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid;
+  border-radius: 9px;
   transition: all .14s;
 }
 
 .lr-file-pdf {
-  background: rgba(239, 107, 107, 0.10);
-  border-color: rgba(239, 107, 107, 0.30);
-  color: #EF6B6B;
+  background: #FEF2F2;
+  border-color: #FECACA;
+  color: #DC2626;
 }
 
 .lr-file-word {
-  background: rgba(133, 183, 235, 0.10);
-  border-color: rgba(133, 183, 235, 0.30);
-  color: rgba(133, 183, 235, 0.85);
+  background: #EFF6FF;
+  border-color: #BFDBFE;
+  color: #2563EB;
 }
 
 .lr-file-image {
-  background: rgba(110, 207, 169, 0.10);
-  border-color: rgba(110, 207, 169, 0.30);
-  color: #6ECFA9;
+  background: #ECFDF5;
+  border-color: #A7F3D0;
+  color: #059669;
 }
 
 .lr-file-generic {
-  background: rgba(201, 169, 110, 0.10);
-  border-color: rgba(201, 169, 110, 0.30);
-  color: #C9A96E;
+  background: #EEF2FF;
+  border-color: #C7D2FE;
+  color: #4F46E5;
 }
 
 .lr-attachment-meta {
@@ -2355,17 +2342,18 @@ onBeforeUnmount(() => {
 }
 
 .lr-attachment-name {
-  font-size: 13px;
-  color: rgba(240, 234, 224, 0.80);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #0F172A;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .lr-attachment-type {
-  font-size: 10px;
-  color: rgba(240, 234, 224, 0.30);
-  letter-spacing: .05em;
+  font-size: 10.5px;
+  color: #94A3B8;
+  letter-spacing: .04em;
   text-transform: uppercase;
 }
 
@@ -2373,24 +2361,26 @@ onBeforeUnmount(() => {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 8px 16px;
+  padding: 9px 18px;
   flex-shrink: 0;
-  background: rgba(201, 169, 110, 0.12);
-  border: 1px solid rgba(201, 169, 110, 0.42);
-  color: #C9A96E;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: .04em;
+  background: #4F46E5;
+  border: 1px solid #4F46E5;
+  border-radius: 8px;
+  color: #FFFFFF;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: .02em;
   cursor: pointer;
   transition: all .14s;
 }
 
 .lr-attachment-dl-btn:hover:not(:disabled) {
-  background: rgba(201, 169, 110, 0.22);
+  background: #4338CA;
+  border-color: #4338CA;
 }
 
 .lr-attachment-dl-btn:disabled {
-  opacity: .5;
+  opacity: .55;
   cursor: not-allowed;
 }
 
@@ -2403,7 +2393,7 @@ onBeforeUnmount(() => {
   width: 100%;
   max-height: 420px;
   object-fit: contain;
-  background: rgba(0, 0, 0, 0.40);
+  background: #0F172A;
   display: block;
 }
 
@@ -2421,30 +2411,33 @@ onBeforeUnmount(() => {
 .lr-attachment-preview-trigger {
   display: flex;
   justify-content: center;
-  padding: 16px;
-  border-top: 1px solid rgba(201, 169, 110, 0.10);
-  background: rgba(0, 0, 0, 0.15);
+  padding: 18px;
+  border-top: 1px solid #E2E8F0;
+  background: #F8FAFC;
 }
 
 .lr-preview-btn {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 8px 18px;
-  font-size: 12px;
-  background: rgba(133, 183, 235, 0.08);
-  border: 1px solid rgba(133, 183, 235, 0.28);
-  color: rgba(133, 183, 235, 0.80);
+  padding: 9px 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: #FFFFFF;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  color: #2563EB;
   cursor: pointer;
   transition: all .14s;
 }
 
 .lr-preview-btn:hover:not(:disabled) {
-  background: rgba(133, 183, 235, 0.16);
+  background: #EFF6FF;
+  border-color: #93C5FD;
 }
 
 .lr-preview-btn:disabled {
-  opacity: .5;
+  opacity: .55;
   cursor: not-allowed;
 }
 
@@ -2452,68 +2445,61 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 18px;
-  border: 1px dashed rgba(240, 234, 224, 0.10);
-  color: rgba(240, 234, 224, 0.22);
-  font-size: 12px;
+  padding: 20px;
+  border: 1px dashed #E2E8F0;
+  border-radius: 10px;
+  background: #F8FAFC;
+  color: #94A3B8;
+  font-size: 12.5px;
 }
 
 /* ══════════════════════════════════════════════════
    FORM FIELDS
 ══════════════════════════════════════════════════ */
 .lr-form-section-title {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .10em;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
   text-transform: uppercase;
-  color: rgba(201, 169, 110, 0.70);
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(201, 169, 110, 0.15);
-  margin-bottom: 18px;
+  color: #4F46E5;
+  padding-bottom: 11px;
+  border-bottom: 1px solid #E2E8F0;
+  margin-bottom: 20px;
 }
 
 .lr-form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
+  gap: 18px;
 }
 
 .lr-form-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 
 .lr-field-full {
   grid-column: 1 / -1;
 }
 
-.lr-form-label {
-  font-size: 11px;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  color: rgba(240, 234, 224, 0.45);
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px;
-}
 
 .lr-req {
-  color: rgba(239, 107, 107, 0.80);
+  color: #DC2626;
 }
 
 .lr-form-input,
 .lr-form-select,
 .lr-form-textarea {
-  background: rgba(18, 18, 24, 0.98);
-  border: 1px solid rgba(201, 169, 110, 0.22);
-  color: #F0EAE0;
-  font-size: 13px;
-  padding: 10px 13px;
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  color: #0F172A;
+  font-size: 13.5px;
+  padding: 11px 14px;
   outline: none;
   font-family: inherit;
-  transition: border-color .14s;
+  transition: border-color .14s, box-shadow .14s;
   box-sizing: border-box;
   width: 100%;
 }
@@ -2521,60 +2507,64 @@ onBeforeUnmount(() => {
 .lr-form-input:focus,
 .lr-form-select:focus,
 .lr-form-textarea:focus {
-  border-color: rgba(201, 169, 110, 0.55);
+  border-color: #4F46E5;
+  box-shadow: 0 0 0 3px #EEF2FF;
 }
 
 .lr-form-input::placeholder,
 .lr-form-textarea::placeholder {
-  color: rgba(240, 234, 224, 0.22);
+  color: #94A3B8;
 }
 
 .lr-form-input:disabled,
 .lr-form-select:disabled {
-  opacity: .45;
+  opacity: .6;
   cursor: not-allowed;
+  background: #F1F5F9;
 }
 
 .lr-form-select {
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
-  padding-right: 30px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(201,169,110,0.55)'/%3E%3C/svg%3E");
+  padding-right: 34px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2364748B'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-color: rgba(18, 18, 24, 0.98);
+  background-position: right 12px center;
+  background-color: #FFFFFF;
 }
 
 .lr-form-select option {
-  background: #17171D;
-  color: #F0EAE0;
+  background: #FFFFFF;
+  color: #0F172A;
 }
 
 .lr-form-textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 84px;
 }
 
-.lr-field-hint {
-  font-size: 10px;
-  color: rgba(240, 234, 224, 0.28);
-  letter-spacing: .02em;
-}
+/* .text-small {
+  font-size: 11px;
+  color: #94A3B8;
+  letter-spacing: .01em;
+} */
 
 .lr-hint-warn {
-  color: rgba(232, 184, 75, 0.70) !important;
+  color: #B45309 !important;
+  font-weight: 500;
 }
 
 .lr-duration-strip {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
   flex-wrap: wrap;
-  margin-top: 16px;
-  padding: 14px 18px;
-  background: rgba(201, 169, 110, 0.05);
-  border: 1px solid rgba(201, 169, 110, 0.15);
+  margin-top: 18px;
+  padding: 16px 20px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
 }
 
 .lr-dur-item {
@@ -2583,57 +2573,53 @@ onBeforeUnmount(() => {
   gap: 3px;
 }
 
-.lr-dur-label {
-  font-size: 10px;
-  letter-spacing: .07em;
-  text-transform: uppercase;
-  color: rgba(240, 234, 224, 0.28);
-}
-
 .lr-dur-value {
-  font-size: 13px;
-  color: rgba(240, 234, 224, 0.78);
+  font-size: 13.5px;
+  color: #0F172A;
+  font-weight: 500;
 }
 
 .lr-dur-highlight {
-  font-size: 18px;
-  font-weight: 600;
-  color: #C9A96E;
-  font-family: 'Georgia', serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: #4F46E5;
 }
 
 .lr-dur-arrow {
   font-size: 16px;
-  color: rgba(201, 169, 110, 0.38);
+  color: #94A3B8;
   margin-top: 14px;
 }
 
 .lr-dur-divider {
   width: 1px;
   height: 36px;
-  background: rgba(201, 169, 110, 0.18);
+  background: #E2E8F0;
   margin: 0 4px;
 }
 
 .lr-doc-dropzone {
-  border: 1px dashed rgba(201, 169, 110, 0.28);
+  border: 2px dashed #CBD5E1;
+  border-radius: 10px;
   position: relative;
   cursor: pointer;
   transition: border-color .15s, background .15s;
-  min-height: 96px;
+  min-height: 100px;
   display: flex;
   align-items: center;
+  background: #F8FAFC;
 }
 
 .lr-doc-dropzone:hover,
 .lr-doc-dropzone--active {
-  border-color: rgba(201, 169, 110, 0.58);
-  background: rgba(201, 169, 110, 0.04);
+  border-color: #4F46E5;
+  background: #EEF2FF;
 }
 
 .lr-doc-dropzone--filled {
   border-style: solid;
-  border-color: rgba(201, 169, 110, 0.32);
+  border-color: #CBD5E1;
+  background: #FFFFFF;
 }
 
 .lr-doc-file-input {
@@ -2651,13 +2637,13 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 26px;
+  padding: 28px;
   width: 100%;
   text-align: center;
 }
 
 .lr-doc-icon {
-  color: rgba(201, 169, 110, 0.22);
+  color: #94A3B8;
 }
 
 .lr-doc-placeholder-text {
@@ -2667,14 +2653,15 @@ onBeforeUnmount(() => {
 }
 
 .lr-doc-placeholder-main {
-  font-size: 12px;
-  color: rgba(240, 234, 224, 0.42);
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
 }
 
 .lr-doc-placeholder-sub {
   font-size: 10px;
-  color: rgba(240, 234, 224, 0.20);
-  letter-spacing: .07em;
+  color: #94A3B8;
+  letter-spacing: .06em;
   text-transform: uppercase;
 }
 
@@ -2682,20 +2669,21 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 18px;
+  padding: 15px 18px;
   width: 100%;
 }
 
 .lr-doc-selected-icon {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   flex-shrink: 0;
-  background: rgba(201, 169, 110, 0.10);
-  border: 1px solid rgba(201, 169, 110, 0.25);
+  background: #EEF2FF;
+  border: 1px solid #C7D2FE;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #C9A96E;
+  color: #4F46E5;
 }
 
 .lr-doc-selected-info {
@@ -2707,25 +2695,27 @@ onBeforeUnmount(() => {
 }
 
 .lr-doc-selected-name {
-  font-size: 13px;
-  color: rgba(240, 234, 224, 0.78);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #0F172A;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .lr-doc-selected-size {
-  font-size: 10px;
-  color: rgba(240, 234, 224, 0.28);
+  font-size: 10.5px;
+  color: #94A3B8;
 }
 
 .lr-doc-remove {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   flex-shrink: 0;
-  background: rgba(239, 107, 107, 0.10);
-  border: 1px solid rgba(239, 107, 107, 0.28);
-  color: rgba(239, 107, 107, 0.70);
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 7px;
+  color: #DC2626;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -2735,21 +2725,22 @@ onBeforeUnmount(() => {
 }
 
 .lr-doc-remove:hover {
-  background: rgba(239, 107, 107, 0.18);
-  color: #EF6B6B;
+  background: #DC2626;
+  color: #FFFFFF;
 }
 
 .lr-existing-file {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 7px;
-  margin-top: 8px;
-  font-size: 11px;
-  color: rgba(240, 234, 224, 0.38);
+  margin-top: 9px;
+  font-size: 11.5px;
+  color: #475569;
 }
 
 .lr-existing-file svg {
-  color: rgba(201, 169, 110, 0.40);
+  color: #4F46E5;
   flex-shrink: 0;
 }
 
@@ -2758,77 +2749,88 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 10px;
-  padding: 14px 26px;
-  border-top: 1px solid rgba(201, 169, 110, 0.12);
+  gap: 12px;
+  padding: 16px 28px;
+  border-top: 1px solid #E2E8F0;
+  background: #F8FAFC;
   flex-shrink: 0;
+  border-radius: 0 0 14px 14px;
 }
 
 .lr-btn-cancel {
-  padding: 9px 20px;
-  background: transparent;
-  border: 1px solid rgba(240, 234, 224, 0.15);
-  color: rgba(240, 234, 224, 0.50);
-  font-size: 12px;
+  padding: 10px 22px;
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  color: #475569;
+  font-size: 12.5px;
+  font-weight: 600;
   cursor: pointer;
-  letter-spacing: .05em;
+  letter-spacing: .02em;
   transition: all .13s;
 }
 
 .lr-btn-cancel:hover {
-  border-color: rgba(240, 234, 224, 0.30);
-  color: rgba(240, 234, 224, 0.75);
+  border-color: #94A3B8;
+  background: #F1F5F9;
+  color: #0F172A;
 }
 
 .lr-btn-submit {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 9px 22px;
-  background: rgba(201, 169, 110, 0.14);
-  border: 1px solid rgba(201, 169, 110, 0.50);
-  color: #C9A96E;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: .06em;
-  text-transform: uppercase;
+  gap: 8px;
+  padding: 10px 24px;
+  background: #4F46E5;
+  border: 1px solid #4F46E5;
+  border-radius: 8px;
+  color: #FFFFFF;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: .03em;
   cursor: pointer;
   transition: all .14s;
+  box-shadow: 0 1px 2px rgba(79, 70, 229, 0.20);
 }
 
 .lr-btn-submit:hover:not(:disabled) {
-  background: rgba(201, 169, 110, 0.22);
+  background: #4338CA;
+  border-color: #4338CA;
 }
 
 .lr-btn-submit:disabled {
-  opacity: .45;
+  opacity: .55;
   cursor: not-allowed;
 }
 
 .lr-btn-approve-submit {
-  background: rgba(110, 207, 169, 0.12) !important;
-  border-color: rgba(110, 207, 169, 0.45) !important;
-  color: #6ECFA9 !important;
+  background: #059669 !important;
+  border-color: #059669 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 1px 2px rgba(5, 150, 105, 0.20);
 }
 
 .lr-btn-approve-submit:hover:not(:disabled) {
-  background: rgba(110, 207, 169, 0.22) !important;
+  background: #047857 !important;
+  border-color: #047857 !important;
 }
 
 .lr-btn-reject-submit {
-  background: rgba(239, 107, 107, 0.12) !important;
-  border-color: rgba(239, 107, 107, 0.45) !important;
-  color: #EF6B6B !important;
+  background: #DC2626 !important;
+  border-color: #DC2626 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 1px 2px rgba(220, 38, 38, 0.20);
 }
 
 .lr-btn-reject-submit:hover:not(:disabled) {
-  background: rgba(239, 107, 107, 0.20) !important;
+  background: #B91C1C !important;
+  border-color: #B91C1C !important;
 }
 
 .lr-spinner-sm {
   width: 13px;
   height: 13px;
-  border: 2px solid rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.35);
   border-top-color: currentColor;
   border-radius: 50%;
   animation: lrspin .6s linear infinite;
@@ -2837,6 +2839,120 @@ onBeforeUnmount(() => {
 @keyframes lrspin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE — tablet & mobile
+══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .lr-modal-backdrop {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .lr-modal-shell {
+    max-width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  .lr-modal-foot {
+    border-radius: 0;
+  }
+
+  .lr-modal-head {
+    padding: 18px 18px 14px;
+  }
+
+  .lr-modal-body {
+    padding: 18px;
+    max-height: none;
+  }
+
+  .lr-modal-foot {
+    padding: 14px 18px;
+    flex-wrap: wrap;
+  }
+
+  .lr-btn-cancel,
+  .lr-btn-submit {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .lr-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lr-view-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lr-view-row {
+    border-right: none !important;
+  }
+
+  .lr-pipeline-progress {
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .lr-pip-label {
+    font-size: 9.5px;
+    white-space: normal;
+    max-width: 70px;
+  }
+
+  .lr-view-action-row {
+    flex-direction: column;
+  }
+
+  .lr-view-action-btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .lr-action-summary-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .lr-action-summary-label {
+    min-width: 0;
+  }
+
+  .lr-attachment-info {
+    flex-wrap: wrap;
+  }
+
+  .lr-attachment-dl-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .lr-modal-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .lr-dur-arrow {
+    display: none;
+  }
+
+  .lr-dur-divider {
+    display: none;
+  }
+
+  .lr-pip-circle,
+  .lr-tl-circle {
+    width: 28px;
+    height: 28px;
   }
 }
 </style>

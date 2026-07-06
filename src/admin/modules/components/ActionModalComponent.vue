@@ -40,8 +40,8 @@
                   </svg>
                 </div>
                 <div>
-                  <p class="modal-mode-label">{{ modeLabel }}</p>
-                  <h3 class="modal-title" :id="`modal-title-${uid}`">{{ computedTitle }}</h3>
+                  <p class="text-subtitle">{{ modeLabel }}</p>
+                  <h3 class="text-card-title" :id="`modal-title-${uid}`">{{ computedTitle }}</h3>
                 </div>
               </div>
 
@@ -309,7 +309,7 @@
                             clip-rule="evenodd" />
                         </svg>
                         <span>{{ isFileObject(formData[field.name]) ? formData[field.name].name : 'Choose file'
-                        }}</span>
+                          }}</span>
                       </label>
                       <input type="file" :id="field.name" class="form-file-hidden" :accept="field.accept"
                         :multiple="field.multiple" :disabled="field.disabled || loading"
@@ -338,7 +338,7 @@
 
                   <!-- Description -->
                   <small v-if="field.description && !field.hidden" class="form-description">{{ field.description
-                  }}</small>
+                    }}</small>
 
                   <!-- Field error -->
                   <Transition name="alert">
@@ -361,7 +361,7 @@
           <div class="modal-footer">
             <button type="button" class="modal-btn modal-btn--cancel" @click="handleClose" :disabled="loading">{{
               cancelLabel
-            }}</button>
+              }}</button>
 
             <button type="button" class="modal-btn" :class="confirmBtnClass" @click="handleConfirm"
               :disabled="loading || (mode !== 'delete' && mode !== 'view' && !isFormValid)">
