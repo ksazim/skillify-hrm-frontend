@@ -11,8 +11,9 @@
           </svg>
         </div>
         <div>
-          <h1 class="page-title">Company Management</h1>
-          <p class="page-subtitle">Manage companies, branches, departments and roles</p>
+          <h1 class="text-page-title">Company Management</h1>
+          <p class="text-subtitle">Manage companies, branches, departments and
+            roles</p>
         </div>
       </div>
       <div class="header-right">
@@ -81,98 +82,129 @@
       <button class="btn-retry" @click="loadData">Retry</button>
     </div>
 
-    <!-- Company Cards Grid -->
-    <div v-else class="cards-grid">
-      <div v-for="company in filteredCompanies" :key="company.id" class="company-card"
-        :class="{ 'card-inactive': company.status !== 'active' }">
-        <div class="card-header">
-          <div class="card-logo-wrap">
-            <img v-if="company.logo" :src="getFileUrl(company.logo)" alt="logo" class="card-logo" />
-            <div v-else class="card-logo-placeholder">
-              <svg viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd"
-                  d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12H4V4zm2 1h2v2H6V5zm0 4h2v2H6V9zm4-4h2v2h-2V5z"
-                  clip-rule="evenodd" />
-              </svg>
-            </div>
-          </div>
-          <div class="card-title-block">
-            <h3 class="card-name">{{ company.name }}</h3>
-            <span v-if="company.industry" class="card-industry">{{ company.industry }}</span>
-          </div>
-          <div class="card-status-wrap">
-            <span class="card-status" :class="company.status === 'active' ? 'status-active' : 'status-inactive'">
-              {{ company.status === 'active' ? 'Active' : 'Inactive' }}
-            </span>
-          </div>
-        </div>
+    <!-- Company Data Table -->
+    <div v-else class="table-container">
+      <div class="table-scroll">
+        <table class="company-table">
+          <thead>
+            <tr>
+              <th class="col-company">Company</th>
+              <th class="col-contact">Contact</th>
+              <th class="col-location">Location</th>
+              <th class="col-stat">Branches</th>
+              <th class="col-stat">Departments</th>
+              <th class="col-stat">Roles</th>
+              <th class="col-status">Status</th>
+              <th class="col-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="company in filteredCompanies" :key="company.id" class="table-row"
+              :class="{ 'row-inactive': company.status !== 'active' }">
+              <td class="col-company" data-label="Company">
+                <div class="company-cell">
+                  <div class="company-cell-logo">
+                    <img v-if="company.logo" :src="getFileUrl(company.logo)" alt="logo" class="cell-logo-img" />
+                    <div v-else class="cell-logo-placeholder">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                          d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12H4V4zm2 1h2v2H6V5zm0 4h2v2H6V9zm4-4h2v2h-2V5z"
+                          clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="company-cell-text">
+                    <span class="company-cell-name">{{ company.name }}</span>
+                    <span v-if="company.industry" class="company-cell-industry">{{ company.industry }}</span>
+                  </div>
+                </div>
+              </td>
 
-        <div class="card-meta">
-          <div v-if="company.email" class="meta-item">
-            <svg viewBox="0 0 20 20" fill="currentColor">
-              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-            </svg>
-            <span>{{ company.email }}</span>
-          </div>
-          <div v-if="company.phone" class="meta-item">
-            <svg viewBox="0 0 20 20" fill="currentColor">
-              <path
-                d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-            </svg>
-            <span>{{ company.phone }}</span>
-          </div>
-          <div v-if="company.country" class="meta-item">
-            <svg viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd"
-                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                clip-rule="evenodd" />
-            </svg>
-            <span>{{ company.city ? company.city + ', ' : '' }}{{ company.country }}</span>
-          </div>
-        </div>
+              <td class="col-contact" data-label="Contact">
+                <div class="contact-cell">
+                  <span v-if="company.email" class="contact-line">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                    {{ company.email }}
+                  </span>
+                  <span v-if="company.phone" class="contact-line">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                      <path
+                        d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                    </svg>
+                    {{ company.phone }}
+                  </span>
+                  <span v-if="!company.email && !company.phone" class="cell-muted">—</span>
+                </div>
+              </td>
 
-        <div class="card-stats">
-          <button class="stat-chip" @click="openModal(company, 'branches')">
-            <span class="stat-num">{{ company.branches?.length ?? 0 }}</span>
-            <span class="stat-lbl">Branches</span>
-          </button>
-          <button class="stat-chip" @click="openModal(company, 'departments')">
-            <span class="stat-num">{{ company.departments?.length ?? 0 }}</span>
-            <span class="stat-lbl">Departments</span>
-          </button>
-          <button class="stat-chip" @click="openModal(company, 'roles')">
-            <span class="stat-num">{{ company.roles?.length ?? 0 }}</span>
-            <span class="stat-lbl">Roles</span>
-          </button>
-        </div>
+              <td class="col-location" data-label="Location">
+                <span v-if="company.country" class="location-cell">
+                  <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                      d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                      clip-rule="evenodd" />
+                  </svg>
+                  {{ company.city ? company.city + ', ' : '' }}{{ company.country }}
+                </span>
+                <span v-else class="cell-muted">—</span>
+              </td>
 
-        <div class="card-footer">
-          <button class="card-btn btn-view-c" @click="openModal(company, 'company-view')">
-            <svg viewBox="0 0 20 20" fill="currentColor">
-              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-              <path fill-rule="evenodd"
-                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                clip-rule="evenodd" />
-            </svg>
-            View
-          </button>
-          <button class="card-btn btn-edit-c" @click="openModal(company, 'company-edit')">
-            <svg viewBox="0 0 20 20" fill="currentColor">
-              <path
-                d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-            </svg>
-            Edit
-          </button>
-          <button class="card-btn btn-delete-c" @click="confirmDelete(company)">
-            <svg viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd"
-                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                clip-rule="evenodd" />
-            </svg>
-            Delete
-          </button>
-        </div>
+              <td class="col-stat" data-label="Branches">
+                <button class="stat-pill" @click="openModal(company, 'branches')">
+                  {{ company.branches?.length ?? 0 }}
+                </button>
+              </td>
+              <td class="col-stat" data-label="Departments">
+                <button class="stat-pill" @click="openModal(company, 'departments')">
+                  {{ company.departments?.length ?? 0 }}
+                </button>
+              </td>
+              <td class="col-stat" data-label="Roles">
+                <button class="stat-pill" @click="openModal(company, 'roles')">
+                  {{ company.roles?.length ?? 0 }}
+                </button>
+              </td>
+
+              <td class="col-status" data-label="Status">
+                <span class="table-status" :class="company.status === 'active' ? 'status-active' : 'status-inactive'">
+                  {{ company.status === 'active' ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+
+              <td class="col-actions" data-label="Actions">
+                <div class="row-actions">
+                  <button class="row-btn row-btn-view" title="View" @click="openModal(company, 'company-view')">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                      <path fill-rule="evenodd"
+                        d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                        clip-rule="evenodd" />
+                    </svg>
+                    <span class="row-btn-label">View</span>
+                  </button>
+                  <button class="row-btn row-btn-edit" title="Edit" @click="openModal(company, 'company-edit')">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                      <path
+                        d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                    <span class="row-btn-label">Edit</span>
+                  </button>
+                  <button class="row-btn row-btn-delete" title="Delete" @click="confirmDelete(company)">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd"
+                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                        clip-rule="evenodd" />
+                    </svg>
+                    <span class="row-btn-label">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <div v-if="!isLoading && filteredCompanies.length === 0 && companies.length === 0" class="state-empty">
@@ -209,8 +241,8 @@
                 </svg>
               </div>
               <div>
-                <h2 class="modal-title">{{ modalTitle }}</h2>
-                <p v-if="selectedCompany" class="modal-company-name">{{ selectedCompany.name }}</p>
+                <h2 class="text-card-title">{{ modalTitle }}</h2>
+                <p v-if="selectedCompany" class="text-subtitle">{{ selectedCompany.name }}</p>
               </div>
             </div>
             <button class="modal-close" @click="closeModal">
@@ -306,7 +338,7 @@
       <div v-if="showDeleteConfirm" class="modal-backdrop" @click.self="showDeleteConfirm = false">
         <div class="modal-shell modal-sm">
           <div class="modal-head">
-            <h2 class="modal-title danger-title">Delete Company</h2>
+            <h2 class="text-card-title danger-title">Delete Company</h2>
             <button class="modal-close" @click="showDeleteConfirm = false">
               <svg viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
@@ -1839,7 +1871,6 @@ function buildFormData(data) {
 onMounted(() => loadData())
 </script>
 
-
 <style scoped>
 /* ══════════════════════════════════════════════════
    DESIGN TOKENS
@@ -1901,7 +1932,7 @@ onMounted(() => loadData())
   padding: 28px 32px;
   min-height: 100vh;
   color: var(--text-1);
-  background: var(--bg);
+  /* background: var(--bg); */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   box-sizing: border-box;
 }
@@ -1941,20 +1972,20 @@ onMounted(() => loadData())
   flex-shrink: 0;
 }
 
-.page-title {
+/* .page-title {
   font-size: 28px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: var(--text-primary);
+  color: var(--text-1);
   margin: 0;
   line-height: 1.2;
-}
+} */
 
-.page-subtitle {
+/* .page-subtitle {
   font-size: 13px;
   color: var(--text-3);
   margin: 3px 0 0;
-}
+} */
 
 .header-stats {
   display: flex;
@@ -2167,250 +2198,307 @@ onMounted(() => loadData())
 }
 
 /* ══════════════════════════════════════════════════
-   CARDS GRID
+   ENTERPRISE DATA TABLE
 ══════════════════════════════════════════════════ */
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 18px;
-}
-
-.company-card {
+.table-container {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xs);
-  transition: border-color .15s, box-shadow .15s, transform .15s;
-  display: flex;
-  flex-direction: column;
   overflow: hidden;
 }
 
-.company-card:hover {
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.card-inactive {
-  opacity: .68;
+.company-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 880px;
 }
 
-.card-header {
+.company-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: left;
+  padding: 13px 16px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.company-table thead th.col-stat {
+  text-align: center;
+}
+
+.company-table thead th.col-actions {
+  text-align: right;
+}
+
+.table-row td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-2);
+  vertical-align: middle;
+  background: var(--surface);
+  transition: background .13s;
+}
+
+.table-row:last-child td {
+  border-bottom: none;
+}
+
+.table-row:hover td {
+  background: var(--primary-light);
+}
+
+.table-row.row-inactive td {
+  color: var(--text-3);
+}
+
+.table-row.row-inactive .company-cell-name {
+  color: var(--text-2);
+}
+
+/* Company cell */
+.company-cell {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
-  padding: 18px 18px 0;
+  min-width: 220px;
 }
 
-.card-logo-wrap {
+.company-cell-logo {
   flex-shrink: 0;
 }
 
-.card-logo {
-  width: 44px;
-  height: 44px;
+.cell-logo-img {
+  width: 38px;
+  height: 38px;
   object-fit: contain;
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
-  padding: 4px;
+  padding: 3px;
 }
 
-.card-logo-placeholder {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
+.cell-logo-placeholder {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
   border: 1px dashed var(--border-strong);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-3);
+  flex-shrink: 0;
 }
 
-.card-logo-placeholder svg {
-  width: 20px;
-  height: 20px;
+.cell-logo-placeholder svg {
+  width: 17px;
+  height: 17px;
 }
 
-.card-title-block {
-  flex: 1;
+.company-cell-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   min-width: 0;
 }
 
-.card-name {
-  font-size: 15px;
+.company-cell-name {
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--text-1);
-  margin: 0 0 5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 220px;
 }
 
-.card-industry {
+.company-cell-industry {
   display: inline-block;
-  font-size: 10.5px;
+  align-self: flex-start;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: .04em;
+  letter-spacing: .03em;
   border-radius: 999px;
   background: var(--primary-light);
   border: 1px solid var(--primary-border);
   color: var(--primary);
-  padding: 2px 9px;
+  padding: 2px 8px;
   white-space: nowrap;
 }
 
-.card-status-wrap {
-  flex-shrink: 0;
-  margin-left: auto;
+/* Contact cell */
+.contact-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 170px;
 }
 
-.card-status {
+.contact-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.contact-line svg {
+  width: 12px;
+  height: 12px;
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+
+/* Location cell */
+.location-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.location-cell svg {
+  width: 13px;
+  height: 13px;
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+
+.cell-muted {
+  color: var(--text-3);
+  font-size: 12.5px;
+}
+
+/* Stat pill (branches / departments / roles count) */
+.col-stat {
+  text-align: center;
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  padding: 5px 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-light);
+  border: 1px solid var(--primary-border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all .13s;
+}
+
+.stat-pill:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+/* Status badge */
+.col-status {
+  white-space: nowrap;
+}
+
+.table-status {
+  display: inline-block;
   font-size: 10.5px;
   font-weight: 600;
   letter-spacing: .04em;
   border-radius: 999px;
   padding: 3px 10px;
   border: 1px solid;
+  white-space: nowrap;
 }
 
-.status-active {
+.table-status.status-active {
   color: var(--green-text);
   border-color: var(--green-border);
   background: var(--green-bg);
 }
 
-.status-inactive {
+.table-status.status-inactive {
   color: var(--text-3);
   border-color: var(--border);
   background: var(--surface-2);
 }
 
-.card-meta {
-  padding: 14px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1;
+/* Row actions */
+.col-actions {
+  text-align: right;
 }
 
-.meta-item {
+.row-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12.5px;
-  color: var(--text-2);
-  overflow: hidden;
-}
-
-.meta-item svg {
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-  color: var(--text-3);
-}
-
-.meta-item span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.card-stats {
-  display: flex;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  background: var(--surface-2);
-}
-
-.stat-chip {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 12px 8px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: background .13s;
-  gap: 3px;
-  border-right: 1px solid var(--border);
-}
-
-.stat-chip:last-child {
-  border-right: none;
-}
-
-.stat-chip:hover {
-  background: var(--surface);
-}
-
-.stat-num {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--primary);
-  line-height: 1;
-}
-
-.stat-lbl {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-
-.card-footer {
-  display: flex;
-}
-
-.card-btn {
-  flex: 1;
-  padding: 11px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  background: var(--surface);
-  border: none;
-  border-top: 1px solid var(--border);
-  cursor: pointer;
-  transition: background .13s, color .13s;
 }
 
-.card-btn svg {
+.row-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all .13s;
+  white-space: nowrap;
+}
+
+.row-btn svg {
   width: 13px;
   height: 13px;
+  flex-shrink: 0;
 }
 
-.btn-view-c {
+.row-btn-view {
   color: var(--blue-text);
-  border-right: 1px solid var(--border);
 }
 
-.btn-view-c:hover {
+.row-btn-view:hover {
   background: var(--blue-bg);
+  border-color: var(--blue-border);
 }
 
-.btn-edit-c {
+.row-btn-edit {
   color: var(--text-2);
-  border-right: 1px solid var(--border);
 }
 
-.btn-edit-c:hover {
-  background: var(--surface-2);
+.row-btn-edit:hover {
+  background: var(--primary-light);
+  border-color: var(--primary-border);
   color: var(--primary);
 }
 
-.btn-delete-c {
+.row-btn-delete {
   color: var(--red-text);
 }
 
-.btn-delete-c:hover {
+.row-btn-delete:hover {
   background: var(--red-bg);
+  border-color: var(--red-border);
 }
 
 /* ══════════════════════════════════════════════════
@@ -2441,13 +2529,15 @@ onMounted(() => loadData())
    WEEKEND PANEL
 ══════════════════════════════════════════════════ */
 :deep(.weekend-info) {
-  font-size: 12.5px;
-  color: var(--text-2);
   margin-bottom: 18px;
   padding: 11px 14px;
   background: var(--primary-light);
   border: 1px solid var(--primary-border);
   border-radius: var(--radius-md);
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-2);
 }
 
 :deep(.weekend-grid) {
@@ -2584,17 +2674,6 @@ onMounted(() => loadData())
    MODAL
 ══════════════════════════════════════════════════ */
 .modal-backdrop {
-  /* ── Re-declare design tokens here ──────────────────────
-     Both modals use <Teleport to="body">, which moves this
-     entire subtree out from under .company-page in the real
-     DOM. CSS custom properties cascade through the live DOM
-     tree, not the component tree, so once teleported this
-     subtree can no longer see .company-page's variables —
-     every var(--surface), var(--border), etc. below would
-     silently resolve to nothing and the browser drops those
-     declarations, leaving the modal transparent. Redeclaring
-     the full token set here makes the teleported subtree
-     self-sufficient regardless of where it lives in the DOM. */
   --primary: #4F46E5;
   --primary-hover: #4338CA;
   --primary-light: #EEF2FF;
@@ -2713,13 +2792,6 @@ onMounted(() => loadData())
   width: 18px;
   height: 18px;
   color: var(--text-3);
-}
-
-.modal-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text-1);
-  margin: 0;
 }
 
 .modal-company-name {
@@ -2873,17 +2945,24 @@ onMounted(() => loadData())
 }
 
 :deep(.view-label) {
-  font-size: 10.5px;
+  font-family: var(--font-family-base);
+  font-size: var(--fs-label);
   font-weight: 600;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  color: var(--text-3);
+  line-height: 1.3;
+  letter-spacing: 0.005em;
+  color: var(--text-label);
+  display: inline-block;
+  margin-bottom: var(--space-1);
 }
 
 :deep(.view-value) {
-  font-size: 13.5px;
-  color: var(--text-1);
-  font-weight: 500;
+  font-family: var(--font-family-base);
+  font-size: var(--fs-paragraph);
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0;
+  color: var(--text-secondary);
+  margin: 0;
 }
 
 :deep(.color-swatch-wrap) {
@@ -2934,9 +3013,14 @@ onMounted(() => loadData())
 }
 
 :deep(.form-label) {
-  font-size: 12px;
+  font-family: var(--font-family-base);
+  font-size: var(--fs-label);
   font-weight: 600;
-  color: var(--text-2);
+  line-height: 1.3;
+  letter-spacing: 0.03em;
+  color: var(--text-label);
+  display: inline-block;
+  margin-bottom: var(--space-1);
 }
 
 :deep(.form-input),
@@ -3530,6 +3614,19 @@ onMounted(() => loadData())
   }
 }
 
+/* ── Tablet: trim non-essential columns, keep table format ── */
+@media (max-width: 860px) {
+  .company-table {
+    min-width: 0;
+  }
+
+  .company-table .col-contact,
+  .table-row td.col-contact {
+    display: none;
+  }
+}
+
+/* ── Mobile: collapse table into stacked cards ── */
 @media (max-width: 640px) {
   .company-page {
     padding: 16px;
@@ -3553,8 +3650,101 @@ onMounted(() => loadData())
     width: 100%;
   }
 
-  .cards-grid {
-    grid-template-columns: 1fr;
+  .table-scroll {
+    overflow-x: visible;
+  }
+
+  .company-table {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .company-table thead {
+    display: none;
+  }
+
+  .company-table,
+  .company-table tbody,
+  .table-row {
+    display: block;
+    width: 100%;
+  }
+
+  .table-row {
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .table-row td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+  }
+
+  .table-row td::before {
+    content: attr(data-label);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    flex-shrink: 0;
+    text-align: left;
+  }
+
+  .table-row td.col-company {
+    background: var(--surface-2);
+  }
+
+  .table-row td.col-company::before {
+    display: none;
+  }
+
+  .table-row td.col-company {
+    justify-content: flex-start;
+  }
+
+  .company-cell {
+    width: 100%;
+  }
+
+  .company-cell-name {
+    max-width: none;
+    white-space: normal;
+  }
+
+  .table-row td.col-contact .contact-cell,
+  .table-row td.col-location {
+    align-items: flex-end;
+  }
+
+  .contact-cell {
+    align-items: flex-end;
+    min-width: 0;
+  }
+
+  .table-row td:last-child {
+    border-bottom: none;
+  }
+
+  .row-actions {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .row-btn-label {
+    display: none;
+  }
+
+  .row-btn {
+    padding: 7px 9px;
   }
 
   .modal-backdrop {
