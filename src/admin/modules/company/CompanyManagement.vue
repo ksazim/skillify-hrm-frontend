@@ -12,7 +12,7 @@
         </div>
         <div>
           <h1 class="text-page-title">Company Management</h1>
-          <p class="text-subtitle">Manage companies, branches, departments and
+          <p style="color: #9ca3af" class="text-subtitle">Manage companies, branches, departments and
             roles</p>
         </div>
       </div>
@@ -33,7 +33,7 @@
             <span class="hstat-label">Inactive</span>
           </div>
         </div>
-        <button class="btn-add" @click="openCreateCompanyModal">
+        <button class="primary-button" @click="openCreateCompanyModal">
           <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd"
               d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
@@ -213,7 +213,7 @@
             clip-rule="evenodd" />
         </svg>
         <p>No companies found</p>
-        <button class="btn-add" @click="openCreateCompanyModal">Add First Company</button>
+        <button class="primary-button" @click="openCreateCompanyModal">Add First Company</button>
       </div>
       <div v-else-if="!isLoading && filteredCompanies.length === 0 && companies.length > 0" class="state-empty">
         <svg viewBox="0 0 20 20" fill="currentColor">
@@ -222,7 +222,7 @@
             clip-rule="evenodd" />
         </svg>
         <p>No companies match your filters</p>
-        <button class="btn-retry" @click="clearFilters">Clear Filters</button>
+        <button class="primary-button" @click="clearFilters">Clear Filters</button>
       </div>
     </div>
 
@@ -1971,21 +1971,6 @@ onMounted(() => loadData())
   color: var(--primary);
   flex-shrink: 0;
 }
-
-/* .page-title {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--text-1);
-  margin: 0;
-  line-height: 1.2;
-} */
-
-/* .page-subtitle {
-  font-size: 13px;
-  color: var(--text-3);
-  margin: 3px 0 0;
-} */
 
 .header-stats {
   display: flex;

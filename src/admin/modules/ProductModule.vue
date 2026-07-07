@@ -3,8 +3,8 @@
     <div class="container">
       <!-- Header -->
       <div class="header">
-        <h1>Product Management</h1>
-        <button class="add-btn" @click="openCreateModal">Add New Product</button>
+        <h1 class="text-page-title">Product Management</h1>
+        <button class="primary-button" @click="openCreateModal">+ Add New Product</button>
       </div>
 
       <!-- Filter Panel -->
@@ -734,7 +734,7 @@ onBeforeUnmount(() => {
 
 /* ─── Header — neutral dark ─────────────────────────────────── */
 .header {
-  background: #1d283a;
+  background: var(--surface);
   color: #fff;
   padding: 30px 40px;
   display: flex;

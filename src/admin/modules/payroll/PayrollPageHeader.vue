@@ -12,7 +12,7 @@
         <p class="page-header__subtitle">Process payroll, manage deductions and download payslips</p>
       </div>
     </div>
-    <button v-if="isAdmin" class="btn btn--primary" @click="$emit('run-payroll')">
+    <button v-if="isAdmin" class="primary-button" @click="$emit('run-payroll')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
         <path d="M8 5v14l11-7z" />
       </svg>

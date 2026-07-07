@@ -3,8 +3,8 @@
     <div class="container">
       <!-- Header -->
       <div class="header">
-        <h1>Order Management</h1>
-        <button class="add-btn" @click="openCreateModal">+ New Order</button>
+        <h1 class="text-page-title">Order Management</h1>
+        <button class="primary-button" @click="openCreateModal">+ New Order</button>
       </div>
 
       <!-- Filter Panel -->
@@ -99,7 +99,7 @@
                         <textarea v-model="createForm.recipient_address" rows="2" class="form-input"
                           placeholder="Full delivery address..."></textarea>
                         <p v-if="createErrors.recipient_address" class="field-error">{{ createErrors.recipient_address
-                          }}
+                        }}
                         </p>
                       </div>
                       <div class="form-group">
@@ -299,13 +299,13 @@
                 <h4 class="view-section-title">Customer Details</h4>
                 <div class="detail-grid">
                   <div class="detail-item"><span class="detail-label">Name</span><span>{{ selectedOrder.recipient_name
-                      }}</span></div>
+                  }}</span></div>
                   <div class="detail-item"><span class="detail-label">Phone</span><span>{{ selectedOrder.recipient_phone
-                      }}</span></div>
+                  }}</span></div>
                   <div class="detail-item full"><span class="detail-label">Address</span><span>{{
                     selectedOrder.recipient_address }}</span></div>
                   <div class="detail-item"><span class="detail-label">City</span><span>{{ selectedOrder.city || '—'
-                      }}</span></div>
+                  }}</span></div>
                   <div class="detail-item"><span class="detail-label">Delivery</span><span>{{
                     capitalize(selectedOrder.delivery_option) }}</span></div>
                   <div class="detail-item"><span class="detail-label">Coupon</span><span>{{ selectedOrder.coupon_code ||
@@ -314,7 +314,7 @@
                   <div class="detail-item"><span class="detail-label">Status</span>
                     <span :class="['status-badge', 'status-' + selectedOrder.status]">{{
                       capitalize(selectedOrder.status)
-                      }}</span>
+                    }}</span>
                   </div>
                   <div v-if="selectedOrder.consignment" class="detail-item">
                     <span class="detail-label">Consignment</span><span>{{ selectedOrder.consignment }}</span>
@@ -363,9 +363,9 @@
                 <div class="total-line"><span>Shipping</span><span>{{ formatPrice(selectedOrder.shipping_cost) }}</span>
                 </div>
                 <div class="total-line" v-if="selectedOrder.vat"><span>VAT</span><span>{{ formatPrice(selectedOrder.vat)
-                    }}</span></div>
+                }}</span></div>
                 <div class="total-line grand-total"><span>Total</span><span>{{ formatPrice(selectedOrder.total)
-                    }}</span>
+                }}</span>
                 </div>
               </div>
 
@@ -890,35 +890,12 @@ onBeforeUnmount(() => crudStore.clearCurrentItem());
 
 /* ─── Header ─────────────────────────────────────────────────── */
 .header {
-  background: #1d283a;
+  background: var(--surface);
   color: #fff;
   padding: 30px 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.header h1 {
-  font-size: 28px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.add-btn {
-  background: #fff;
-  color: #1e1e2e;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all .25s;
-}
-
-.add-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
 }
 
 /* ─── Loading / Error ────────────────────────────────────────── */
@@ -1928,11 +1905,11 @@ textarea.form-input {
 }
 
 @media (max-width: 768px) {
-  .header {
+  /* .header {
     flex-direction: column;
     gap: 16px;
     text-align: center;
-  }
+  } */
 
   .table-container {
     padding: 16px;

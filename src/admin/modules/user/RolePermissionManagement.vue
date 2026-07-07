@@ -262,8 +262,9 @@
                   </svg>
                 </div>
                 <div>
-                  <p class="modal-mode-label">{{ isEditing ? 'Editing role' : 'New role' }}</p>
-                  <h3 class="modal-title">{{ isEditing ? 'Edit Role' : 'Create New Role' }}</h3>
+                  <h3 class="text-card-title">{{ isEditing ? 'Edit Role' : 'Create New Role' }}</h3>
+                  <p class="text-subtitle">{{ isEditing ? 'Editing role' : 'New role' }}</p>
+
                 </div>
               </div>
               <button class="modal-close" @click="closeModal">
@@ -1842,13 +1843,13 @@ async function confirmDelete() {
   color: var(--error);
 }
 
-.modal-title {
+/* .modal-title {
   font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: #0F172A;
   margin: 0;
-}
+} */
 
 .modal-close {
   width: 36px;
@@ -2343,9 +2344,9 @@ async function confirmDelete() {
     height: 16px;
   }
 
-  .modal-title {
+  /* .modal-title {
     font-size: 16px;
-  }
+  } */
 
   .modal-body {
     padding: 16px;
