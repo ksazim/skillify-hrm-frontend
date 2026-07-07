@@ -448,6 +448,7 @@ onBeforeUnmount(() => {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.01em;
+  margin-bottom: 8px;
   color: var(--text-primary);
   white-space: nowrap;
   line-height: 1;

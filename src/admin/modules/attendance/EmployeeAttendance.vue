@@ -789,7 +789,7 @@ onBeforeUnmount(() => {
 .attendance-page {
   min-height: 100vh;
   padding: 32px;
-  background: #F6F7F9;
+  background: #FFFFFF;
   color: var(--cream);
   font-family: var(--font-body);
   box-sizing: border-box;

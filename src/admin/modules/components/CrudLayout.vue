@@ -590,6 +590,7 @@ defineExpose({ showBanner })
 .content-area {
   flex: 1;
   padding: 0;
+  background: #FFFFFF;
 }
 
 /* ── Loading / Error / Empty states ── */

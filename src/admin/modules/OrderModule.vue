@@ -99,7 +99,7 @@
                         <textarea v-model="createForm.recipient_address" rows="2" class="form-input"
                           placeholder="Full delivery address..."></textarea>
                         <p v-if="createErrors.recipient_address" class="field-error">{{ createErrors.recipient_address
-                        }}
+                          }}
                         </p>
                       </div>
                       <div class="form-group">
@@ -299,13 +299,13 @@
                 <h4 class="view-section-title">Customer Details</h4>
                 <div class="detail-grid">
                   <div class="detail-item"><span class="detail-label">Name</span><span>{{ selectedOrder.recipient_name
-                  }}</span></div>
+                      }}</span></div>
                   <div class="detail-item"><span class="detail-label">Phone</span><span>{{ selectedOrder.recipient_phone
-                  }}</span></div>
+                      }}</span></div>
                   <div class="detail-item full"><span class="detail-label">Address</span><span>{{
                     selectedOrder.recipient_address }}</span></div>
                   <div class="detail-item"><span class="detail-label">City</span><span>{{ selectedOrder.city || '—'
-                  }}</span></div>
+                      }}</span></div>
                   <div class="detail-item"><span class="detail-label">Delivery</span><span>{{
                     capitalize(selectedOrder.delivery_option) }}</span></div>
                   <div class="detail-item"><span class="detail-label">Coupon</span><span>{{ selectedOrder.coupon_code ||
@@ -314,7 +314,7 @@
                   <div class="detail-item"><span class="detail-label">Status</span>
                     <span :class="['status-badge', 'status-' + selectedOrder.status]">{{
                       capitalize(selectedOrder.status)
-                    }}</span>
+                      }}</span>
                   </div>
                   <div v-if="selectedOrder.consignment" class="detail-item">
                     <span class="detail-label">Consignment</span><span>{{ selectedOrder.consignment }}</span>
@@ -363,9 +363,9 @@
                 <div class="total-line"><span>Shipping</span><span>{{ formatPrice(selectedOrder.shipping_cost) }}</span>
                 </div>
                 <div class="total-line" v-if="selectedOrder.vat"><span>VAT</span><span>{{ formatPrice(selectedOrder.vat)
-                }}</span></div>
+                    }}</span></div>
                 <div class="total-line grand-total"><span>Total</span><span>{{ formatPrice(selectedOrder.total)
-                }}</span>
+                    }}</span>
                 </div>
               </div>
 
@@ -876,7 +876,7 @@ onBeforeUnmount(() => crudStore.clearCurrentItem());
 .dashboard {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
-  background: #f0f2f5;
+  background: #FFFFFF;
 }
 
 .container {

@@ -254,7 +254,7 @@
               </div>
               <div class="view-details">
                 <div class="detail-row"><span class="detail-label">Name</span><span>{{ selectedItem.product_name
-                }}</span>
+                    }}</span>
                 </div>
                 <div class="detail-row"><span class="detail-label">Category</span><span>{{ selectedItem.category?.name
                   ??
@@ -272,7 +272,7 @@
                 <div class="detail-row"><span class="detail-label">Views</span><span>{{ selectedItem.view ?? 0 }}</span>
                 </div>
                 <div class="detail-row"><span class="detail-label">Orders</span><span>{{ selectedItem.orders ?? 0
-                }}</span>
+                    }}</span>
                 </div>
                 <div class="detail-row full"><span class="detail-label">Description</span>
                   <p class="detail-desc">{{ selectedItem.description }}</p>
@@ -720,7 +720,7 @@ onBeforeUnmount(() => {
 .dashboard {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
-  background: #f0f2f5;
+  background: #FFFFFF;
 }
 
 .container {

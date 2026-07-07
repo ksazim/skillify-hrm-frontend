@@ -508,7 +508,7 @@ onMounted(loadProjects)
 .emp-projects-page {
   min-height: 100vh;
   padding: 28px 32px;
-  background: #F8FAFC;
+  background: #FFFFFF;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   color: #0F172A;
 }

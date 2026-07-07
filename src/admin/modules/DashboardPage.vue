@@ -427,7 +427,7 @@ onUnmounted(() => clearInterval(timeInterval))
   padding: 28px 32px 40px;
   max-width: 1600px;
   margin: 0 auto;
-  background: var(--bg-page);
+  /* background: var(--bg-page); */
   min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
 }
